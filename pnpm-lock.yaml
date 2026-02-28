@@ -72,6 +72,9 @@ importers:
         specifier: ^5.0.3
         version: 5.0.11(@types/react@19.2.9)(react@19.2.1)(use-sync-external-store@1.6.0(react@19.2.1))
     devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3.3.4
+        version: 3.3.4
       '@playwright/test':
         specifier: 1.58.2
         version: 1.58.2

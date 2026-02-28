@@ -17,7 +17,7 @@
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.config.ts",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
     "seed": "pnpx tsx seed/seed.ts",
-    "extract-payload-theme": "tsx scripts/extract-payload-theme.ts"
+    "extract-payload-theme": "pnpx tsx src/scripts/extract-payload-theme.ts"
   },
   "dependencies": {
     "@payloadcms/db-sqlite": "3.78.0",
@@ -43,6 +43,7 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.4",
     "@playwright/test": "1.58.2",
     "@testing-library/react": "16.3.0",
     "@types/node": "22.19.9",
