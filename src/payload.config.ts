@@ -7,6 +7,7 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { seed } from './seed/seed'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -17,6 +18,10 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    autoLogin:
+      process.env.NODE_ENV !== 'production'
+        ? { email: 'dev@payloadcms.com', password: 'test', prefillOnly: false }
+        : false,
   },
   collections: [Users, Media],
   editor: lexicalEditor(),
@@ -30,5 +35,8 @@ export default buildConfig({
     },
   }),
   sharp,
+  onInit: async (payload) => {
+    await seed(payload)
+  },
   plugins: [],
 })
