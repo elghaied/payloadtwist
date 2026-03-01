@@ -13,12 +13,10 @@ export function IframePanel({ config }: IframePanelProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [isDark, setIsDark] = useState(false)
 
-  // Inject on every config change
   useEffect(() => {
     injectIntoIframe(config)
   }, [config])
 
-  // Re-inject after iframe navigation (Payload navigates within the iframe)
   useEffect(() => {
     const iframe = iframeRef.current
     if (!iframe) return
@@ -33,21 +31,21 @@ export function IframePanel({ config }: IframePanelProps) {
       const iframeHtml = iframe?.contentDocument?.documentElement
       if (!iframeHtml) return
 
-      if (dark) {
-        iframeHtml.setAttribute('data-theme', 'dark')
-      } else {
-        iframeHtml.setAttribute('data-theme', 'light')
-      }
+      iframeHtml.setAttribute('data-theme', dark ? 'dark' : 'light')
       injectIntoIframe(config)
     },
     [config],
   )
 
-  const handleDarkToggle = useCallback(() => {
-    const next = !isDark
-    setIsDark(next)
-    applyThemeMode(next)
-  }, [isDark, applyThemeMode])
+  const handleSetLight = useCallback(() => {
+    setIsDark(false)
+    applyThemeMode(false)
+  }, [applyThemeMode])
+
+  const handleSetDark = useCallback(() => {
+    setIsDark(true)
+    applyThemeMode(true)
+  }, [applyThemeMode])
 
   const handleReload = useCallback(() => {
     const iframe = iframeRef.current
@@ -56,26 +54,50 @@ export function IframePanel({ config }: IframePanelProps) {
   }, [])
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
+    <div className="h-full min-w-0 flex flex-col overflow-hidden">
       {/* Toolbar */}
-      <div className="flex items-center justify-between px-3 py-2 bg-zinc-900 border-b border-zinc-800 flex-shrink-0">
-        <span className="text-xs text-zinc-400 font-mono">/admin</span>
-        <div className="flex items-center gap-1">
+      <div className="flex items-center justify-between px-3 py-1.5 bg-[#F8F7F5] border-b border-[#E5E2DC] flex-shrink-0">
+        <span
+          className="text-[11px] text-[#78726C]"
+          style={{ fontFamily: "'JetBrains Mono', monospace" }}
+        >
+          /admin
+        </span>
+        <div className="flex items-center gap-0.5">
+          {/* Light mode button */}
           <button
-            onClick={handleDarkToggle}
-            className="p-1.5 rounded hover:bg-zinc-800 transition-colors text-zinc-400 hover:text-zinc-200"
-            title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            onClick={handleSetLight}
+            className={`p-1.5 rounded transition-colors ${
+              !isDark
+                ? 'bg-[#5B6CF0] text-white'
+                : 'text-[#78726C] hover:text-[#1C1917] hover:bg-[#F0EDE8]'
+            }`}
+            title="Light mode"
+            aria-label="Switch to light mode"
           >
-            {isDark ? <Sun size={14} /> : <Moon size={14} />}
+            <Sun size={13} />
           </button>
+          {/* Dark mode button */}
+          <button
+            onClick={handleSetDark}
+            className={`p-1.5 rounded transition-colors ${
+              isDark
+                ? 'bg-[#5B6CF0] text-white'
+                : 'text-[#78726C] hover:text-[#1C1917] hover:bg-[#F0EDE8]'
+            }`}
+            title="Dark mode"
+            aria-label="Switch to dark mode"
+          >
+            <Moon size={13} />
+          </button>
+          <div className="w-px h-4 bg-[#E5E2DC] mx-1" />
           <button
             onClick={handleReload}
-            className="p-1.5 rounded hover:bg-zinc-800 transition-colors text-zinc-400 hover:text-zinc-200"
+            className="p-1.5 rounded hover:bg-[#F0EDE8] transition-colors text-[#78726C] hover:text-[#1C1917]"
             title="Reload preview"
             aria-label="Reload preview"
           >
-            <RotateCcw size={14} />
+            <RotateCcw size={13} />
           </button>
         </div>
       </div>
@@ -85,7 +107,7 @@ export function IframePanel({ config }: IframePanelProps) {
         id="payload-preview"
         ref={iframeRef}
         src="/admin"
-        className="flex-1 w-full border-0"
+        className="flex-1 w-full min-w-0 border-0 bg-white"
         title="Payload Admin Preview"
       />
     </div>

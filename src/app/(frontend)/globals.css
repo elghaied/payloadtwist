@@ -47,78 +47,75 @@
 
 :root {
     --radius: 0.625rem;
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.141 0.005 285.823);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.141 0.005 285.823);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.141 0.005 285.823);
-    --primary: oklch(0.21 0.006 285.885);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.967 0.001 286.375);
-    --secondary-foreground: oklch(0.21 0.006 285.885);
-    --muted: oklch(0.967 0.001 286.375);
-    --muted-foreground: oklch(0.552 0.016 285.938);
-    --accent: oklch(0.967 0.001 286.375);
-    --accent-foreground: oklch(0.21 0.006 285.885);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.92 0.004 286.32);
-    --input: oklch(0.92 0.004 286.32);
-    --ring: oklch(0.705 0.015 286.067);
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-3: oklch(0.398 0.07 227.392);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.141 0.005 285.823);
-    --sidebar-primary: oklch(0.21 0.006 285.885);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.967 0.001 286.375);
-    --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
-    --sidebar-border: oklch(0.92 0.004 286.32);
-    --sidebar-ring: oklch(0.705 0.015 286.067);
-}
 
-.dark {
-    --background: oklch(0.141 0.005 285.823);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.21 0.006 285.885);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.21 0.006 285.885);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.92 0.004 286.32);
-    --primary-foreground: oklch(0.21 0.006 285.885);
-    --secondary: oklch(0.274 0.006 286.033);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.274 0.006 286.033);
-    --muted-foreground: oklch(0.705 0.015 286.067);
-    --accent: oklch(0.274 0.006 286.033);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.552 0.016 285.938);
-    --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.696 0.17 162.48);
-    --chart-3: oklch(0.769 0.188 70.08);
-    --chart-4: oklch(0.627 0.265 303.9);
-    --chart-5: oklch(0.645 0.246 16.439);
-    --sidebar: oklch(0.21 0.006 285.885);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.274 0.006 286.033);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.552 0.016 285.938);
+    /* ── Payloadtwist editor design tokens — warm light ── */
+    --pt-bg: #F8F7F5;
+    --pt-surface: #FFFFFF;
+    --pt-border: #E5E2DC;
+    --pt-text: #1C1917;
+    --pt-text-muted: #78726C;
+    --pt-accent: #5B6CF0;
+    --pt-danger: #E5484D;
+    --pt-success: #30A46C;
+
+    /* ── shadcn overrides — light editor chrome ── */
+    --background: #F8F7F5;
+    --foreground: #1C1917;
+    --card: #FFFFFF;
+    --card-foreground: #1C1917;
+    --popover: #FFFFFF;
+    --popover-foreground: #1C1917;
+    --primary: #1C1917;
+    --primary-foreground: #FFFFFF;
+    --secondary: #F0EDE8;
+    --secondary-foreground: #1C1917;
+    --muted: #F0EDE8;
+    --muted-foreground: #78726C;
+    --accent: #F0EDE8;
+    --accent-foreground: #1C1917;
+    --destructive: #E5484D;
+    --border: #E5E2DC;
+    --input: #E5E2DC;
+    --ring: #5B6CF0;
+    --chart-1: #5B6CF0;
+    --chart-2: #30A46C;
+    --chart-3: #E5484D;
+    --chart-4: #E5A000;
+    --chart-5: #8B5CF6;
+    --sidebar: #F8F7F5;
+    --sidebar-foreground: #1C1917;
+    --sidebar-primary: #5B6CF0;
+    --sidebar-primary-foreground: #FFFFFF;
+    --sidebar-accent: #F0EDE8;
+    --sidebar-accent-foreground: #1C1917;
+    --sidebar-border: #E5E2DC;
+    --sidebar-ring: #5B6CF0;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    }
+  }
   body {
     @apply bg-background text-foreground;
-    }
+  }
+}
+
+/* ── Panel scrollbar ── */
+.panel-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #D1CEC9 transparent;
+}
+.panel-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.panel-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.panel-scroll::-webkit-scrollbar-thumb {
+  background: #D1CEC9;
+  border-radius: 2px;
+}
+.panel-scroll::-webkit-scrollbar-thumb:hover {
+  background: #B8B4AE;
 }

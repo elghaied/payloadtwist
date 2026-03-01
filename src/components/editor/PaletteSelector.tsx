@@ -5,7 +5,7 @@ import type { PayloadThemeConfig } from '@/payload-theme/types'
 import { mapPaletteToTheme } from '@/payload-theme/palette-mapper'
 import { THEME_PRESETS } from '@/payload-theme/presets'
 import { getDefaultTheme } from '@/payload-theme/config'
-import { ColorPicker } from './ColorPicker'
+import { ColorPopover } from '@/components/controls'
 
 interface PaletteSelectorProps {
   onApply: (config: PayloadThemeConfig) => void
@@ -21,7 +21,6 @@ export function PaletteSelector({ onApply, onReset }: PaletteSelectorProps) {
   const [accentEnabled, setAccentEnabled] = useState(false)
   const [applyFlash, setApplyFlash] = useState(false)
 
-  // Compute preview colors for all presets once (THEME_PRESETS is constant)
   const presetPreviews = useMemo(() => {
     const defaults = getDefaultTheme()
     return THEME_PRESETS.map((preset) => {
@@ -31,7 +30,6 @@ export function PaletteSelector({ onApply, onReset }: PaletteSelectorProps) {
     })
   }, [])
 
-  // Live preview strip for custom palette
   const customPreview = useMemo(() => {
     const config = mapPaletteToTheme({
       neutral,
@@ -67,16 +65,8 @@ export function PaletteSelector({ onApply, onReset }: PaletteSelectorProps) {
     <div className="space-y-4">
       {/* Preset row */}
       <div>
-        <div className="flex items-center gap-2 mb-3">
-          <span
-            className="text-[10px] uppercase tracking-widest text-zinc-500"
-            style={{ fontFamily: "'DM Sans', sans-serif" }}
-          >
-            Theme Preset
-          </span>
-          <div className="flex-1 h-px bg-zinc-800/80" />
-        </div>
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
+        <p className="text-[10px] uppercase tracking-wider text-[#78726C] mb-2 font-medium">Theme Preset</p>
+        <div className="flex gap-2 overflow-x-auto pb-1 panel-scroll">
           {THEME_PRESETS.map((preset, idx) => {
             const preview = presetPreviews[idx]
             const isActive = activePresetId === preset.id
@@ -84,27 +74,19 @@ export function PaletteSelector({ onApply, onReset }: PaletteSelectorProps) {
               <button
                 key={preset.id}
                 onClick={() => handlePresetClick(preset)}
-                className={`flex-shrink-0 rounded-lg p-1.5 transition-all ${
+                className={`flex-shrink-0 rounded-lg p-1.5 transition-all active:scale-[0.97] ${
                   isActive
-                    ? 'ring-2 ring-blue-500 bg-zinc-800'
-                    : 'bg-zinc-800/50 hover:bg-zinc-800 ring-1 ring-zinc-700/50 hover:ring-zinc-600'
+                    ? 'ring-2 ring-[#5B6CF0] bg-white'
+                    : 'bg-[#F8F7F5] hover:bg-white ring-1 ring-[#E5E2DC] hover:ring-[#CCC8C2]'
                 }`}
                 title={preset.description}
               >
-                {/* Mini swatch strip */}
                 <div className="flex gap-px rounded overflow-hidden mb-1.5">
                   {preview.colors.map((color, i) => (
-                    <div
-                      key={i}
-                      className="w-4 h-5"
-                      style={{ background: color }}
-                    />
+                    <div key={i} className="w-4 h-5" style={{ background: color }} />
                   ))}
                 </div>
-                <span
-                  className="text-[10px] text-zinc-400 block text-center leading-none"
-                  style={{ fontFamily: "'DM Sans', sans-serif" }}
-                >
+                <span className="text-[10px] text-[#78726C] block text-center leading-none">
                   {preset.name}
                 </span>
               </button>
@@ -115,35 +97,21 @@ export function PaletteSelector({ onApply, onReset }: PaletteSelectorProps) {
 
       {/* Custom palette */}
       <div>
-        <div className="flex items-center gap-2 mb-3">
-          <span
-            className="text-[10px] uppercase tracking-widest text-zinc-500"
-            style={{ fontFamily: "'DM Sans', sans-serif" }}
-          >
-            Custom Palette
-          </span>
-          <div className="flex-1 h-px bg-zinc-800/80" />
-        </div>
+        <p className="text-[10px] uppercase tracking-wider text-[#78726C] mb-2 font-medium">Custom Palette</p>
 
         <div className="space-y-3">
-          {/* Neutral + Accent row */}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <ColorPicker
+              <ColorPopover
                 value={neutral}
                 onChange={setNeutral}
                 label="Neutral Base"
-                size="sm"
+                swatchSize="sm"
               />
-              <span
-                className="text-[10px] text-zinc-500"
-                style={{ fontFamily: "'DM Sans', sans-serif" }}
-              >
-                Neutral
-              </span>
+              <span className="text-[10px] text-[#78726C]">Neutral</span>
             </div>
 
-            <div className="w-px h-5 bg-zinc-800" />
+            <div className="w-px h-5 bg-[#E5E2DC]" />
 
             <button
               type="button"
@@ -154,53 +122,41 @@ export function PaletteSelector({ onApply, onReset }: PaletteSelectorProps) {
             >
               <div
                 className={`w-7 h-4 rounded-full relative transition-colors ${
-                  accentEnabled ? 'bg-blue-600' : 'bg-zinc-700'
+                  accentEnabled ? 'bg-[#5B6CF0]' : 'bg-[#E5E2DC]'
                 }`}
               >
                 <div
-                  className={`absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-zinc-300 transition-transform ${
+                  className={`absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-white shadow-sm transition-transform ${
                     accentEnabled ? 'translate-x-3' : ''
                   }`}
                 />
               </div>
-              <span
-                className="text-[10px] text-zinc-500"
-                style={{ fontFamily: "'DM Sans', sans-serif" }}
-              >
-                Accent
-              </span>
+              <span className="text-[10px] text-[#78726C]">Accent</span>
             </button>
 
             {accentEnabled && (
-              <ColorPicker
+              <ColorPopover
                 value={accent}
                 onChange={setAccent}
                 label="Accent Color"
-                size="sm"
+                swatchSize="sm"
               />
             )}
           </div>
 
-          {/* Preview strip */}
           <div
             className={`flex gap-px rounded overflow-hidden transition-opacity ${
               applyFlash ? 'opacity-60' : 'opacity-100'
             }`}
           >
             {customPreview.map((color, i) => (
-              <div
-                key={i}
-                className="flex-1 h-5"
-                style={{ background: color }}
-              />
+              <div key={i} className="flex-1 h-5" style={{ background: color }} />
             ))}
           </div>
 
-          {/* Apply button */}
           <button
             onClick={handleCustomApply}
-            className="w-full text-xs py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white transition-colors"
-            style={{ fontFamily: "'DM Sans', sans-serif" }}
+            className="w-full text-xs py-1.5 rounded bg-[#5B6CF0] hover:bg-[#4A5AD9] text-white font-medium transition-colors active:scale-[0.97]"
           >
             Apply Custom Palette
           </button>

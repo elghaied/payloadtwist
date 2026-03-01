@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useCallback, useEffect } from 'react'
+import { MoveHorizontal } from 'lucide-react'
 
 interface ScrubberInputProps {
   value: number
@@ -26,6 +27,7 @@ export function ScrubberInput({
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValue] = useState('')
   const [isDragging, setIsDragging] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const dragState = useRef<{ startX: number; startValue: number } | null>(null)
@@ -33,7 +35,6 @@ export function ScrubberInput({
   const clamp = useCallback(
     (v: number) => {
       const clamped = Math.min(max, Math.max(min, v))
-      // Round to step precision
       const precision = step < 1 ? String(step).split('.')[1]?.length ?? 0 : 0
       return Number(clamped.toFixed(precision))
     },
@@ -112,11 +113,13 @@ export function ScrubberInput({
     [commitEdit],
   )
 
+  const mono = "'JetBrains Mono', monospace"
+
   if (isEditing) {
     return (
       <div className={`inline-flex items-center ${className}`}>
         {label && (
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 mr-2">{label}</span>
+          <span className="text-[10px] uppercase tracking-wider text-[#78726C] mr-2">{label}</span>
         )}
         <input
           ref={inputRef}
@@ -125,10 +128,10 @@ export function ScrubberInput({
           onChange={(e) => setEditValue(e.target.value)}
           onBlur={commitEdit}
           onKeyDown={handleKeyDown}
-          className="w-16 text-xs bg-zinc-800 border border-blue-500/50 rounded px-2 py-1 text-zinc-100 font-mono text-right focus:outline-none"
-          style={{ fontFamily: "'JetBrains Mono', monospace" }}
+          className="w-16 text-xs bg-white border border-[#5B6CF0] rounded px-2 py-1 text-[#1C1917] font-mono text-right focus:outline-none"
+          style={{ fontFamily: mono }}
         />
-        {unit && <span className="text-[10px] text-zinc-500 ml-1">{unit}</span>}
+        {unit && <span className="text-[10px] text-[#78726C] ml-1">{unit}</span>}
       </div>
     )
   }
@@ -136,7 +139,7 @@ export function ScrubberInput({
   return (
     <div className={`inline-flex items-center ${className}`}>
       {label && (
-        <span className="text-[10px] uppercase tracking-wider text-zinc-500 mr-2">{label}</span>
+        <span className="text-[10px] uppercase tracking-wider text-[#78726C] mr-2">{label}</span>
       )}
       <div
         ref={containerRef}
@@ -144,17 +147,24 @@ export function ScrubberInput({
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onDoubleClick={handleDoubleClick}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         className={`
-          select-none px-2 py-1 rounded text-xs text-zinc-100 font-mono text-right
-          bg-zinc-800 border border-zinc-700 hover:border-zinc-500
-          transition-colors min-w-[3.5rem]
-          ${isDragging ? 'cursor-ew-resize border-blue-500/50' : 'cursor-ew-resize'}
+          select-none px-2 py-1 rounded text-xs text-[#1C1917] font-mono text-right
+          bg-[#F8F7F5] border transition-colors min-w-[3.5rem] relative
+          ${isDragging ? 'cursor-ew-resize border-[#5B6CF0]' : 'cursor-ew-resize border-[#E5E2DC] hover:border-[#CCC8C2]'}
         `}
-        style={{ fontFamily: "'JetBrains Mono', monospace" }}
+        style={{ fontFamily: mono }}
         title="Drag to scrub · Double-click to edit · Shift=10x · Alt=0.1x"
       >
+        {isHovered && !isDragging && (
+          <MoveHorizontal
+            size={10}
+            className="absolute left-1 top-1/2 -translate-y-1/2 text-[#B8B4AE]"
+          />
+        )}
         {value}
-        {unit && <span className="text-zinc-500 ml-0.5">{unit}</span>}
+        {unit && <span className="text-[#78726C] ml-0.5">{unit}</span>}
       </div>
     </div>
   )

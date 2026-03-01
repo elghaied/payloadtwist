@@ -2,11 +2,10 @@
 
 import { useState, useCallback, useEffect, useMemo } from 'react'
 
-import { ColorPicker } from './ColorPicker'
+import { ColorPopover, ScaleStrip } from '@/components/controls'
 import { ColorWheel } from './ColorWheel'
 import { LightnessSlider } from './LightnessSlider'
 import { ScrubberInput } from './ScrubberInput'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { PayloadThemeConfig } from '@/payload-theme/types'
 import { generateBaseScale, hexToHsl, hslToHex } from '@/payload-theme/scale-generator'
 
@@ -17,6 +16,7 @@ function isValidHex(value: string): boolean {
 }
 
 const BASE_STEPS = [0, 50, 100, 150, 200, 250, 300, 400, 500, 600, 700, 800, 850, 900, 950, 1000]
+const ANCHOR_STEPS = new Set([0, 500, 1000])
 
 function getStepVar(step: number): string {
   return `--color-base-${step}`
@@ -24,11 +24,6 @@ function getStepVar(step: number): string {
 
 function getAnchor(config: PayloadThemeConfig, step: number): string {
   return config.light[getStepVar(step)] ?? '#888888'
-}
-
-function isDarkColor(hex: string): boolean {
-  const [, , l] = hexToHsl(hex)
-  return l < 50
 }
 
 interface BaseScaleEditorProps {
@@ -77,7 +72,6 @@ export function BaseScaleEditor({ config, setBaseScale, setVariable }: BaseScale
     [setBaseScale],
   )
 
-  // Shared helper: update an anchor by key with a hex value
   const updateAnchor = useCallback(
     (anchor: AnchorKey, value: string) => {
       const next = {
@@ -93,7 +87,6 @@ export function BaseScaleEditor({ config, setBaseScale, setVariable }: BaseScale
     [lightest, mid, darkest, overrides, applyScale],
   )
 
-  // Handle hue change from wheel — combine new hue with existing S/L
   const handleHueChange = useCallback(
     (anchor: AnchorKey, hue: number) => {
       const current = anchor === 'lightest' ? lightest : anchor === 'mid' ? mid : darkest
@@ -103,13 +96,11 @@ export function BaseScaleEditor({ config, setBaseScale, setVariable }: BaseScale
     [lightest, mid, darkest, updateAnchor],
   )
 
-  // HSL of the currently selected anchor (DRY helper)
   const selectedHSL = useMemo(() => {
     const hex = selectedAnchor === 'lightest' ? lightest : selectedAnchor === 'mid' ? mid : darkest
     return hexToHsl(hex)
   }, [selectedAnchor, lightest, mid, darkest])
 
-  // Handle saturation change from scrubber
   const handleSaturationChange = useCallback(
     (sat: number) => {
       const [h, , l] = selectedHSL
@@ -139,6 +130,23 @@ export function BaseScaleEditor({ config, setBaseScale, setVariable }: BaseScale
       setVariable(varName, generated[varName], 'light')
     },
     [lightest, mid, darkest, setVariable],
+  )
+
+  // Build steps for ScaleStrip
+  const generated = useMemo(() => generateBaseScale(lightest, mid, darkest), [lightest, mid, darkest])
+  const scaleSteps = useMemo(
+    () =>
+      BASE_STEPS.map((step) => {
+        const varName = getStepVar(step)
+        return {
+          step,
+          color: config.light[varName] ?? '#888888',
+          isOverridden: varName in overrides,
+          isAnchor: ANCHOR_STEPS.has(step),
+          defaultColor: generated[varName],
+        }
+      }),
+    [config.light, overrides, generated],
   )
 
   return (
@@ -185,14 +193,13 @@ export function BaseScaleEditor({ config, setBaseScale, setVariable }: BaseScale
           { key: 'darkest' as AnchorKey, label: 'Darkest' },
         ] as const).map(({ key, label }) => (
           <div key={key} className="flex flex-col gap-1">
-            <label className="text-[10px] uppercase tracking-wider text-zinc-500">{label}</label>
+            <label className="text-[10px] uppercase tracking-wider text-[#78726C] font-medium">{label}</label>
             <div className="flex items-center gap-1.5">
-              <div
-                className={`w-5 h-5 rounded border flex-shrink-0 cursor-pointer ${
-                  selectedAnchor === key ? 'border-blue-500' : 'border-zinc-600'
-                }`}
-                style={{ background: key === 'lightest' ? lightest : key === 'mid' ? mid : darkest }}
-                onClick={() => setSelectedAnchor(key)}
+              <ColorPopover
+                value={key === 'lightest' ? lightest : key === 'mid' ? mid : darkest}
+                onChange={(hex) => updateAnchor(key, hex)}
+                label={label}
+                swatchSize="sm"
               />
               <input
                 type="text"
@@ -205,7 +212,7 @@ export function BaseScaleEditor({ config, setBaseScale, setVariable }: BaseScale
                   }
                 }}
                 onFocus={() => setSelectedAnchor(key)}
-                className="flex-1 text-xs bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-zinc-200 font-mono min-w-0"
+                className="flex-1 text-xs bg-[#F8F7F5] border border-[#E5E2DC] rounded px-2 py-1 text-[#1C1917] font-mono min-w-0 focus:outline-none focus:border-[#5B6CF0]"
                 spellCheck={false}
                 placeholder="#000000"
               />
@@ -216,60 +223,12 @@ export function BaseScaleEditor({ config, setBaseScale, setVariable }: BaseScale
 
       {/* 16-step swatch strip */}
       <div>
-        <p className="text-xs text-zinc-500 mb-2">Scale steps — click to override individually</p>
-        <div className="flex gap-0.5">
-          {BASE_STEPS.map((step) => {
-            const varName = getStepVar(step)
-            const color = config.light[varName] ?? '#888888'
-            const isOverridden = varName in overrides
-            const dark = isDarkColor(color)
-
-            return (
-              <Popover key={step}>
-                <PopoverTrigger asChild>
-                  <button
-                    className="flex-1 h-10 rounded-sm border border-transparent hover:border-zinc-400 transition-colors relative flex items-end justify-center pb-0.5"
-                    style={{ background: color }}
-                    title={`${varName}: ${color}`}
-                  >
-                    {isOverridden && (
-                      <span
-                        className={`w-1.5 h-1.5 rounded-full ${dark ? 'bg-white' : 'bg-zinc-800'} opacity-75`}
-                      />
-                    )}
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="w-52 p-3 bg-zinc-900 border-zinc-700 text-zinc-100"
-                  sideOffset={6}
-                >
-                  <p className="text-xs text-zinc-400 mb-2 font-mono">{varName}</p>
-                  <ColorPicker
-                    value={color}
-                    onChange={(hex) => handleSwatchOverride(step, hex)}
-                    label={varName}
-                  />
-                  {isOverridden && (
-                    <button
-                      onClick={() => handleSwatchReset(step)}
-                      className="mt-2 w-full text-xs text-zinc-400 hover:text-zinc-200 bg-zinc-800 hover:bg-zinc-700 rounded px-2 py-1 transition-colors"
-                    >
-                      Reset to scale
-                    </button>
-                  )}
-                </PopoverContent>
-              </Popover>
-            )
-          })}
-        </div>
-        {/* Step labels */}
-        <div className="flex gap-0.5 mt-0.5">
-          {BASE_STEPS.map((step) => (
-            <div key={step} className="flex-1 text-center">
-              <span className="text-[9px] text-zinc-600">{step}</span>
-            </div>
-          ))}
-        </div>
+        <p className="text-[10px] text-[#78726C] mb-2">Scale steps — click to override individually</p>
+        <ScaleStrip
+          steps={scaleSteps}
+          onStepChange={handleSwatchOverride}
+          onStepReset={handleSwatchReset}
+        />
       </div>
     </div>
   )

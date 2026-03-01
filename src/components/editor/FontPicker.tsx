@@ -48,11 +48,9 @@ const FONT_OPTIONS: { group: string; fonts: FontOption[] }[] = [
   },
 ]
 
-// Track which Google Fonts have been loaded into the iframe
 const loadedFontsInIframe = new Set<string>()
 
 function getFontFamily(value: string): string {
-  // Extract the first font name from the stack for display
   const first = value.split(',')[0].trim().replace(/'/g, '')
   return first
 }
@@ -101,7 +99,6 @@ export function FontPicker({ value, onChange, varName }: FontPickerProps) {
     return getFontFamily(value) || 'Custom'
   })()
 
-  // Close on click outside
   useEffect(() => {
     if (!isOpen) return
     const handler = (e: MouseEvent) => {
@@ -124,11 +121,13 @@ export function FontPicker({ value, onChange, varName }: FontPickerProps) {
     [onChange],
   )
 
+  const mono = "'JetBrains Mono', monospace"
+
   return (
     <div className="space-y-2">
       <label
-        className="text-xs text-zinc-400 block"
-        style={{ fontFamily: "'JetBrains Mono', monospace" }}
+        className="text-[11px] text-[#57534E] block"
+        style={{ fontFamily: mono }}
       >
         {varName}
       </label>
@@ -136,30 +135,30 @@ export function FontPicker({ value, onChange, varName }: FontPickerProps) {
       <div ref={dropdownRef} className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded hover:border-zinc-500 transition-colors text-left"
+          className="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 text-xs bg-[#F8F7F5] border border-[#E5E2DC] rounded hover:border-[#CCC8C2] transition-colors text-left focus-visible:ring-1 focus-visible:ring-[#5B6CF0] focus-visible:outline-none"
         >
-          <span className="text-zinc-200 truncate" style={{ fontFamily: value || undefined }}>
+          <span className="text-[#1C1917] truncate" style={{ fontFamily: value || undefined }}>
             {currentLabel}
           </span>
           <ChevronDown
             size={12}
-            className={`text-zinc-500 flex-shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            className={`text-[#78726C] flex-shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           />
         </button>
 
         {isOpen && (
-          <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-zinc-900 border border-zinc-700 rounded shadow-xl max-h-64 overflow-y-auto">
+          <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-[#E5E2DC] rounded shadow-lg max-h-64 overflow-y-auto panel-scroll">
             {FONT_OPTIONS.map((group) => (
               <div key={group.group}>
-                <div className="px-2.5 py-1 text-[10px] uppercase tracking-wider text-zinc-500 bg-zinc-900 sticky top-0">
+                <div className="px-2.5 py-1 text-[10px] uppercase tracking-wider text-[#78726C] bg-[#F8F7F5] sticky top-0 font-medium">
                   {group.group}
                 </div>
                 {group.fonts.map((font) => (
                   <button
                     key={font.value}
                     onClick={() => handleSelect(font)}
-                    className={`w-full text-left px-2.5 py-1.5 text-xs hover:bg-zinc-800 transition-colors ${
-                      font.value === value ? 'text-blue-400 bg-zinc-800/50' : 'text-zinc-300'
+                    className={`w-full text-left px-2.5 py-1.5 text-xs hover:bg-[#F0EDE8] transition-colors ${
+                      font.value === value ? 'text-[#5B6CF0] bg-[#F0EDE8]/50' : 'text-[#1C1917]'
                     }`}
                     style={{ fontFamily: font.value }}
                   >
@@ -172,12 +171,11 @@ export function FontPicker({ value, onChange, varName }: FontPickerProps) {
         )}
       </div>
 
-      {/* Font preview */}
-      <div className="rounded border border-zinc-800 bg-zinc-900/50 px-3 py-2">
-        <p className="text-sm text-zinc-300" style={{ fontFamily: value || undefined }}>
+      <div className="rounded border border-[#E5E2DC] bg-[#F8F7F5] px-3 py-2">
+        <p className="text-sm text-[#1C1917]" style={{ fontFamily: value || undefined }}>
           The quick brown fox jumps over the lazy dog
         </p>
-        <p className="text-[10px] text-zinc-500 mt-1" style={{ fontFamily: value || undefined }}>
+        <p className="text-[10px] text-[#78726C] mt-1" style={{ fontFamily: value || undefined }}>
           ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789
         </p>
       </div>

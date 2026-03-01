@@ -340,10 +340,10 @@ export function ColorWheel({
       {/* Link/unlink toggle */}
       <button
         onClick={() => onLinkedChange(!linked)}
-        className={`flex items-center gap-1.5 text-[10px] uppercase tracking-wider px-2 py-1 rounded transition-colors ${
+        className={`flex items-center gap-1.5 text-[10px] uppercase tracking-wider px-2 py-1 rounded transition-colors font-medium ${
           linked
-            ? 'text-blue-400 bg-blue-500/10 hover:bg-blue-500/20'
-            : 'text-zinc-500 bg-zinc-800 hover:bg-zinc-700'
+            ? 'text-[#5B6CF0] bg-[#5B6CF0]/10 hover:bg-[#5B6CF0]/20'
+            : 'text-[#78726C] bg-[#F0EDE8] hover:bg-[#E5E2DC]'
         }`}
         title={linked ? 'Handles linked — drag rotates all together' : 'Handles unlinked — drag independently'}
       >
@@ -363,4 +363,5 @@ export function ColorWheel({
       </button>
     </div>
   )
+
 }

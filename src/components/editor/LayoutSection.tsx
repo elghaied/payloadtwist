@@ -28,6 +28,8 @@ function isRadiusVar(varName: string): boolean {
   return varName.includes('radius') || varName.includes('-r-')
 }
 
+const mono = "'JetBrains Mono', monospace"
+
 export function LayoutSection({ config, setVariable, setBaseRadius }: LayoutSectionProps) {
   const vars = getVariablesByCategory('layout').filter((v) => v.overridable)
 
@@ -40,11 +42,10 @@ export function LayoutSection({ config, setVariable, setBaseRadius }: LayoutSect
 
   return (
     <div className="space-y-5">
-      {/* Border Radius */}
       {radiusVars.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] uppercase tracking-wider text-zinc-500">Roundness</span>
+            <span className="text-[10px] uppercase tracking-wider text-[#78726C] font-medium">Roundness</span>
             <ScrubberInput
               value={radiusM}
               onChange={(v) => setBaseRadius(v)}
@@ -55,7 +56,6 @@ export function LayoutSection({ config, setVariable, setBaseRadius }: LayoutSect
             />
           </div>
 
-          {/* Preview pills */}
           <div className="flex gap-2">
             {[
               { label: 'S', value: radiusS },
@@ -64,12 +64,12 @@ export function LayoutSection({ config, setVariable, setBaseRadius }: LayoutSect
             ].map(({ label, value }) => (
               <div key={label} className="flex items-center gap-1.5">
                 <div
-                  className="w-8 h-6 bg-zinc-700 border border-zinc-600"
+                  className="w-8 h-6 bg-[#E5E2DC] border border-[#CCC8C2]"
                   style={{ borderRadius: `${value}px` }}
                 />
                 <span
-                  className="text-[10px] text-zinc-500"
-                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                  className="text-[10px] text-[#78726C]"
+                  style={{ fontFamily: mono }}
                 >
                   {label}: {value}px
                 </span>
@@ -79,12 +79,10 @@ export function LayoutSection({ config, setVariable, setBaseRadius }: LayoutSect
         </div>
       )}
 
-      {/* Divider */}
       {radiusVars.length > 0 && nonRadiusVars.length > 0 && (
-        <div className="border-t border-zinc-800" />
+        <div className="border-t border-[#E5E2DC]" />
       )}
 
-      {/* Other layout vars */}
       {nonRadiusVars.map((v) => {
         const value = config.light[v.var] ?? v.value
 
@@ -93,8 +91,8 @@ export function LayoutSection({ config, setVariable, setBaseRadius }: LayoutSect
           return (
             <div key={v.var} className="flex items-center gap-2">
               <label
-                className="text-xs text-zinc-400 flex-1 truncate"
-                style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                className="text-[11px] text-[#57534E] flex-1 truncate"
+                style={{ fontFamily: mono }}
               >
                 {v.var}
               </label>
@@ -105,22 +103,21 @@ export function LayoutSection({ config, setVariable, setBaseRadius }: LayoutSect
                 max={9999}
                 step={1}
                 onChange={(e) => setVariable(v.var, e.target.value, 'light')}
-                className="w-20 text-xs bg-zinc-800 border border-zinc-700 rounded px-1.5 py-0.5 text-zinc-200 text-right focus:outline-none focus:border-zinc-500"
-                style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                className="w-20 text-xs bg-[#F8F7F5] border border-[#E5E2DC] rounded px-1.5 py-1 text-[#1C1917] text-right focus:outline-none focus:border-[#5B6CF0]"
+                style={{ fontFamily: mono }}
               />
             </div>
           )
         }
 
-        // Other size vars
         const numVal = parsePx(value)
         const isResponsive = v.responsive
         return (
           <div key={v.var} className="space-y-1">
             <div className="flex items-center justify-between">
               <label
-                className="text-xs text-zinc-400"
-                style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                className="text-[11px] text-[#57534E]"
+                style={{ fontFamily: mono }}
               >
                 {v.var}
               </label>
@@ -133,7 +130,9 @@ export function LayoutSection({ config, setVariable, setBaseRadius }: LayoutSect
                 unit="px"
               />
             </div>
-            {isResponsive && v.note && <p className="text-[10px] text-zinc-600 italic">{v.note}</p>}
+            {isResponsive && v.note && (
+              <p className="text-[10px] text-[#78726C] italic">{v.note}</p>
+            )}
           </div>
         )
       })}

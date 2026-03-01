@@ -116,17 +116,17 @@ export function BemSection({ config }: BemSectionProps) {
     return (
       <div className="flex flex-col h-full -m-3">
         {/* Editor header */}
-        <div className="flex items-center justify-between px-3 py-2 border-b border-zinc-800/80">
+        <div className="flex items-center justify-between px-3 py-2 border-b border-[#E5E2DC]">
           <div className="flex items-center gap-2 min-w-0">
             <button
               onClick={handleClose}
-              className="p-1 rounded hover:bg-zinc-800 text-zinc-500 hover:text-zinc-300 transition-colors flex-shrink-0"
+              className="p-1 rounded hover:bg-[#F0EDE8] text-[#78726C] hover:text-[#1C1917] transition-colors flex-shrink-0"
               aria-label="Close editor"
             >
               <X size={14} />
             </button>
             <span
-              className="text-xs text-zinc-300 truncate"
+              className="text-xs text-[#1C1917] truncate"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               .{selectedBlock.blockName}
@@ -134,16 +134,15 @@ export function BemSection({ config }: BemSectionProps) {
           </div>
           <button
             onClick={handleSave}
-            className="text-[10px] uppercase tracking-wider text-blue-400 hover:text-blue-300 transition-colors px-2 py-1"
-            style={{ fontFamily: "'DM Sans', sans-serif" }}
+            className="text-[10px] uppercase tracking-wider text-[#5B6CF0] hover:text-[#4A5AD9] transition-colors px-2 py-1 font-medium"
           >
             Apply
           </button>
         </div>
 
         {/* Info */}
-        <div className="px-3 py-2 border-b border-zinc-800/50">
-          <div className="flex gap-3 text-[10px] text-zinc-500">
+        <div className="px-3 py-2 border-b border-[#E5E2DC]/50">
+          <div className="flex gap-3 text-[10px] text-[#78726C]">
             {selectedBlock.elements.length > 0 && (
               <span>{selectedBlock.elements.length} elements</span>
             )}
@@ -159,7 +158,7 @@ export function BemSection({ config }: BemSectionProps) {
             value={editorValue}
             onChange={(e) => setEditorValue(e.target.value)}
             spellCheck={false}
-            className="w-full h-full resize-none bg-zinc-950 text-zinc-300 text-xs p-3 focus:outline-none border-0"
+            className="w-full h-full resize-none bg-[#F8F7F5] text-[#1C1917] text-xs p-3 focus:outline-none border-0"
             style={{
               fontFamily: "'JetBrains Mono', monospace",
               lineHeight: '1.6',
@@ -176,16 +175,13 @@ export function BemSection({ config }: BemSectionProps) {
   return (
     <div className="space-y-1">
       <div className="flex items-center gap-2 mb-3">
-        <span
-          className="text-[10px] uppercase tracking-widest text-zinc-500"
-          style={{ fontFamily: "'DM Sans', sans-serif" }}
-        >
+        <span className="text-[10px] uppercase tracking-widest text-[#78726C] font-medium">
           BEM Block Overrides
         </span>
-        <div className="flex-1 h-px bg-zinc-800/80" />
+        <div className="flex-1 h-px bg-[#E5E2DC]" />
         {overrideCount > 0 && (
           <span
-            className="text-[10px] text-zinc-500 bg-zinc-800/80 px-1.5 py-0.5 rounded-full tabular-nums"
+            className="text-[10px] text-[#78726C] bg-[#F0EDE8] px-1.5 py-0.5 rounded-full tabular-nums"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
             {overrideCount}
@@ -193,7 +189,7 @@ export function BemSection({ config }: BemSectionProps) {
         )}
       </div>
 
-      <p className="text-[11px] text-zinc-500 mb-3" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+      <p className="text-[11px] text-[#78726C] mb-3">
         Write CSS overrides targeting specific Payload admin components by their BEM class names.
       </p>
 
@@ -205,20 +201,17 @@ export function BemSection({ config }: BemSectionProps) {
           <div key={cat}>
             <button
               onClick={() => toggleCategory(cat)}
-              className="w-full flex items-center gap-1.5 py-1.5 px-1 text-left hover:bg-zinc-900/50 rounded transition-colors"
+              className="w-full flex items-center gap-1.5 py-1.5 px-1 text-left hover:bg-[#F0EDE8] rounded transition-colors"
             >
               <ChevronRight
                 size={12}
-                className={`text-zinc-600 transition-transform flex-shrink-0 ${isExpanded ? 'rotate-90' : ''}`}
+                className={`text-[#78726C] transition-transform flex-shrink-0 ${isExpanded ? 'rotate-90' : ''}`}
               />
-              <span
-                className="text-[10px] uppercase tracking-wider text-zinc-400 flex-1"
-                style={{ fontFamily: "'DM Sans', sans-serif" }}
-              >
+              <span className="text-[10px] uppercase tracking-wider text-[#78726C] flex-1 font-medium">
                 {CATEGORY_LABELS[cat] ?? cat}
               </span>
               <span
-                className="text-[10px] text-zinc-600 tabular-nums"
+                className="text-[10px] text-[#78726C] tabular-nums"
                 style={{ fontFamily: "'JetBrains Mono', monospace" }}
               >
                 {blocks.length}
@@ -226,7 +219,7 @@ export function BemSection({ config }: BemSectionProps) {
             </button>
 
             {isExpanded && (
-              <div className="ml-4 border-l border-zinc-800/50 pl-2 mb-1">
+              <div className="ml-4 border-l border-[#E5E2DC] pl-2 mb-1">
                 {blocks.map((block) => {
                   const hasOverride = !!overrides[block.blockName]
                   return (
@@ -235,8 +228,8 @@ export function BemSection({ config }: BemSectionProps) {
                       onClick={() => handleSelectBlock(block)}
                       className={`w-full flex items-center gap-2 py-1 px-1.5 text-left rounded transition-colors group ${
                         hasOverride
-                          ? 'text-zinc-200 bg-zinc-800/30'
-                          : 'text-zinc-400 hover:text-zinc-300 hover:bg-zinc-900/50'
+                          ? 'text-[#1C1917] bg-[#F0EDE8]/50'
+                          : 'text-[#78726C] hover:text-[#1C1917] hover:bg-[#F0EDE8]'
                       }`}
                     >
                       <span
@@ -246,11 +239,11 @@ export function BemSection({ config }: BemSectionProps) {
                         .{block.blockName}
                       </span>
                       {hasOverride && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#5B6CF0] flex-shrink-0" />
                       )}
                       {block.elements.length > 0 && (
                         <span
-                          className="text-[9px] text-zinc-600 flex-shrink-0"
+                          className="text-[9px] text-[#78726C] flex-shrink-0"
                           style={{ fontFamily: "'JetBrains Mono', monospace" }}
                         >
                           {block.elements.length}
@@ -258,7 +251,7 @@ export function BemSection({ config }: BemSectionProps) {
                       )}
                       <Plus
                         size={10}
-                        className="text-zinc-600 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                        className="text-[#78726C] opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
                       />
                     </button>
                   )

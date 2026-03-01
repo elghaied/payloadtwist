@@ -161,7 +161,7 @@ export function PaletteEditor({ config, setBaseScale }: PaletteEditorProps) {
       <div className="flex items-center gap-2 justify-center">
         <button
           onClick={addPoint}
-          className="flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded text-zinc-400 bg-zinc-800 hover:bg-zinc-700 hover:text-zinc-200 transition-colors"
+          className="flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded text-[#78726C] bg-[#F0EDE8] hover:bg-[#E5E2DC] hover:text-[#1C1917] transition-colors font-medium"
         >
           <Plus size={12} />
           Add point
@@ -169,17 +169,17 @@ export function PaletteEditor({ config, setBaseScale }: PaletteEditorProps) {
         <button
           onClick={removePoint}
           disabled={!selectedId || points.length <= 2}
-          className="flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded text-zinc-400 bg-zinc-800 hover:bg-zinc-700 hover:text-zinc-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          className="flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded text-[#78726C] bg-[#F0EDE8] hover:bg-[#E5E2DC] hover:text-[#1C1917] transition-colors disabled:opacity-30 disabled:cursor-not-allowed font-medium"
         >
           <Minus size={12} />
           Remove
         </button>
-        <span className="text-[10px] text-zinc-600 ml-1">{points.length} points</span>
+        <span className="text-[10px] text-[#78726C] ml-1">{points.length} points</span>
       </div>
 
       {/* Read-only swatch strip showing the 16 resulting steps */}
       <div>
-        <p className="text-xs text-zinc-500 mb-2">Interpolated scale preview</p>
+        <p className="text-xs text-[#78726C] mb-2">Interpolated scale preview</p>
         <div className="flex gap-0.5">
           {BASE_STEPS.map((step) => {
             const varName = getStepVar(step)
@@ -197,7 +197,7 @@ export function PaletteEditor({ config, setBaseScale }: PaletteEditorProps) {
         <div className="flex gap-0.5 mt-0.5">
           {BASE_STEPS.map((step) => (
             <div key={step} className="flex-1 text-center">
-              <span className="text-[9px] text-zinc-600">{step}</span>
+              <span className="text-[9px] text-[#78726C]">{step}</span>
             </div>
           ))}
         </div>
