@@ -3,7 +3,26 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { injectIntoIframe } from '@/payload-theme/generator'
 import type { PayloadThemeConfig } from '@/payload-theme/types'
-import { Sun, Moon, RotateCcw } from 'lucide-react'
+import { Sun, Moon, RotateCcw, ExternalLink } from 'lucide-react'
+
+type PreviewTab = 'admin' | 'showcase' | 'custom'
+
+const PREVIEW_TABS: { key: PreviewTab; label: string }[] = [
+  { key: 'admin', label: 'Admin' },
+  { key: 'showcase', label: 'Showcase' },
+  { key: 'custom', label: 'Custom' },
+]
+
+function getTabUrl(tab: PreviewTab, customUrl: string): string {
+  switch (tab) {
+    case 'admin':
+      return '/admin'
+    case 'showcase':
+      return '/admin/showcase'
+    case 'custom':
+      return customUrl || '/admin'
+  }
+}
 
 interface IframePanelProps {
   config: PayloadThemeConfig
@@ -12,6 +31,9 @@ interface IframePanelProps {
 export function IframePanel({ config }: IframePanelProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [isDark, setIsDark] = useState(false)
+  const [activeTab, setActiveTab] = useState<PreviewTab>('admin')
+  const [customUrl, setCustomUrl] = useState('')
+  const [customInput, setCustomInput] = useState('')
 
   useEffect(() => {
     injectIntoIframe(config)
@@ -47,23 +69,93 @@ export function IframePanel({ config }: IframePanelProps) {
     applyThemeMode(true)
   }, [applyThemeMode])
 
-  const handleReload = useCallback(() => {
+  const navigateIframe = useCallback((url: string) => {
     const iframe = iframeRef.current
     if (!iframe) return
-    iframe.src = '/admin'
+    iframe.src = url
   }, [])
+
+  const handleReload = useCallback(() => {
+    navigateIframe(getTabUrl(activeTab, customUrl))
+  }, [navigateIframe, activeTab, customUrl])
+
+  const handleTabChange = useCallback(
+    (tab: PreviewTab) => {
+      setActiveTab(tab)
+      if (tab !== 'custom') {
+        navigateIframe(getTabUrl(tab, customUrl))
+      } else if (customUrl) {
+        navigateIframe(customUrl)
+      }
+    },
+    [navigateIframe, customUrl],
+  )
+
+  const handleCustomSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault()
+      const url = customInput.trim()
+      if (!url) return
+      setCustomUrl(url)
+      navigateIframe(url)
+    },
+    [customInput, navigateIframe],
+  )
+
+  const currentUrl = getTabUrl(activeTab, customUrl)
 
   return (
     <div className="h-full min-w-0 flex flex-col overflow-hidden">
+      {/* Tab bar */}
+      <div className="flex items-center gap-0.5 px-2 py-1 bg-[#F8F7F5] border-b border-[#E5E2DC] flex-shrink-0">
+        {PREVIEW_TABS.map(({ key, label }) => (
+          <button
+            key={key}
+            onClick={() => handleTabChange(key)}
+            className={`text-[11px] px-2.5 py-1 rounded transition-colors whitespace-nowrap active:scale-[0.97] font-medium ${
+              activeTab === key
+                ? 'bg-[#5B6CF0] text-white'
+                : 'text-[#78726C] hover:text-[#1C1917] hover:bg-[#F0EDE8]'
+            }`}
+          >
+            {key === 'custom' && <ExternalLink size={10} className="inline mr-1 -mt-px" />}
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* Custom URL input (only when custom tab active) */}
+      {activeTab === 'custom' && (
+        <form
+          onSubmit={handleCustomSubmit}
+          className="flex items-center gap-1.5 px-2 py-1.5 bg-[#F8F7F5] border-b border-[#E5E2DC] flex-shrink-0"
+        >
+          <input
+            type="url"
+            value={customInput}
+            onChange={(e) => setCustomInput(e.target.value)}
+            placeholder="https://your-payload-admin.com/admin"
+            className="flex-1 text-[11px] px-2 py-1 rounded border border-[#E5E2DC] bg-white text-[#1C1917] placeholder-[#B8B4AE] focus:outline-none focus:border-[#5B6CF0] focus:ring-1 focus:ring-[#5B6CF0]/20"
+            style={{ fontFamily: "'JetBrains Mono', monospace" }}
+          />
+          <button
+            type="submit"
+            className="text-[11px] px-2.5 py-1 rounded bg-[#5B6CF0] hover:bg-[#4A5AD9] text-white font-medium transition-colors active:scale-[0.97]"
+          >
+            Go
+          </button>
+        </form>
+      )}
+
       {/* Toolbar */}
       <div className="flex items-center justify-between px-3 py-1.5 bg-[#F8F7F5] border-b border-[#E5E2DC] flex-shrink-0">
         <span
-          className="text-[11px] text-[#78726C]"
+          className="text-[11px] text-[#78726C] truncate"
           style={{ fontFamily: "'JetBrains Mono', monospace" }}
         >
-          /admin
+          {activeTab === 'custom' && customUrl ? customUrl : currentUrl}
         </span>
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-0.5 flex-shrink-0">
           {/* Light mode button */}
           <button
             onClick={handleSetLight}

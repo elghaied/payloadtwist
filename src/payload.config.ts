@@ -29,6 +29,14 @@ export default buildConfig({
       process.env.NODE_ENV !== 'production'
         ? { email: 'dev@payloadcms.com', password: 'test', prefillOnly: false }
         : false,
+    components: {
+      views: {
+        showcase: {
+          Component: '@/components/admin/ShowcaseView',
+          path: '/showcase',
+        },
+      },
+    },
   },
   collections: [Users, Media, Categories, TeamMembers, Posts, Products, Pages],
   globals: [SiteSettings, MainMenu],
