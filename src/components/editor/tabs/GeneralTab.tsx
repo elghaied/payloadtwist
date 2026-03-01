@@ -3,8 +3,7 @@
 import { useState } from 'react'
 import { SectionHeader } from '@/components/controls'
 import { PaletteSelector } from '../PaletteSelector'
-import { BaseScaleEditor } from '../BaseScaleEditor'
-import { PaletteEditor } from '../PaletteEditor'
+import { ScaleEditor } from '../ScaleEditor'
 import { ThemeColorsSection } from '../ThemeColorsSection'
 import { StatusColorsSection } from '../StatusColorsSection'
 import { TypographySection } from '../TypographySection'
@@ -46,22 +45,12 @@ export function GeneralTab({
       {openSections.colors && (
         <div className="pl-1 pb-4 space-y-5">
           <PaletteSelector onApply={importTheme} onReset={resetTheme} />
-          <div>
-            <p className="text-[10px] text-[#78726C] mb-3 uppercase tracking-wider font-medium">
-              Fine-Tune Base Scale
-            </p>
-            <BaseScaleEditor
-              config={config}
-              setBaseScale={setBaseScale}
-              setVariable={setVariable}
-            />
-          </div>
-          <div>
-            <p className="text-[10px] text-[#78726C] mb-3 uppercase tracking-wider font-medium">
-              General Palette
-            </p>
-            <PaletteEditor config={config} setBaseScale={setBaseScale} />
-          </div>
+          <ScaleEditor
+            config={config}
+            importTheme={importTheme}
+            setBaseScale={setBaseScale}
+            setVariable={setVariable}
+          />
         </div>
       )}
 

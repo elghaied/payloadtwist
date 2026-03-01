@@ -243,6 +243,18 @@ function SingleControl({
         step={1}
       />
     )
+  } else if (control.controlType === 'opacity') {
+    controlEl = (
+      <ScrubberInput
+        value={parseFloat(displayValue) || 0}
+        onChange={(v) =>
+          setComponentOverride(control.selector, control.property, String(v))
+        }
+        min={0}
+        max={1}
+        step={0.01}
+      />
+    )
   }
 
   return (

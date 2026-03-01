@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
+import { ChevronDown } from 'lucide-react'
 import type { PayloadThemeConfig } from '@/payload-theme/types'
 import { mapPaletteToTheme } from '@/payload-theme/palette-mapper'
-import { THEME_PRESETS } from '@/payload-theme/presets'
+import { THEME_PRESETS, PRESET_GROUPS } from '@/payload-theme/presets'
 import { getDefaultTheme } from '@/payload-theme/config'
 import { ColorPopover } from '@/components/controls'
 
@@ -14,8 +15,21 @@ interface PaletteSelectorProps {
 
 const PREVIEW_STEPS = ['--color-base-0', '--color-base-200', '--color-base-500', '--color-base-800', '--color-base-1000'] as const
 
+function PreviewStrip({ colors, className = '' }: { colors: string[]; className?: string }) {
+  return (
+    <div className={`flex gap-px rounded overflow-hidden ${className}`}>
+      {colors.map((color, i) => (
+        <div key={i} className="w-4 h-4" style={{ background: color }} />
+      ))}
+    </div>
+  )
+}
+
 export function PaletteSelector({ onApply, onReset }: PaletteSelectorProps) {
   const [activePresetId, setActivePresetId] = useState<string | null>(null)
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
   const [neutral, setNeutral] = useState('#71717a')
   const [accent, setAccent] = useState('#3b82f6')
   const [accentEnabled, setAccentEnabled] = useState(false)
@@ -23,11 +37,12 @@ export function PaletteSelector({ onApply, onReset }: PaletteSelectorProps) {
 
   const presetPreviews = useMemo(() => {
     const defaults = getDefaultTheme()
-    return THEME_PRESETS.map((preset) => {
+    const map: Record<string, string[]> = {}
+    for (const preset of THEME_PRESETS) {
       const config = preset.palette ? mapPaletteToTheme(preset.palette) : { light: defaults.light }
-      const colors = PREVIEW_STEPS.map((step) => config.light[step] ?? '#888888')
-      return { id: preset.id, colors }
-    })
+      map[preset.id] = PREVIEW_STEPS.map((step) => config.light[step] ?? '#888888')
+    }
+    return map
   }, [])
 
   const customPreview = useMemo(() => {
@@ -38,9 +53,25 @@ export function PaletteSelector({ onApply, onReset }: PaletteSelectorProps) {
     return PREVIEW_STEPS.map((step) => config.light[step] ?? '#888888')
   }, [neutral, accent, accentEnabled])
 
+  const activePreset = THEME_PRESETS.find((p) => p.id === activePresetId)
+  const activeColors = activePresetId ? presetPreviews[activePresetId] : null
+
+  // Close on outside click
+  useEffect(() => {
+    if (!isOpen) return
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [isOpen])
+
   const handlePresetClick = useCallback(
     (preset: (typeof THEME_PRESETS)[number]) => {
       setActivePresetId(preset.id)
+      setIsOpen(false)
       if (preset.palette) {
         onApply(mapPaletteToTheme(preset.palette))
       } else {
@@ -63,35 +94,70 @@ export function PaletteSelector({ onApply, onReset }: PaletteSelectorProps) {
 
   return (
     <div className="space-y-4">
-      {/* Preset row */}
+      {/* Preset dropdown */}
       <div>
         <p className="text-[10px] uppercase tracking-wider text-[#78726C] mb-2 font-medium">Theme Preset</p>
-        <div className="flex gap-2 overflow-x-auto pb-1 panel-scroll">
-          {THEME_PRESETS.map((preset, idx) => {
-            const preview = presetPreviews[idx]
-            const isActive = activePresetId === preset.id
-            return (
-              <button
-                key={preset.id}
-                onClick={() => handlePresetClick(preset)}
-                className={`flex-shrink-0 rounded-lg p-1.5 transition-all active:scale-[0.97] ${
-                  isActive
-                    ? 'ring-2 ring-[#5B6CF0] bg-white'
-                    : 'bg-[#F8F7F5] hover:bg-white ring-1 ring-[#E5E2DC] hover:ring-[#CCC8C2]'
-                }`}
-                title={preset.description}
-              >
-                <div className="flex gap-px rounded overflow-hidden mb-1.5">
-                  {preview.colors.map((color, i) => (
-                    <div key={i} className="w-4 h-5" style={{ background: color }} />
-                  ))}
-                </div>
-                <span className="text-[10px] text-[#78726C] block text-center leading-none">
-                  {preset.name}
+
+        <div ref={dropdownRef} className="relative">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 text-xs bg-[#F8F7F5] border border-[#E5E2DC] rounded hover:border-[#CCC8C2] transition-colors text-left focus-visible:ring-1 focus-visible:ring-[#5B6CF0] focus-visible:outline-none"
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              {activeColors && <PreviewStrip colors={activeColors} />}
+              <span className="text-[#1C1917] truncate">
+                {activePreset?.name ?? 'Select a preset'}
+              </span>
+              {activePreset && (
+                <span className="text-[10px] text-[#A8A29E] truncate hidden sm:inline">
+                  {activePreset.description}
                 </span>
-              </button>
-            )
-          })}
+              )}
+            </div>
+            <ChevronDown
+              size={12}
+              className={`text-[#78726C] flex-shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            />
+          </button>
+
+          {isOpen && (
+            <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-[#E5E2DC] rounded-lg shadow-lg max-h-72 overflow-y-auto panel-scroll">
+              {PRESET_GROUPS.map((group) => {
+                const groupPresets = THEME_PRESETS.filter((p) => p.group === group.id)
+                if (groupPresets.length === 0) return null
+                return (
+                  <div key={group.id}>
+                    <div className="px-2.5 py-1 text-[10px] uppercase tracking-wider text-[#78726C] bg-[#F8F7F5] sticky top-0 font-medium">
+                      {group.label}
+                    </div>
+                    {groupPresets.map((preset) => {
+                      const colors = presetPreviews[preset.id]
+                      const isActive = activePresetId === preset.id
+                      return (
+                        <button
+                          key={preset.id}
+                          onClick={() => handlePresetClick(preset)}
+                          className={`w-full text-left px-2.5 py-2 flex items-center gap-2.5 hover:bg-[#F0EDE8] transition-colors ${
+                            isActive ? 'bg-[#F0EDE8]/60' : ''
+                          }`}
+                        >
+                          <PreviewStrip colors={colors} />
+                          <div className="min-w-0">
+                            <span className={`text-xs block ${isActive ? 'text-[#5B6CF0] font-medium' : 'text-[#1C1917]'}`}>
+                              {preset.name}
+                            </span>
+                            <span className="text-[10px] text-[#A8A29E] block truncate">
+                              {preset.description}
+                            </span>
+                          </div>
+                        </button>
+                      )
+                    })}
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
       </div>
 

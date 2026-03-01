@@ -56,6 +56,26 @@ function generateStatusScale(accentHex: string, role: 'success' | 'warning' | 'e
   return result
 }
 
+/**
+ * Derives dark-mode semantic vars from a base scale.
+ * Maps base scale steps to --theme-bg, --theme-text, --theme-input-bg, --theme-overlay.
+ */
+export function deriveDarkVarsFromScale(scaleVars: Record<string, string>): Record<string, string> {
+  const dark: Record<string, string> = {}
+
+  if (scaleVars['--color-base-950']) dark['--theme-bg'] = scaleVars['--color-base-950']
+  if (scaleVars['--color-base-50']) dark['--theme-text'] = scaleVars['--color-base-50']
+  if (scaleVars['--color-base-900']) dark['--theme-input-bg'] = scaleVars['--color-base-900']
+
+  const base1000 = scaleVars['--color-base-1000']
+  if (base1000) {
+    const [r, g, b] = hexToRgb(base1000)
+    dark['--theme-overlay'] = `rgba(${r}, ${g}, ${b}, 0.75)`
+  }
+
+  return dark
+}
+
 export function mapPaletteToTheme(palette: Palette): PayloadThemeConfig {
   const defaults = getDefaultTheme()
   const [h] = hexToHsl(palette.neutral)
@@ -71,16 +91,7 @@ export function mapPaletteToTheme(palette: Palette): PayloadThemeConfig {
   // Build dark config: defaults + semantic dark vars derived from generated scale
   const dark: Record<string, string> = {
     ...defaults.dark,
-    '--theme-bg': baseScaleVars['--color-base-950'] ?? defaults.dark['--theme-bg'],
-    '--theme-text': baseScaleVars['--color-base-50'] ?? defaults.dark['--theme-text'],
-    '--theme-input-bg': baseScaleVars['--color-base-900'] ?? defaults.dark['--theme-input-bg'],
-  }
-
-  // Derive overlay from base-1000 at 75% opacity
-  const base1000 = baseScaleVars['--color-base-1000']
-  if (base1000) {
-    const [r, g, b] = hexToRgb(base1000)
-    dark['--theme-overlay'] = `rgba(${r}, ${g}, ${b}, 0.75)`
+    ...deriveDarkVarsFromScale(baseScaleVars),
   }
 
   // Status colors from accent

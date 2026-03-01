@@ -73,19 +73,23 @@ export const useEditorStore = create<EditorStore>()(
         const currentHistory = get().history
         const currentTime = Date.now()
 
-        const updatedHistory = [
-          ...currentHistory,
-          { config: currentConfig, timestamp: currentTime },
-        ]
-        const trimmedHistory =
-          updatedHistory.length > MAX_HISTORY_COUNT ? updatedHistory.slice(1) : updatedHistory
+        const lastEntry =
+          currentHistory.length > 0 ? currentHistory[currentHistory.length - 1] : null
+        let updatedHistory = currentHistory
+
+        if (!lastEntry || currentTime - lastEntry.timestamp >= HISTORY_OVERRIDE_THRESHOLD_MS) {
+          updatedHistory = [...currentHistory, { config: currentConfig, timestamp: currentTime }]
+          if (updatedHistory.length > MAX_HISTORY_COUNT) {
+            updatedHistory = updatedHistory.slice(1)
+          }
+        }
 
         set({
           config: {
             ...currentConfig,
             light: { ...currentConfig.light, ...vars },
           },
-          history: trimmedHistory,
+          history: updatedHistory,
           future: [],
         })
       },
