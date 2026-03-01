@@ -11,7 +11,7 @@ import { DashboardTab } from '@/components/editor/tabs/DashboardTab'
 import { OverlaysTab } from '@/components/editor/tabs/OverlaysTab'
 import { Undo2, Redo2, Copy, RotateCcw, X, GripVertical } from 'lucide-react'
 import { getDefaultTheme } from '@/payload-theme/config'
-import { generateMinimalPayloadCSS } from '@/payload-theme/generator'
+import { generateExportCSS } from '@/payload-theme/generator'
 
 type Tab = 'general' | 'ui-elements' | 'fields' | 'views' | 'dashboard' | 'overlays'
 
@@ -70,10 +70,10 @@ export default function EditorPage() {
   }, [])
 
   const handleCopyCSS = useCallback(async () => {
-    const css = generateMinimalPayloadCSS(config)
+    const css = generateExportCSS(config)
     try {
       await navigator.clipboard.writeText(css)
-      showToast('Copied to clipboard')
+      showToast('CSS copied — paste into your custom.scss')
     } catch {
       showToast('Copy failed — see panel below')
     }

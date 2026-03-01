@@ -77,16 +77,6 @@ export function ComponentControlsSection({
     return result
   }, [regionNames, q])
 
-  if (allComponents.length === 0) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-[11px] text-[#78726C]">
-          {searchQuery ? 'No matching components' : 'No components in this category'}
-        </p>
-      </div>
-    )
-  }
-
   return (
     <div className="space-y-1">
       {/* Search */}
@@ -97,7 +87,13 @@ export function ComponentControlsSection({
         className="w-full text-xs bg-[#F8F7F5] border border-[#E5E2DC] rounded px-2.5 py-1.5 text-[#1C1917] placeholder-[#A8A29E] focus:outline-none focus:border-[#5B6CF0] mb-2"
       />
 
-      {allComponents.map(({ component: comp }) => {
+      {allComponents.length === 0 ? (
+        <div className="text-center py-8">
+          <p className="text-[11px] text-[#78726C]">
+            {searchQuery ? 'No matching components' : 'No components in this category'}
+          </p>
+        </div>
+      ) : allComponents.map(({ component: comp }) => {
         const key = `${comp.category}/${comp.componentName}`
         const isExpanded = expandedComponents.has(key)
         const controls = CONTROLS_BY_COMPONENT[comp.componentName] ?? []
