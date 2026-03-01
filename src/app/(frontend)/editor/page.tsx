@@ -170,7 +170,7 @@ export default function EditorPage() {
             {/* Logo row */}
             <div className="px-4 py-2.5 border-b border-[var(--pt-border)] flex-shrink-0">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
+                <a href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                   <EditorLogoMark size={22} />
                   <h1
                     className="text-sm font-bold tracking-tight"
@@ -184,7 +184,7 @@ export default function EditorPage() {
                   >
                     v1.0
                   </span>
-                </div>
+                </a>
                 {/* Editor UI theme toggle */}
                 <div className="flex items-center bg-[var(--pt-bg)] rounded-full p-0.5" title="Editor theme">
                   <button
