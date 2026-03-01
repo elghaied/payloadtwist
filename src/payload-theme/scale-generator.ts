@@ -143,6 +143,57 @@ export function generateBaseScaleFromAnchors(anchors: ScaleAnchor[]): Record<str
   return result
 }
 
+// ─── Random Scale Generator ──────────────────────────────────────────────────
+
+export interface RandomScaleResult {
+  points: Array<{ step: number; hue: number; saturation: number; lightness: number }>
+}
+
+/**
+ * Generates 3 random HSL anchor points that produce a harmonious base scale.
+ * Low-to-moderate saturation ensures the palette looks balanced when
+ * Payload auto-inverts it for dark mode.
+ */
+export function generateRandomScale(): RandomScaleResult {
+  const rand = (min: number, max: number) => min + Math.random() * (max - min)
+  const randInt = (min: number, max: number) => Math.round(rand(min, max))
+
+  type Strategy = () => { hueLight: number; hueDark: number; sat: number }
+  const strategies: Strategy[] = [
+    // Warm neutral
+    () => { const h = randInt(15, 55); return { hueLight: h, hueDark: h, sat: rand(8, 20) } },
+    // Cool neutral
+    () => { const h = randInt(200, 250); return { hueLight: h, hueDark: h, sat: rand(8, 20) } },
+    // Earthy
+    () => { const h = randInt(25, 45); return { hueLight: h, hueDark: h, sat: rand(12, 30) } },
+    // Tinted gray
+    () => { const h = randInt(0, 360); return { hueLight: h, hueDark: h, sat: rand(3, 10) } },
+    // Split tint — light and dark ends get shifted hues
+    () => {
+      const h = randInt(0, 360)
+      const shift = randInt(20, 60) * (Math.random() > 0.5 ? 1 : -1)
+      return { hueLight: h, hueDark: (h + shift + 360) % 360, sat: rand(8, 20) }
+    },
+  ]
+
+  const strategy = strategies[Math.floor(Math.random() * strategies.length)]()
+
+  const midHue = (strategy.hueLight + strategy.hueDark) / 2
+  // Handle hue wrapping for split tint
+  const dh = strategy.hueDark - strategy.hueLight
+  const midHueAdjusted = Math.abs(dh) > 180
+    ? (strategy.hueLight + (dh > 0 ? dh - 360 : dh + 360) / 2 + 360) % 360
+    : midHue
+
+  return {
+    points: [
+      { step: 0, hue: strategy.hueLight, saturation: strategy.sat / 2, lightness: rand(93, 97) },
+      { step: 500, hue: midHueAdjusted, saturation: strategy.sat, lightness: rand(45, 55) },
+      { step: 1000, hue: strategy.hueDark, saturation: strategy.sat * 0.7, lightness: rand(5, 12) },
+    ],
+  }
+}
+
 export function generateBaseScale(
   lightest: string,
   mid: string,

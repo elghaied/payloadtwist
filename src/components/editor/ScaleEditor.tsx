@@ -6,10 +6,10 @@ import { LightnessSlider } from './LightnessSlider'
 import { ScrubberInput } from './ScrubberInput'
 import { ColorPopover, ScaleStrip } from '@/components/controls'
 import type { PayloadThemeConfig } from '@/payload-theme/types'
-import { generateBaseScaleFromAnchors, hexToHsl, hslToHex } from '@/payload-theme/scale-generator'
+import { generateBaseScaleFromAnchors, generateRandomScale, hexToHsl, hslToHex } from '@/payload-theme/scale-generator'
 import { deriveDarkVarsFromScale } from '@/payload-theme/palette-mapper'
 import { getDefaultTheme } from '@/payload-theme/config'
-import { Plus, Minus, RotateCcw } from 'lucide-react'
+import { Plus, Minus, RotateCcw, Dices } from 'lucide-react'
 
 const BASE_STEPS = [0, 50, 100, 150, 200, 250, 300, 400, 500, 600, 700, 800, 850, 900, 950, 1000]
 
@@ -327,6 +327,22 @@ export function ScaleEditor({ config, importTheme, setBaseScale, setVariable }: 
     })
   }, [points, applyScale, overrides])
 
+  const randomizeScale = useCallback(() => {
+    const result = generateRandomScale()
+    const newPoints: ScalePoint[] = result.points.map(p => ({
+      id: makeId(),
+      hue: p.hue,
+      saturation: p.saturation,
+      lightness: p.lightness,
+      step: p.step,
+      label: p.step === 0 ? 'Lightest' : p.step === 500 ? 'Midpoint' : 'Darkest',
+    }))
+    setPoints(newPoints)
+    setSelectedId(newPoints[1].id)
+    setOverrides({})
+    applyScale(newPoints, {})
+  }, [applyScale])
+
   const handleSwatchOverride = useCallback(
     (step: number, value: string) => {
       const varName = getStepVar(step)
@@ -493,6 +509,13 @@ export function ScaleEditor({ config, importTheme, setBaseScale, setVariable }: 
             Reset
           </button>
         )}
+        <button
+          onClick={randomizeScale}
+          className="flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded text-[#78726C] bg-[#F0EDE8] hover:bg-[#E5E2DC] hover:text-[#1C1917] transition-colors font-medium"
+        >
+          <Dices size={12} />
+          Random
+        </button>
         <span className="text-[10px] text-[#78726C] ml-1">{points.length}/16 points</span>
       </div>
 
