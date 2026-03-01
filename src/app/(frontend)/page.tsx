@@ -351,44 +351,88 @@ export default function LandingPage() {
             </div>
 
             <div className="flex min-h-[480px]">
-              {/* ── Editor panel (left) ── */}
-              <div className="w-[300px] shrink-0 border-r border-white/[0.04] bg-[#faf9f7] flex flex-col">
+              {/* ── Editor panel (left) — dark theme ── */}
+              <div className="w-[300px] shrink-0 border-r border-white/[0.06] bg-[#141416] flex flex-col">
                 {/* Logo bar */}
-                <div className="px-4 py-2.5 border-b border-[#e5e2dc] flex items-center gap-2">
-                  <div className="w-4 h-4 rounded bg-[#5B6CF0] flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-[2px] bg-white" />
+                <div className="px-4 py-2.5 border-b border-white/[0.06] flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {/* DNA strand logo mark */}
+                    <svg width="18" height="18" viewBox="0 0 200 200" fill="none">
+                      <defs>
+                        <linearGradient id="mock-s1" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#a855f7" />
+                          <stop offset="100%" stopColor="#ec4899" />
+                        </linearGradient>
+                        <linearGradient id="mock-s2" x1="0%" y1="100%" x2="100%" y2="0%">
+                          <stop offset="0%" stopColor="#06b6d4" />
+                          <stop offset="100%" stopColor="#22c55e" />
+                        </linearGradient>
+                        <linearGradient id="mock-core" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#a855f7" />
+                          <stop offset="33%" stopColor="#ec4899" />
+                          <stop offset="66%" stopColor="#06b6d4" />
+                          <stop offset="100%" stopColor="#22c55e" />
+                        </linearGradient>
+                      </defs>
+                      <path d="M 56 56 C 56 90, 90 95, 100 100 C 110 105, 144 110, 144 144" stroke="url(#mock-s2)" strokeWidth="16" strokeLinecap="round" fill="none" opacity="0.35" />
+                      <path d="M 144 56 C 144 90, 110 95, 100 100 C 90 105, 56 110, 56 144" stroke="url(#mock-s1)" strokeWidth="16" strokeLinecap="round" fill="none" />
+                      <path d="M 100 100 C 110 105, 144 110, 144 144" stroke="url(#mock-s2)" strokeWidth="16" strokeLinecap="round" fill="none" />
+                      <circle cx="100" cy="100" r="10" fill="#141416" />
+                      <circle cx="100" cy="100" r="7" fill="url(#mock-core)" />
+                      <circle cx="100" cy="100" r="3" fill="white" />
+                      <circle cx="144" cy="56" r="6" fill="#ec4899" />
+                      <circle cx="56" cy="56" r="6" fill="#06b6d4" />
+                      <circle cx="56" cy="144" r="6" fill="#a855f7" />
+                      <circle cx="144" cy="144" r="6" fill="#22c55e" />
+                    </svg>
+                    <span className="text-[12px] font-bold text-[#e4e4e7] tracking-tight">
+                      payload<span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">twist</span>
+                    </span>
+                    <span className="text-[8px] bg-white/[0.06] text-[#71717a] px-1.5 py-0.5 rounded font-mono">v1.0</span>
                   </div>
-                  <span className="text-[12px] font-semibold text-[#1c1917] tracking-tight">payloadtwist</span>
-                  <span className="text-[8px] bg-[#f0ede8] text-[#78726c] px-1.5 py-0.5 rounded font-mono">v1.0</span>
+                  {/* Sun/Moon editor theme toggle */}
+                  <div className="flex items-center bg-white/[0.04] rounded-full p-0.5">
+                    <div className="p-1 rounded-full text-[#71717a]">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2" /></svg>
+                    </div>
+                    <div className="p-1 rounded-full bg-purple-600 text-white">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Action bar */}
-                <div className="px-3 py-1.5 border-b border-[#e5e2dc] flex items-center gap-1.5">
-                  <div className="flex items-center gap-1 bg-[#5B6CF0] text-white rounded px-2 py-1 text-[10px] font-medium">
+                <div className="px-3 py-1.5 border-b border-white/[0.06] flex items-center gap-1.5">
+                  {/* Gradient export pill */}
+                  <div className="flex items-center gap-1 bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 text-white rounded-full px-2.5 py-1 text-[10px] font-medium">
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" /></svg>
                     Export
                     <span className="text-[8px] bg-white/20 px-1 rounded-full">12</span>
                   </div>
-                  <div className="w-px h-3.5 bg-[#e5e2dc]" />
+                  {/* Reset button */}
+                  <div className="w-5 h-5 rounded flex items-center justify-center text-[#71717a] hover:text-red-400">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 102.13-9.36L1 10" /></svg>
+                  </div>
+                  <div className="w-px h-3.5 bg-white/[0.06]" />
                   <div className="flex gap-0.5">
-                    <div className="w-5 h-5 rounded bg-[#f0ede8] flex items-center justify-center text-[#78726c]">
+                    <div className="w-5 h-5 rounded flex items-center justify-center text-[#71717a]">
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="14 2 8 8 14 14" /></svg>
                     </div>
-                    <div className="w-5 h-5 rounded bg-[#f0ede8] flex items-center justify-center text-[#78726c]">
+                    <div className="w-5 h-5 rounded flex items-center justify-center text-[#71717a]">
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="10 2 16 8 10 14" /></svg>
                     </div>
                   </div>
                 </div>
 
-                {/* Tab bar */}
-                <div className="flex gap-0.5 px-2 py-1.5 border-b border-[#e5e2dc] overflow-hidden">
-                  {['General', 'UI Elements', 'Fields', 'Views'].map((tab, i) => (
+                {/* Tab bar — 6 tabs */}
+                <div className="flex gap-0.5 px-2 py-1.5 border-b border-white/[0.06] overflow-hidden">
+                  {['General', 'UI Elements', 'Fields', 'Views', 'Dashboard', 'Overlays'].map((tab, i) => (
                     <div
                       key={tab}
-                      className={`text-[9px] px-2 py-1 rounded font-medium whitespace-nowrap ${
+                      className={`text-[8px] px-1.5 py-1 rounded font-medium whitespace-nowrap ${
                         i === 0
-                          ? 'bg-[#5B6CF0] text-white'
-                          : 'text-[#78726c]'
+                          ? 'bg-purple-600 text-white'
+                          : 'text-[#71717a]'
                       }`}
                     >
                       {tab}
@@ -400,7 +444,7 @@ export default function LandingPage() {
                 <div className="flex-1 p-3 flex flex-col gap-4 overflow-hidden">
                   {/* Color scale section */}
                   <div>
-                    <span className="text-[9px] uppercase tracking-wider text-[#78726c] font-medium">Color Scale</span>
+                    <span className="text-[9px] uppercase tracking-wider text-[#71717a] font-medium">Color Scale</span>
                     <div className="mt-2 h-4 rounded-md overflow-hidden flex">
                       {['#f8f9fa', '#e9ecef', '#dee2e6', '#ced4da', '#adb5bd', '#6c757d', '#495057', '#343a40', '#212529', '#0d1117'].map((c, i) => (
                         <div key={i} className="flex-1" style={{ backgroundColor: c }} />
@@ -410,7 +454,7 @@ export default function LandingPage() {
 
                   {/* Theme colors */}
                   <div>
-                    <span className="text-[9px] uppercase tracking-wider text-[#78726c] font-medium">Theme Colors</span>
+                    <span className="text-[9px] uppercase tracking-wider text-[#71717a] font-medium">Theme Colors</span>
                     <div className="mt-2 flex flex-col gap-2">
                       {[
                         { label: '--theme-bg', color: '#ffffff' },
@@ -418,8 +462,8 @@ export default function LandingPage() {
                         { label: '--theme-input-bg', color: '#f8f7f5' },
                       ].map((item) => (
                         <div key={item.label} className="flex items-center justify-between">
-                          <span className="text-[9px] font-mono text-[#78726c]">{item.label}</span>
-                          <div className="w-5 h-5 rounded border border-[#e5e2dc]" style={{ backgroundColor: item.color }} />
+                          <span className="text-[9px] font-mono text-[#71717a]">{item.label}</span>
+                          <div className="w-5 h-5 rounded border border-white/[0.08]" style={{ backgroundColor: item.color }} />
                         </div>
                       ))}
                     </div>
@@ -427,37 +471,64 @@ export default function LandingPage() {
 
                   {/* Typography */}
                   <div>
-                    <span className="text-[9px] uppercase tracking-wider text-[#78726c] font-medium">Typography</span>
-                    <div className="mt-2 rounded border border-[#e5e2dc] bg-white px-2.5 py-1.5 text-[10px] text-[#1c1917] flex items-center justify-between">
+                    <span className="text-[9px] uppercase tracking-wider text-[#71717a] font-medium">Typography</span>
+                    <div className="mt-2 rounded border border-white/[0.08] bg-white/[0.04] px-2.5 py-1.5 text-[10px] text-[#e4e4e7] flex items-center justify-between">
                       <span>DM Sans</span>
-                      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#78726c" strokeWidth="2"><polyline points="6 9 12 15 18 9" /></svg>
+                      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2"><polyline points="6 9 12 15 18 9" /></svg>
                     </div>
                   </div>
 
                   {/* Layout */}
                   <div>
-                    <span className="text-[9px] uppercase tracking-wider text-[#78726c] font-medium">Roundness</span>
+                    <span className="text-[9px] uppercase tracking-wider text-[#71717a] font-medium">Roundness</span>
                     <div className="mt-2 flex items-center gap-2">
-                      <div className="flex-1 h-1.5 rounded-full bg-[#e5e2dc]">
-                        <div className="w-2/5 h-full rounded-full bg-[#5B6CF0]" />
+                      <div className="flex-1 h-1.5 rounded-full bg-white/[0.06]">
+                        <div className="w-2/5 h-full rounded-full bg-gradient-to-r from-purple-500 to-pink-500" />
                       </div>
-                      <span className="text-[9px] font-mono text-[#78726c]">8px</span>
+                      <span className="text-[9px] font-mono text-[#71717a]">8px</span>
                     </div>
                   </div>
                 </div>
               </div>
 
+              {/* ── Resize handle ── */}
+              <div className="w-[5px] shrink-0 bg-white/[0.04] flex items-center justify-center">
+                <svg width="8" height="12" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2" opacity="0.5"><line x1="9" y1="4" x2="9" y2="20" /><line x1="15" y1="4" x2="15" y2="20" /></svg>
+              </div>
+
               {/* ── Iframe preview (right) ── */}
               <div className="flex-1 flex flex-col">
+                {/* Preview tabs */}
+                <div className="flex items-center justify-between px-3 py-1.5 bg-[#141416] border-b border-white/[0.06]">
+                  <div className="flex gap-1">
+                    {['Admin', 'Showcase', 'Custom'].map((tab, i) => (
+                      <div
+                        key={tab}
+                        className={`text-[9px] px-2 py-0.5 rounded font-medium ${
+                          i === 0
+                            ? 'bg-white/[0.08] text-[#e4e4e7]'
+                            : 'text-[#71717a]'
+                        }`}
+                      >
+                        {tab}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Toolbar */}
-                <div className="flex items-center justify-between px-3 py-1.5 bg-[#faf9f7] border-b border-[#e5e2dc]">
-                  <span className="text-[10px] font-mono text-[#78726c]">/admin</span>
+                <div className="flex items-center justify-between px-3 py-1.5 bg-[#141416] border-b border-white/[0.06]">
+                  <span className="text-[10px] font-mono text-[#71717a]">/admin</span>
                   <div className="flex items-center gap-1">
-                    <div className="w-5 h-5 rounded bg-[#5B6CF0] flex items-center justify-center">
+                    <div className="w-5 h-5 rounded flex items-center justify-center bg-purple-600">
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><circle cx="12" cy="12" r="5" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2" /></svg>
                     </div>
-                    <div className="w-5 h-5 rounded bg-[#f0ede8] flex items-center justify-center">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#78726c" strokeWidth="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
+                    <div className="w-5 h-5 rounded flex items-center justify-center text-[#71717a]">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
+                    </div>
+                    {/* Reload button */}
+                    <div className="w-5 h-5 rounded flex items-center justify-center text-[#71717a]">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 102.13-9.36L1 10" /></svg>
                     </div>
                   </div>
                 </div>
