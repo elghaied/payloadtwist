@@ -74,7 +74,7 @@ function lerp(a: number, b: number, t: number): number {
   return a + (b - a) * t
 }
 
-function lerpHsl(
+export function lerpHsl(
   h1: number, s1: number, l1: number,
   h2: number, s2: number, l2: number,
   t: number,
@@ -95,6 +95,54 @@ function lerpHsl(
  * @param darkest  - hex color for step 1000
  * @returns Record of `{ "--color-base-0": "#...", "--color-base-50": "...", ... }`
  */
+export interface ScaleAnchor {
+  step: number  // 0–1000
+  color: string // hex
+}
+
+/**
+ * N-point interpolation across the 16 base steps.
+ * Anchors are sorted by step. Steps before the first anchor use the first anchor's color;
+ * steps after the last use the last anchor's color.
+ */
+export function generateBaseScaleFromAnchors(anchors: ScaleAnchor[]): Record<string, string> {
+  const sorted = [...anchors].sort((a, b) => a.step - b.step)
+  const parsed = sorted.map(a => ({ step: a.step, hsl: hexToHsl(a.color) }))
+  const result: Record<string, string> = {}
+
+  for (const step of BASE_STEPS) {
+    if (parsed.length === 0) {
+      result[`--color-base-${step}`] = '#888888'
+      continue
+    }
+    if (parsed.length === 1 || step <= parsed[0].step) {
+      const [h, s, l] = parsed[0].hsl
+      result[`--color-base-${step}`] = hslToHex(h, s, l)
+      continue
+    }
+    if (step >= parsed[parsed.length - 1].step) {
+      const [h, s, l] = parsed[parsed.length - 1].hsl
+      result[`--color-base-${step}`] = hslToHex(h, s, l)
+      continue
+    }
+
+    // Find the two anchors this step falls between
+    let lo = 0
+    for (let i = 1; i < parsed.length; i++) {
+      if (parsed[i].step >= step) { lo = i - 1; break }
+    }
+    const hi = lo + 1
+    const range = parsed[hi].step - parsed[lo].step
+    const t = range === 0 ? 0 : (step - parsed[lo].step) / range
+    const [h1, s1, l1] = parsed[lo].hsl
+    const [h2, s2, l2] = parsed[hi].hsl
+    const [h, s, l] = lerpHsl(h1, s1, l1, h2, s2, l2, t)
+    result[`--color-base-${step}`] = hslToHex(h, s, l)
+  }
+
+  return result
+}
+
 export function generateBaseScale(
   lightest: string,
   mid: string,

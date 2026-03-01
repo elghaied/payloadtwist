@@ -1,11 +1,20 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 
 import { ColorPicker } from './ColorPicker'
+import { ColorWheel } from './ColorWheel'
+import { LightnessSlider } from './LightnessSlider'
+import { ScrubberInput } from './ScrubberInput'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { PayloadThemeConfig } from '@/payload-theme/types'
-import { generateBaseScale, hexToHsl } from '@/payload-theme/scale-generator'
+import { generateBaseScale, hexToHsl, hslToHex } from '@/payload-theme/scale-generator'
+
+type AnchorKey = 'lightest' | 'mid' | 'darkest'
+
+function isValidHex(value: string): boolean {
+  return /^#[0-9a-fA-F]{6}$/.test(value)
+}
 
 const BASE_STEPS = [0, 50, 100, 150, 200, 250, 300, 400, 500, 600, 700, 800, 850, 900, 950, 1000]
 
@@ -29,23 +38,24 @@ interface BaseScaleEditorProps {
 }
 
 export function BaseScaleEditor({ config, setBaseScale, setVariable }: BaseScaleEditorProps) {
-  // Local state for anchor colors so the pickers feel instantaneous.
-  // Synced from config on external changes (undo/redo/reset) via useEffect.
   const [lightest, setLightest] = useState(() => getAnchor(config, 0))
   const [mid, setMid] = useState(() => getAnchor(config, 500))
   const [darkest, setDarkest] = useState(() => getAnchor(config, 1000))
 
+  const [selectedAnchor, setSelectedAnchor] = useState<AnchorKey>('mid')
+  const [linked, setLinked] = useState(true)
+  const [hexInputs, setHexInputs] = useState({ lightest, mid: mid, darkest })
+
   const [overrides, setOverrides] = useState<Record<string, string>>({})
 
-  // Sync anchor pickers when config changes externally (undo/redo/reset).
-  // Safe with uncontrolled ColorPicker — no onChange feedback loop.
-  // After our own setBaseScale call, step-0/500/1000 values equal the HSL
-  // round-trip of the anchor (exact for these t=0/t=1 endpoints), so React
-  // bails out of the setState call with no extra render.
   useEffect(() => {
-    setLightest(getAnchor(config, 0))
-    setMid(getAnchor(config, 500))
-    setDarkest(getAnchor(config, 1000))
+    const l = getAnchor(config, 0)
+    const m = getAnchor(config, 500)
+    const d = getAnchor(config, 1000)
+    setLightest(l)
+    setMid(m)
+    setDarkest(d)
+    setHexInputs({ lightest: l, mid: m, darkest: d })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     config.light['--color-base-0'],
@@ -67,19 +77,45 @@ export function BaseScaleEditor({ config, setBaseScale, setVariable }: BaseScale
     [setBaseScale],
   )
 
-  const handleAnchorChange = useCallback(
-    (anchor: 'lightest' | 'mid' | 'darkest', value: string) => {
+  // Shared helper: update an anchor by key with a hex value
+  const updateAnchor = useCallback(
+    (anchor: AnchorKey, value: string) => {
       const next = {
         lightest: anchor === 'lightest' ? value : lightest,
         mid: anchor === 'mid' ? value : mid,
         darkest: anchor === 'darkest' ? value : darkest,
       }
-      if (anchor === 'lightest') setLightest(value)
-      if (anchor === 'mid') setMid(value)
-      if (anchor === 'darkest') setDarkest(value)
+      if (anchor === 'lightest') { setLightest(value); setHexInputs((prev) => ({ ...prev, lightest: value })) }
+      if (anchor === 'mid') { setMid(value); setHexInputs((prev) => ({ ...prev, mid: value })) }
+      if (anchor === 'darkest') { setDarkest(value); setHexInputs((prev) => ({ ...prev, darkest: value })) }
       applyScale(next.lightest, next.mid, next.darkest, overrides)
     },
     [lightest, mid, darkest, overrides, applyScale],
+  )
+
+  // Handle hue change from wheel — combine new hue with existing S/L
+  const handleHueChange = useCallback(
+    (anchor: AnchorKey, hue: number) => {
+      const current = anchor === 'lightest' ? lightest : anchor === 'mid' ? mid : darkest
+      const [, s, l] = hexToHsl(current)
+      updateAnchor(anchor, hslToHex(hue, s, l))
+    },
+    [lightest, mid, darkest, updateAnchor],
+  )
+
+  // HSL of the currently selected anchor (DRY helper)
+  const selectedHSL = useMemo(() => {
+    const hex = selectedAnchor === 'lightest' ? lightest : selectedAnchor === 'mid' ? mid : darkest
+    return hexToHsl(hex)
+  }, [selectedAnchor, lightest, mid, darkest])
+
+  // Handle saturation change from scrubber
+  const handleSaturationChange = useCallback(
+    (sat: number) => {
+      const [h, , l] = selectedHSL
+      updateAnchor(selectedAnchor, hslToHex(h, sat, l))
+    },
+    [selectedHSL, selectedAnchor, updateAnchor],
   )
 
   const handleSwatchOverride = useCallback(
@@ -107,20 +143,73 @@ export function BaseScaleEditor({ config, setBaseScale, setVariable }: BaseScale
 
   return (
     <div className="space-y-4">
-      {/* Anchor pickers */}
-      <div className="grid grid-cols-3 gap-3">
-        {[
-          { key: 'lightest' as const, label: 'Lightest', value: lightest },
-          { key: 'mid' as const, label: 'Midpoint', value: mid },
-          { key: 'darkest' as const, label: 'Darkest', value: darkest },
-        ].map(({ key, label, value }) => (
-          <div key={key} className="flex flex-col items-center gap-1.5">
-            <ColorPicker
-              value={value}
-              onChange={(hex) => handleAnchorChange(key, hex)}
-              label={label}
-            />
-            <span className="text-xs text-zinc-400">{label}</span>
+      {/* Color wheel + lightness slider + saturation scrubber */}
+      <div className="flex gap-3 items-start justify-center">
+        <ColorWheel
+          anchors={{ lightest, mid, darkest }}
+          onHueChange={handleHueChange}
+          selectedAnchor={selectedAnchor}
+          onSelectAnchor={setSelectedAnchor}
+          linked={linked}
+          onLinkedChange={setLinked}
+          size={240}
+        />
+        <div className="flex flex-col items-center gap-3">
+          <LightnessSlider
+            hue={selectedHSL[0]}
+            saturation={selectedHSL[1]}
+            lightness={selectedHSL[2]}
+            onChange={(l) => {
+              const [h, s] = selectedHSL
+              updateAnchor(selectedAnchor, hslToHex(h, s, l))
+            }}
+            height={240}
+          />
+          <ScrubberInput
+            value={Math.round(selectedHSL[1])}
+            onChange={handleSaturationChange}
+            min={0}
+            max={100}
+            step={1}
+            unit="%"
+            label="Sat"
+          />
+        </div>
+      </div>
+
+      {/* Hex inputs for direct value entry */}
+      <div className="grid grid-cols-3 gap-2">
+        {([
+          { key: 'lightest' as AnchorKey, label: 'Lightest' },
+          { key: 'mid' as AnchorKey, label: 'Midpoint' },
+          { key: 'darkest' as AnchorKey, label: 'Darkest' },
+        ] as const).map(({ key, label }) => (
+          <div key={key} className="flex flex-col gap-1">
+            <label className="text-[10px] uppercase tracking-wider text-zinc-500">{label}</label>
+            <div className="flex items-center gap-1.5">
+              <div
+                className={`w-5 h-5 rounded border flex-shrink-0 cursor-pointer ${
+                  selectedAnchor === key ? 'border-blue-500' : 'border-zinc-600'
+                }`}
+                style={{ background: key === 'lightest' ? lightest : key === 'mid' ? mid : darkest }}
+                onClick={() => setSelectedAnchor(key)}
+              />
+              <input
+                type="text"
+                value={hexInputs[key]}
+                onChange={(e) => {
+                  const raw = e.target.value
+                  setHexInputs((prev) => ({ ...prev, [key]: raw }))
+                  if (isValidHex(raw)) {
+                    updateAnchor(key, raw)
+                  }
+                }}
+                onFocus={() => setSelectedAnchor(key)}
+                className="flex-1 text-xs bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-zinc-200 font-mono min-w-0"
+                spellCheck={false}
+                placeholder="#000000"
+              />
+            </div>
           </div>
         ))}
       </div>

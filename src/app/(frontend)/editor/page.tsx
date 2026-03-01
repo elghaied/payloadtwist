@@ -3,11 +3,13 @@
 import { useState, useCallback, useMemo } from 'react'
 import { useEditorStore } from '@/store/editor-store'
 
+import { PaletteSelector } from '../../../components/editor/PaletteSelector'
 import { BaseScaleEditor } from '../../../components/editor/BaseScaleEditor'
 import { ThemeColorsSection } from '../../../components/editor/ThemeColorsSection'
 import { StatusColorsSection } from '../../../components/editor/StatusColorsSection'
 import { TypographySection } from '../../../components/editor/TypographySection'
 import { LayoutSection } from '../../../components/editor/LayoutSection'
+import { PaletteEditor } from '../../../components/editor/PaletteEditor'
 import { BemTab } from '../../../components/editor/BemTab'
 import { IframePanel } from '../../../components/editor/IframePanel'
 import { Undo2, Redo2, X, Copy, RotateCcw } from 'lucide-react'
@@ -45,6 +47,7 @@ export default function EditorPage() {
     setBaseScale,
     setBaseRadius,
     resetTheme,
+    importTheme,
     undo,
     redo,
     canUndo,
@@ -185,21 +188,40 @@ export default function EditorPage() {
             <div className="p-3">
               {activeTab === 'colors' && (
                 <div className="space-y-6">
+                  <PaletteSelector onApply={importTheme} onReset={resetTheme} />
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span
+                        className="text-[10px] uppercase tracking-widest text-zinc-500"
+                        style={{ fontFamily: "'DM Sans', sans-serif" }}
+                      >
+                        Fine-Tune Base Scale
+                      </span>
+                      <div className="flex-1 h-px bg-zinc-800/80" />
+                    </div>
+                    <p
+                      className="text-[10px] text-zinc-500 mb-3"
+                      style={{ fontFamily: "'DM Sans', sans-serif" }}
+                    >
+                      Manual overrides — applied after palette
+                    </p>
+                    <BaseScaleEditor
+                      config={config}
+                      setBaseScale={setBaseScale}
+                      setVariable={setVariable}
+                    />
+                  </div>
                   <div>
                     <div className="flex items-center gap-2 mb-3">
                       <span
                         className="text-[10px] uppercase tracking-widest text-zinc-500"
                         style={{ fontFamily: "'DM Sans', sans-serif" }}
                       >
-                        Base Color Scale
+                        General Palette
                       </span>
                       <div className="flex-1 h-px bg-zinc-800/80" />
                     </div>
-                    <BaseScaleEditor
-                      config={config}
-                      setBaseScale={setBaseScale}
-                      setVariable={setVariable}
-                    />
+                    <PaletteEditor config={config} setBaseScale={setBaseScale} />
                   </div>
                   <div>
                     <div className="flex items-center gap-2 mb-3">
