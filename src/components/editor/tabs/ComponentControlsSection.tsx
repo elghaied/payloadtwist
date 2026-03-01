@@ -256,6 +256,7 @@ function SingleControl({
   return (
     <ControlRow
       label={control.label}
+      subtitle={control.subtitle}
       control={controlEl}
       onReset={handleReset}
       hasOverride={hasOverride}

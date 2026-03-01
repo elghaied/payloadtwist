@@ -5,21 +5,32 @@ import { TokenChip } from './TokenChip'
 
 interface ControlRowProps {
   label: string
+  subtitle?: string
   control: React.ReactNode
   onReset?: () => void
   hasOverride?: boolean
   tokenRef?: string
 }
 
-export function ControlRow({ label, control, onReset, hasOverride, tokenRef }: ControlRowProps) {
+export function ControlRow({ label, subtitle, control, onReset, hasOverride, tokenRef }: ControlRowProps) {
   return (
     <div className="flex items-center gap-1.5 py-1 group min-h-[28px]">
-      <span
-        className="text-[11px] text-[#57534E] flex-1 truncate"
-        title={label}
-      >
-        {label}
-      </span>
+      <div className="flex-1 min-w-0">
+        <span
+          className="text-[11px] text-[#57534E] block truncate"
+          title={label}
+        >
+          {label}
+        </span>
+        {subtitle && (
+          <span
+            className="text-[9px] text-[#A8A29E] block truncate"
+            title={subtitle}
+          >
+            {subtitle}
+          </span>
+        )}
+      </div>
 
       {tokenRef && !hasOverride && <TokenChip varName={tokenRef} />}
 

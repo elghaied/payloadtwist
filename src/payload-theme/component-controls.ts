@@ -32,7 +32,8 @@ export interface ControlDescriptor {
   originalValue: string         // raw value from schema
   referencedVar: string | null  // "--theme-elevation-800" or null
   controlType: ControlType
-  label: string                 // e.g. "Button Style Primary — Background"
+  label: string                 // e.g. "Style Primary" — just the distinguishing variant
+  subtitle: string              // e.g. ".btn--style-primary" — the actual CSS selector
   region: string                // e.g. "UI Elements"
 }
 
@@ -142,25 +143,38 @@ const ROLE_LABEL: Record<ControlRole, string> = {
   opacity: 'Opacity',
 }
 
-function deriveLabel(componentName: string, selector: string, role: ControlRole): string {
-  // Extract first class only (normalize multiline selectors)
+function deriveLabel(selector: string): string {
   const normalizedSelector = selector.replace(/\s+/g, ' ').trim()
-  const firstCls = normalizedSelector.replace(/^\./, '').split(/[\s,+~>]/)[0]
+  // Extract all classes from the (possibly compound) selector
+  const classes = normalizedSelector.match(/\.[a-zA-Z_][a-zA-Z0-9_-]*/g) || []
 
-  let subpart = ''
-  const eidx = firstCls.indexOf('__')
-  const midx = firstCls.indexOf('--')
-  if (eidx !== -1) subpart = firstCls.slice(eidx + 2)
-  else if (midx !== -1) subpart = firstCls.slice(midx + 2)
+  const parts: string[] = []
+  for (const cls of classes) {
+    const raw = cls.replace(/^\./, '')
+    const eidx = raw.indexOf('__')
+    const midx = raw.indexOf('--')
+    if (eidx !== -1) parts.push(raw.slice(eidx + 2))
+    else if (midx !== -1) parts.push(raw.slice(midx + 2))
+  }
 
-  // Title-case subpart
-  const subLabel = subpart
-    .split('-')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ')
+  if (parts.length === 0) return 'Base'
 
-  const prefix = subLabel ? `${componentName} ${subLabel}` : componentName
-  return `${prefix} — ${ROLE_LABEL[role]}`
+  // De-duplicate, title-case each part
+  const unique = [...new Set(parts)]
+  return unique
+    .map((p) =>
+      p
+        .split('-')
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' '),
+    )
+    .join(' · ')
+}
+
+function deriveSubtitle(selector: string): string {
+  const normalized = selector.replace(/\s+/g, ' ').trim()
+  // Take first selector if comma-separated
+  return normalized.split(',')[0].trim()
 }
 
 /** Extract a single CSS var name from a value like "var(--theme-elevation-100)" */
@@ -227,7 +241,8 @@ for (const [category, categoryComponents] of Object.entries(components)) {
 
       const referencedVar = isCssVar ? extractReferencedVar(usage.value) : null
       const controlType = deriveControlType(role)
-      const label = deriveLabel(compName, normalizedSelector, role)
+      const label = deriveLabel(normalizedSelector)
+      const subtitle = deriveSubtitle(normalizedSelector)
 
       const descriptor: ControlDescriptor = {
         id,
@@ -240,6 +255,7 @@ for (const [category, categoryComponents] of Object.entries(components)) {
         referencedVar,
         controlType,
         label,
+        subtitle,
         region,
       }
 
