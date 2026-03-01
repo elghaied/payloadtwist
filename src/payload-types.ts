@@ -69,15 +69,29 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    categories: Category;
+    'team-members': TeamMember;
+    posts: Post;
+    products: Product;
+    pages: Page;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    categories: {
+      posts: 'posts';
+    };
+  };
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
+    posts: PostsSelect<false> | PostsSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -87,8 +101,14 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-settings': SiteSetting;
+    'main-menu': MainMenu;
+  };
+  globalsSelect: {
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    'main-menu': MainMenuSelect<false> | MainMenuSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -163,6 +183,249 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: number;
+  title: string;
+  description?: string | null;
+  color?: string | null;
+  icon?: ('star' | 'heart' | 'bolt' | 'globe' | 'book') | null;
+  posts?: {
+    docs?: (number | Post)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  title: string;
+  slug?: string | null;
+  author?: (number | null) | TeamMember;
+  categories?: (number | Category)[] | null;
+  tags?: string[] | null;
+  excerpt?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  featuredImage?: (number | null) | Media;
+  publishDate?: string | null;
+  status?: ('draft' | 'published' | 'archived') | null;
+  featured?: boolean | null;
+  readTime?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members".
+ */
+export interface TeamMember {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  photo?: (number | null) | Media;
+  role?: ('author' | 'editor' | 'admin' | 'contributor') | null;
+  bio?: string | null;
+  department?: ('engineering' | 'design' | 'marketing' | 'product') | null;
+  socialLinks?:
+    | {
+        platform?: ('twitter' | 'linkedin' | 'github' | 'website') | null;
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  featured?: boolean | null;
+  startDate?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  name: string;
+  sku?: string | null;
+  price: number;
+  compareAtPrice?: number | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  inStock?: boolean | null;
+  category?: (number | null) | Category;
+  images?: (number | Media)[] | null;
+  variants?:
+    | {
+        name: string;
+        color?: string | null;
+        size?: ('xs' | 's' | 'm' | 'l' | 'xl') | null;
+        price?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  specifications?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  location?: [number, number] | null;
+  rating?: ('1' | '2' | '3' | '4' | '5') | null;
+  embedCode?: string | null;
+  relatedProducts?: (number | Product)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  title: string;
+  slug?: string | null;
+  heroImage?: (number | null) | Media;
+  status?: ('draft' | 'published') | null;
+  publishDate?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  layout?:
+    | (
+        | {
+            heading: string;
+            subheading?: string | null;
+            image?: (number | null) | Media;
+            ctaLabel?: string | null;
+            ctaLink?: string | null;
+            style?: ('fullWidth' | 'centered' | 'split') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero';
+          }
+        | {
+            content: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'content';
+          }
+        | {
+            images: (number | Media)[];
+            columns?: number | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'gallery';
+          }
+        | {
+            heading: string;
+            text?: string | null;
+            buttonLabel: string;
+            buttonLink: string;
+            style?: ('standard' | 'highlight' | 'minimal') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'cta';
+          }
+        | {
+            quote: string;
+            author?: string | null;
+            role?: string | null;
+            image?: (number | null) | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'quote';
+          }
+        | {
+            items?:
+              | {
+                  value: string;
+                  label: string;
+                  suffix?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'stats';
+          }
+      )[]
+    | null;
+  meta?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    metaImage?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -192,6 +455,26 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'categories';
+        value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'team-members';
+        value: number | TeamMember;
+      } | null)
+    | ({
+        relationTo: 'posts';
+        value: number | Post;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -277,6 +560,180 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  color?: T;
+  icon?: T;
+  posts?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members_select".
+ */
+export interface TeamMembersSelect<T extends boolean = true> {
+  firstName?: T;
+  lastName?: T;
+  email?: T;
+  photo?: T;
+  role?: T;
+  bio?: T;
+  department?: T;
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  featured?: T;
+  startDate?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  author?: T;
+  categories?: T;
+  tags?: T;
+  excerpt?: T;
+  content?: T;
+  featuredImage?: T;
+  publishDate?: T;
+  status?: T;
+  featured?: T;
+  readTime?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  name?: T;
+  sku?: T;
+  price?: T;
+  compareAtPrice?: T;
+  description?: T;
+  inStock?: T;
+  category?: T;
+  images?: T;
+  variants?:
+    | T
+    | {
+        name?: T;
+        color?: T;
+        size?: T;
+        price?: T;
+        id?: T;
+      };
+  specifications?: T;
+  location?: T;
+  rating?: T;
+  embedCode?: T;
+  relatedProducts?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  heroImage?: T;
+  status?: T;
+  publishDate?: T;
+  content?: T;
+  layout?:
+    | T
+    | {
+        hero?:
+          | T
+          | {
+              heading?: T;
+              subheading?: T;
+              image?: T;
+              ctaLabel?: T;
+              ctaLink?: T;
+              style?: T;
+              id?: T;
+              blockName?: T;
+            };
+        content?:
+          | T
+          | {
+              content?: T;
+              id?: T;
+              blockName?: T;
+            };
+        gallery?:
+          | T
+          | {
+              images?: T;
+              columns?: T;
+              id?: T;
+              blockName?: T;
+            };
+        cta?:
+          | T
+          | {
+              heading?: T;
+              text?: T;
+              buttonLabel?: T;
+              buttonLink?: T;
+              style?: T;
+              id?: T;
+              blockName?: T;
+            };
+        quote?:
+          | T
+          | {
+              quote?: T;
+              author?: T;
+              role?: T;
+              image?: T;
+              id?: T;
+              blockName?: T;
+            };
+        stats?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    value?: T;
+                    label?: T;
+                    suffix?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+      };
+  meta?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        metaImage?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -314,6 +771,106 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  siteName: string;
+  siteDescription?: string | null;
+  logo?: (number | null) | Media;
+  favicon?: (number | null) | Media;
+  contactEmail?: string | null;
+  socialLinks?:
+    | {
+        platform?: ('twitter' | 'facebook' | 'instagram' | 'linkedin' | 'github') | null;
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  analytics?: {
+    enabled?: boolean | null;
+    trackingId?: string | null;
+  };
+  maintenanceMode?: {
+    enabled?: boolean | null;
+    message?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "main-menu".
+ */
+export interface MainMenu {
+  id: number;
+  items?:
+    | {
+        label: string;
+        type?: ('link' | 'page') | null;
+        url?: string | null;
+        page?: (number | null) | Page;
+        newTab?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  siteName?: T;
+  siteDescription?: T;
+  logo?: T;
+  favicon?: T;
+  contactEmail?: T;
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  analytics?:
+    | T
+    | {
+        enabled?: T;
+        trackingId?: T;
+      };
+  maintenanceMode?:
+    | T
+    | {
+        enabled?: T;
+        message?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "main-menu_select".
+ */
+export interface MainMenuSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        label?: T;
+        type?: T;
+        url?: T;
+        page?: T;
+        newTab?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -7,6 +7,13 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { Categories } from './collections/Categories'
+import { TeamMembers } from './collections/TeamMembers'
+import { Posts } from './collections/Posts'
+import { Products } from './collections/Products'
+import { Pages } from './collections/Pages'
+import { SiteSettings } from './globals/SiteSettings'
+import { MainMenu } from './globals/MainMenu'
 import { seed } from './seed/seed'
 
 const filename = fileURLToPath(import.meta.url)
@@ -23,7 +30,8 @@ export default buildConfig({
         ? { email: 'dev@payloadcms.com', password: 'test', prefillOnly: false }
         : false,
   },
-  collections: [Users, Media],
+  collections: [Users, Media, Categories, TeamMembers, Posts, Products, Pages],
+  globals: [SiteSettings, MainMenu],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
