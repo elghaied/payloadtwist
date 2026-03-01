@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { ArchitectureDiagram } from '@/components/architecture/ArchitectureDiagram'
 import './landing.css'
 
 export const metadata: Metadata = {
@@ -544,6 +545,9 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* ═══ Architecture ═══ */}
+      <ArchitectureDiagram />
 
       {/* ═══ The Output ═══ */}
       <section className="relative py-32 px-6">
