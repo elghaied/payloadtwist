@@ -57,59 +57,116 @@ export function buildCSSString(config: PayloadThemeConfig): string {
  * Injecting all defaults (via buildCSSString) would override Payload's
  * compiled CSS with our schema-extracted values, which may not match
  * exactly — corrupting the admin appearance before the user changes anything.
+ *
+ * For same-origin iframes, uses direct DOM access.
+ * For cross-origin iframes, uses postMessage (requires live-preview.js on the target).
  */
 export function injectIntoIframe(config: PayloadThemeConfig): void {
   const iframe = document.querySelector('iframe#payload-preview') as HTMLIFrameElement | null
-  const iframeDoc = iframe?.contentDocument ?? iframe?.contentWindow?.document
-  if (!iframeDoc) return
+  if (!iframe) return
 
-  let styleTag = iframeDoc.getElementById('tweakpayload-vars') as HTMLStyleElement | null
-  if (!styleTag) {
-    styleTag = iframeDoc.createElement('style')
-    styleTag.id = 'tweakpayload-vars'
-    iframeDoc.head.appendChild(styleTag)
-  }
-
-  let css = generateMinimalPayloadCSS(config)
+  const varsCSS = generateMinimalPayloadCSS(config)
   const bemCss = buildBemCSS(config.bemOverrides)
-  if (bemCss) css += '\n\n' + bemCss
-
-  styleTag.textContent = css
-
-  // Component overrides in a separate tag for clean separation
-  let compTag = iframeDoc.getElementById('tweakpayload-components') as HTMLStyleElement | null
-  if (!compTag) {
-    compTag = iframeDoc.createElement('style')
-    compTag.id = 'tweakpayload-components'
-    iframeDoc.head.appendChild(compTag)
-  }
-  compTag.textContent = config.componentOverrides
+  const componentCSS = config.componentOverrides
     ? buildComponentOverrideCSS(config.componentOverrides)
     : ''
+
+  // Try same-origin direct DOM access first
+  try {
+    const iframeDoc = iframe.contentDocument ?? iframe.contentWindow?.document
+    if (iframeDoc) {
+      let styleTag = iframeDoc.getElementById('tweakpayload-vars') as HTMLStyleElement | null
+      if (!styleTag) {
+        styleTag = iframeDoc.createElement('style')
+        styleTag.id = 'tweakpayload-vars'
+        iframeDoc.head.appendChild(styleTag)
+      }
+      styleTag.textContent = bemCss ? varsCSS + '\n\n' + bemCss : varsCSS
+
+      let compTag = iframeDoc.getElementById('tweakpayload-components') as HTMLStyleElement | null
+      if (!compTag) {
+        compTag = iframeDoc.createElement('style')
+        compTag.id = 'tweakpayload-components'
+        iframeDoc.head.appendChild(compTag)
+      }
+      compTag.textContent = componentCSS
+      return
+    }
+  } catch {
+    // Cross-origin — fall through to postMessage
+  }
+
+  // Cross-origin: use postMessage (requires live-preview.js on the target)
+  iframe.contentWindow?.postMessage(
+    {
+      type: 'payloadtwist:inject',
+      payload: {
+        varsCSS: bemCss ? varsCSS + '\n\n' + bemCss : varsCSS,
+        componentCSS,
+        bemCSS: '',
+      },
+    },
+    '*',
+  )
 }
 
 /**
  * Temporarily highlights a BEM block in the iframe with an outline.
- * Removes after 2 seconds.
+ * Removes after 2 seconds. Works for both same-origin and cross-origin iframes.
  */
 export function highlightBemBlock(blockName: string): void {
   const iframe = document.querySelector('iframe#payload-preview') as HTMLIFrameElement | null
-  const iframeDoc = iframe?.contentDocument ?? iframe?.contentWindow?.document
-  if (!iframeDoc) return
+  if (!iframe) return
 
-  const styleId = 'tweakpayload-highlight'
-  let styleTag = iframeDoc.getElementById(styleId) as HTMLStyleElement | null
-  if (!styleTag) {
-    styleTag = iframeDoc.createElement('style')
-    styleTag.id = styleId
-    iframeDoc.head.appendChild(styleTag)
+  // Try same-origin direct DOM access first
+  try {
+    const iframeDoc = iframe.contentDocument ?? iframe.contentWindow?.document
+    if (iframeDoc) {
+      const styleId = 'tweakpayload-highlight'
+      let styleTag = iframeDoc.getElementById(styleId) as HTMLStyleElement | null
+      if (!styleTag) {
+        styleTag = iframeDoc.createElement('style')
+        styleTag.id = styleId
+        iframeDoc.head.appendChild(styleTag)
+      }
+      styleTag.textContent = `.${blockName} { outline: 2px solid #3b82f6 !important; outline-offset: 2px; }`
+      setTimeout(() => {
+        if (styleTag) styleTag.textContent = ''
+      }, 2000)
+      return
+    }
+  } catch {
+    // Cross-origin — fall through to postMessage
   }
 
-  styleTag.textContent = `.${blockName} { outline: 2px solid #3b82f6 !important; outline-offset: 2px; }`
+  iframe.contentWindow?.postMessage(
+    { type: 'payloadtwist:highlight', payload: { blockName } },
+    '*',
+  )
+}
 
-  setTimeout(() => {
-    if (styleTag) styleTag.textContent = ''
-  }, 2000)
+/**
+ * Sets the iframe's data-theme attribute for light/dark mode.
+ * Works for both same-origin and cross-origin iframes.
+ */
+export function setIframeTheme(theme: 'light' | 'dark'): void {
+  const iframe = document.querySelector('iframe#payload-preview') as HTMLIFrameElement | null
+  if (!iframe) return
+
+  try {
+    const iframeDoc = iframe.contentDocument ?? iframe.contentWindow?.document
+    if (iframeDoc) {
+      iframeDoc.documentElement.setAttribute('data-theme', theme)
+      return
+    }
+  } catch {
+    // Cross-origin — fall through to postMessage
+  }
+
+  iframe.contentWindow?.postMessage(
+    { type: 'payloadtwist:theme', payload: { theme } },
+    '*',
+  )
 }
 
 // ─── Component override helpers ───────────────────────────────────────────────
@@ -162,7 +219,7 @@ function buildComponentOverrideCSSForExport(overrides: Record<string, string>): 
 
 // ─── BEM helpers ──────────────────────────────────────────────────────────────
 
-function buildBemCSS(bemOverrides?: Record<string, string>): string {
+export function buildBemCSS(bemOverrides?: Record<string, string>): string {
   if (!bemOverrides) return ''
   const parts: string[] = []
   for (const [, css] of Object.entries(bemOverrides)) {
