@@ -66,21 +66,21 @@ function ConnectionBadge({ status }: { status: ConnectionStatus }) {
 
   const styles: Record<ConnectionStatus, { bg: string; dot: string; text: string; label: string }> = {
     connecting: {
-      bg: 'bg-amber-50',
+      bg: 'bg-amber-500/10',
       dot: 'bg-amber-400',
-      text: 'text-amber-700',
+      text: 'text-amber-400',
       label: 'Connecting...',
     },
     connected: {
-      bg: 'bg-emerald-50',
+      bg: 'bg-emerald-500/10',
       dot: 'bg-emerald-400',
-      text: 'text-emerald-700',
+      text: 'text-emerald-400',
       label: 'Connected',
     },
     failed: {
-      bg: 'bg-red-50',
+      bg: 'bg-red-500/10',
       dot: 'bg-red-400',
-      text: 'text-red-700',
+      text: 'text-red-400',
       label: 'Script not detected',
     },
     disconnected: { bg: '', dot: '', text: '', label: '' },
@@ -247,15 +247,15 @@ export function IframePanel({ config }: IframePanelProps) {
   return (
     <div className="h-full min-w-0 flex flex-col overflow-hidden">
       {/* Tab bar */}
-      <div className="flex items-center gap-0.5 px-2 py-1 bg-[#F8F7F5] border-b border-[#E5E2DC] flex-shrink-0">
+      <div className="flex items-center gap-0.5 px-2 py-1 bg-[var(--pt-bg)] border-b border-[var(--pt-border)] flex-shrink-0">
         {PREVIEW_TABS.map(({ key, label }) => (
           <button
             key={key}
             onClick={() => handleTabChange(key)}
             className={`text-[11px] px-2.5 py-1 rounded transition-colors whitespace-nowrap active:scale-[0.97] font-medium ${
               activeTab === key
-                ? 'bg-[#5B6CF0] text-white'
-                : 'text-[#78726C] hover:text-[#1C1917] hover:bg-[#F0EDE8]'
+                ? 'bg-[var(--pt-accent)] text-white'
+                : 'text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] hover:bg-[var(--pt-surface-hover)]'
             }`}
           >
             {key === 'custom' && <ExternalLink size={10} className="inline mr-1 -mt-px" />}
@@ -268,19 +268,19 @@ export function IframePanel({ config }: IframePanelProps) {
       {activeTab === 'custom' && (
         <form
           onSubmit={handleCustomSubmit}
-          className="flex items-center gap-1.5 px-2 py-1.5 bg-[#F8F7F5] border-b border-[#E5E2DC] flex-shrink-0"
+          className="flex items-center gap-1.5 px-2 py-1.5 bg-[var(--pt-bg)] border-b border-[var(--pt-border)] flex-shrink-0"
         >
           <input
             type="url"
             value={customInput}
             onChange={(e) => setCustomInput(e.target.value)}
             placeholder="http://localhost:3000/admin"
-            className="flex-1 text-[11px] px-2 py-1 rounded border border-[#E5E2DC] bg-white text-[#1C1917] placeholder-[#B8B4AE] focus:outline-none focus:border-[#5B6CF0] focus:ring-1 focus:ring-[#5B6CF0]/20"
+            className="flex-1 text-[11px] px-2 py-1 rounded border border-[var(--pt-border)] bg-[var(--pt-surface)] text-[var(--pt-text)] placeholder-[var(--pt-text-faint)] focus:outline-none focus:border-[var(--pt-accent)] focus:ring-1 focus:ring-[var(--pt-accent-soft)]"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           />
           <button
             type="submit"
-            className="text-[11px] px-2.5 py-1 rounded bg-[#5B6CF0] hover:bg-[#4A5AD9] text-white font-medium transition-colors active:scale-[0.97]"
+            className="text-[11px] px-2.5 py-1 rounded bg-[var(--pt-accent)] hover:bg-[var(--pt-accent-hover)] text-white font-medium transition-colors active:scale-[0.97]"
           >
             Go
           </button>
@@ -289,10 +289,10 @@ export function IframePanel({ config }: IframePanelProps) {
 
       {/* Toolbar (hidden when showing setup instructions) */}
       {!showCustomSetup && (
-        <div className="flex items-center justify-between px-3 py-1.5 bg-[#F8F7F5] border-b border-[#E5E2DC] flex-shrink-0">
+        <div className="flex items-center justify-between px-3 py-1.5 bg-[var(--pt-bg)] border-b border-[var(--pt-border)] flex-shrink-0">
           <div className="flex items-center gap-2 min-w-0">
             <span
-              className="text-[11px] text-[#78726C] truncate"
+              className="text-[11px] text-[var(--pt-text-muted)] truncate"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               {activeTab === 'custom' && customUrl ? customUrl : currentUrl}
@@ -304,8 +304,8 @@ export function IframePanel({ config }: IframePanelProps) {
               onClick={handleSetLight}
               className={`p-1.5 rounded transition-colors ${
                 !isDark
-                  ? 'bg-[#5B6CF0] text-white'
-                  : 'text-[#78726C] hover:text-[#1C1917] hover:bg-[#F0EDE8]'
+                  ? 'bg-[var(--pt-accent)] text-white'
+                  : 'text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] hover:bg-[var(--pt-surface-hover)]'
               }`}
               title="Light mode"
               aria-label="Switch to light mode"
@@ -316,18 +316,18 @@ export function IframePanel({ config }: IframePanelProps) {
               onClick={handleSetDark}
               className={`p-1.5 rounded transition-colors ${
                 isDark
-                  ? 'bg-[#5B6CF0] text-white'
-                  : 'text-[#78726C] hover:text-[#1C1917] hover:bg-[#F0EDE8]'
+                  ? 'bg-[var(--pt-accent)] text-white'
+                  : 'text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] hover:bg-[var(--pt-surface-hover)]'
               }`}
               title="Dark mode"
               aria-label="Switch to dark mode"
             >
               <Moon size={13} />
             </button>
-            <div className="w-px h-4 bg-[#E5E2DC] mx-1" />
+            <div className="w-px h-4 bg-[var(--pt-border)] mx-1" />
             <button
               onClick={handleReload}
-              className="p-1.5 rounded hover:bg-[#F0EDE8] transition-colors text-[#78726C] hover:text-[#1C1917]"
+              className="p-1.5 rounded hover:bg-[var(--pt-surface-hover)] transition-colors text-[var(--pt-text-muted)] hover:text-[var(--pt-text)]"
               title="Reload preview"
               aria-label="Reload preview"
             >
@@ -339,36 +339,36 @@ export function IframePanel({ config }: IframePanelProps) {
 
       {/* Setup instructions (shown when custom tab with no URL) */}
       {showCustomSetup && (
-        <div className="flex-1 overflow-y-auto bg-[#FAFAF8] p-6">
+        <div className="flex-1 overflow-y-auto bg-[var(--pt-surface-alt)] p-6">
           <div className="max-w-lg mx-auto space-y-5">
             <div>
-              <h3 className="text-sm font-semibold text-[#1C1917]">
+              <h3 className="text-sm font-semibold text-[var(--pt-text)]">
                 Preview your Payload site
               </h3>
-              <p className="text-[11px] text-[#78726C] mt-1">
+              <p className="text-[11px] text-[var(--pt-text-muted)] mt-1">
                 Add the live preview provider to your Payload project, then enter your URL above.
               </p>
             </div>
 
             {/* Step 1 — Provider component */}
             <div className="flex items-start gap-2.5">
-              <span className="text-[11px] font-bold text-[#5B6CF0] bg-[#5B6CF0]/10 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span className="text-[11px] font-bold text-[var(--pt-accent)] bg-[var(--pt-accent-soft)] rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">
                 1
               </span>
               <div className="space-y-1.5 flex-1 min-w-0">
-                <p className="text-xs text-[#44403C]">
-                  Create <code className="text-[10px] bg-[#F0EDE8] px-1 py-0.5 rounded" style={{ fontFamily: "'JetBrains Mono', monospace" }}>src/components/LivePreviewProvider.tsx</code>
+                <p className="text-xs text-[var(--pt-text-label)]">
+                  Create <code className="text-[10px] bg-[var(--pt-surface-hover)] px-1 py-0.5 rounded" style={{ fontFamily: "'JetBrains Mono', monospace" }}>src/components/LivePreviewProvider.tsx</code>
                 </p>
                 <div className="relative group">
                   <pre
-                    className="text-[10px] leading-relaxed bg-[#1C1917] text-[#E7E5E4] rounded-md p-2.5 overflow-x-auto whitespace-pre"
+                    className="text-[10px] leading-relaxed bg-[var(--pt-code-bg)] text-[var(--pt-code-text)] rounded-md p-2.5 overflow-x-auto whitespace-pre"
                     style={{ fontFamily: "'JetBrains Mono', monospace" }}
                   >
                     {PROVIDER_SNIPPET}
                   </pre>
                   <button
                     onClick={() => handleCopy(PROVIDER_SNIPPET, 'provider')}
-                    className="absolute top-1.5 right-1.5 p-1 rounded bg-[#292524] hover:bg-[#44403C] text-[#A8A29E] hover:text-white transition-colors"
+                    className="absolute top-1.5 right-1.5 p-1 rounded bg-[var(--pt-code-btn)] hover:bg-[var(--pt-surface-active)] text-[var(--pt-text-faint)] hover:text-white transition-colors"
                     title="Copy"
                   >
                     {copiedKey === 'provider' ? <Check size={11} /> : <Copy size={11} />}
@@ -379,23 +379,23 @@ export function IframePanel({ config }: IframePanelProps) {
 
             {/* Step 2 — payload.config.ts */}
             <div className="flex items-start gap-2.5">
-              <span className="text-[11px] font-bold text-[#5B6CF0] bg-[#5B6CF0]/10 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span className="text-[11px] font-bold text-[var(--pt-accent)] bg-[var(--pt-accent-soft)] rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">
                 2
               </span>
               <div className="space-y-1.5 flex-1 min-w-0">
-                <p className="text-xs text-[#44403C]">
-                  Add the provider to your <code className="text-[10px] bg-[#F0EDE8] px-1 py-0.5 rounded" style={{ fontFamily: "'JetBrains Mono', monospace" }}>payload.config.ts</code>
+                <p className="text-xs text-[var(--pt-text-label)]">
+                  Add the provider to your <code className="text-[10px] bg-[var(--pt-surface-hover)] px-1 py-0.5 rounded" style={{ fontFamily: "'JetBrains Mono', monospace" }}>payload.config.ts</code>
                 </p>
                 <div className="relative group">
                   <pre
-                    className="text-[10px] leading-relaxed bg-[#1C1917] text-[#E7E5E4] rounded-md p-2.5 overflow-x-auto whitespace-pre"
+                    className="text-[10px] leading-relaxed bg-[var(--pt-code-bg)] text-[var(--pt-code-text)] rounded-md p-2.5 overflow-x-auto whitespace-pre"
                     style={{ fontFamily: "'JetBrains Mono', monospace" }}
                   >
                     {CONFIG_SNIPPET}
                   </pre>
                   <button
                     onClick={() => handleCopy(CONFIG_SNIPPET, 'config')}
-                    className="absolute top-1.5 right-1.5 p-1 rounded bg-[#292524] hover:bg-[#44403C] text-[#A8A29E] hover:text-white transition-colors"
+                    className="absolute top-1.5 right-1.5 p-1 rounded bg-[var(--pt-code-btn)] hover:bg-[var(--pt-surface-active)] text-[var(--pt-text-faint)] hover:text-white transition-colors"
                     title="Copy"
                   >
                     {copiedKey === 'config' ? <Check size={11} /> : <Copy size={11} />}
@@ -406,23 +406,23 @@ export function IframePanel({ config }: IframePanelProps) {
 
             {/* Step 3 — Generate import map */}
             <div className="flex items-start gap-2.5">
-              <span className="text-[11px] font-bold text-[#5B6CF0] bg-[#5B6CF0]/10 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span className="text-[11px] font-bold text-[var(--pt-accent)] bg-[var(--pt-accent-soft)] rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">
                 3
               </span>
               <div className="space-y-1.5 flex-1 min-w-0">
-                <p className="text-xs text-[#44403C]">
+                <p className="text-xs text-[var(--pt-text-label)]">
                   Regenerate the import map and restart your dev server
                 </p>
                 <div className="relative group">
                   <pre
-                    className="text-[10px] leading-relaxed bg-[#1C1917] text-[#E7E5E4] rounded-md p-2.5 overflow-x-auto whitespace-pre"
+                    className="text-[10px] leading-relaxed bg-[var(--pt-code-bg)] text-[var(--pt-code-text)] rounded-md p-2.5 overflow-x-auto whitespace-pre"
                     style={{ fontFamily: "'JetBrains Mono', monospace" }}
                   >
                     {IMPORTMAP_SNIPPET}
                   </pre>
                   <button
                     onClick={() => handleCopy(IMPORTMAP_SNIPPET, 'importmap')}
-                    className="absolute top-1.5 right-1.5 p-1 rounded bg-[#292524] hover:bg-[#44403C] text-[#A8A29E] hover:text-white transition-colors"
+                    className="absolute top-1.5 right-1.5 p-1 rounded bg-[var(--pt-code-btn)] hover:bg-[var(--pt-surface-active)] text-[var(--pt-text-faint)] hover:text-white transition-colors"
                     title="Copy"
                   >
                     {copiedKey === 'importmap' ? <Check size={11} /> : <Copy size={11} />}
@@ -433,15 +433,15 @@ export function IframePanel({ config }: IframePanelProps) {
 
             {/* Step 4 — Enter URL */}
             <div className="flex items-start gap-2.5">
-              <span className="text-[11px] font-bold text-[#5B6CF0] bg-[#5B6CF0]/10 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span className="text-[11px] font-bold text-[var(--pt-accent)] bg-[var(--pt-accent-soft)] rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">
                 4
               </span>
-              <p className="text-xs text-[#44403C]">
-                Paste your site&apos;s URL above (e.g. <code className="text-[10px] bg-[#F0EDE8] px-1 py-0.5 rounded" style={{ fontFamily: "'JetBrains Mono', monospace" }}>http://localhost:3000/admin</code>) and click Go.
+              <p className="text-xs text-[var(--pt-text-label)]">
+                Paste your site&apos;s URL above (e.g. <code className="text-[10px] bg-[var(--pt-surface-hover)] px-1 py-0.5 rounded" style={{ fontFamily: "'JetBrains Mono', monospace" }}>http://localhost:3000/admin</code>) and click Go.
               </p>
             </div>
 
-            <p className="text-[10px] text-[#A8A29E]">
+            <p className="text-[10px] text-[var(--pt-text-faint)]">
               The provider loads a small script that receives theme changes via postMessage. No CORS configuration needed.
             </p>
           </div>
@@ -453,7 +453,7 @@ export function IframePanel({ config }: IframePanelProps) {
         id="payload-preview"
         ref={iframeRef}
         src={activeTab !== 'custom' ? getTabUrl(activeTab, '') : undefined}
-        className={`flex-1 w-full min-w-0 border-0 bg-white ${showCustomSetup ? 'hidden' : ''}`}
+        className={`flex-1 w-full min-w-0 border-0 bg-[var(--pt-surface)] ${showCustomSetup ? 'hidden' : ''}`}
         title="Payload Admin Preview"
       />
     </div>

@@ -391,7 +391,7 @@ export function ScaleWheel({
                   background: hslToHex(p.hue, p.saturation, p.lightness),
                   borderColor: isSelected ? '#fff' : 'rgba(255,255,255,0.5)',
                   boxShadow: isSelected
-                    ? '0 0 0 2px rgba(59,130,246,0.7), 0 2px 8px rgba(0,0,0,0.5)'
+                    ? '0 0 0 2px rgba(168,85,247,0.7), 0 2px 8px rgba(0,0,0,0.5)'
                     : '0 2px 6px rgba(0,0,0,0.4)',
                 }}
                 title={p.label ? `${p.label}: ${hslToHex(p.hue, p.saturation, p.lightness)}` : hslToHex(p.hue, p.saturation, p.lightness)}
@@ -420,8 +420,8 @@ export function ScaleWheel({
         onClick={() => onLinkedChange(!linked)}
         className={`flex items-center gap-1.5 text-[10px] uppercase tracking-wider px-2 py-1 rounded transition-colors font-medium ${
           linked
-            ? 'text-[#5B6CF0] bg-[#5B6CF0]/10 hover:bg-[#5B6CF0]/20'
-            : 'text-[#78726C] bg-[#F0EDE8] hover:bg-[#E5E2DC]'
+            ? 'text-[var(--pt-accent)] bg-[var(--pt-accent-soft)] hover:bg-[var(--pt-accent-muted)]'
+            : 'text-[var(--pt-text-muted)] bg-[var(--pt-surface-hover)] hover:bg-[var(--pt-border)]'
         }`}
         title={linked ? 'Handles linked — drag rotates all together' : 'Handles unlinked — drag independently'}
       >

@@ -9,9 +9,42 @@ import { FieldsTab } from '@/components/editor/tabs/FieldsTab'
 import { ViewsTab } from '@/components/editor/tabs/ViewsTab'
 import { DashboardTab } from '@/components/editor/tabs/DashboardTab'
 import { OverlaysTab } from '@/components/editor/tabs/OverlaysTab'
-import { Undo2, Redo2, Copy, RotateCcw, X, GripVertical } from 'lucide-react'
+import { Undo2, Redo2, Copy, RotateCcw, X, GripVertical, Sun, Moon } from 'lucide-react'
 import { getDefaultTheme } from '@/payload-theme/config'
 import { generateExportCSS } from '@/payload-theme/generator'
+
+function EditorLogoMark({ size = 22 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 200 200" fill="none">
+      <defs>
+        <linearGradient id="ed-s1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#a855f7" />
+          <stop offset="100%" stopColor="#ec4899" />
+        </linearGradient>
+        <linearGradient id="ed-s2" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#06b6d4" />
+          <stop offset="100%" stopColor="#22c55e" />
+        </linearGradient>
+        <linearGradient id="ed-core" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#a855f7" />
+          <stop offset="33%" stopColor="#ec4899" />
+          <stop offset="66%" stopColor="#06b6d4" />
+          <stop offset="100%" stopColor="#22c55e" />
+        </linearGradient>
+      </defs>
+      <path d="M 56 56 C 56 90, 90 95, 100 100 C 110 105, 144 110, 144 144" stroke="url(#ed-s2)" strokeWidth="16" strokeLinecap="round" fill="none" opacity="0.35" />
+      <path d="M 144 56 C 144 90, 110 95, 100 100 C 90 105, 56 110, 56 144" stroke="url(#ed-s1)" strokeWidth="16" strokeLinecap="round" fill="none" />
+      <path d="M 100 100 C 110 105, 144 110, 144 144" stroke="url(#ed-s2)" strokeWidth="16" strokeLinecap="round" fill="none" />
+      <circle cx="100" cy="100" r="10" style={{ fill: 'var(--pt-surface)' }} />
+      <circle cx="100" cy="100" r="7" fill="url(#ed-core)" />
+      <circle cx="100" cy="100" r="3" fill="white" />
+      <circle cx="144" cy="56" r="6" fill="#ec4899" />
+      <circle cx="56" cy="56" r="6" fill="#06b6d4" />
+      <circle cx="56" cy="144" r="6" fill="#a855f7" />
+      <circle cx="144" cy="144" r="6" fill="#22c55e" />
+    </svg>
+  )
+}
 
 type Tab = 'general' | 'ui-elements' | 'fields' | 'views' | 'dashboard' | 'overlays'
 
@@ -55,6 +88,7 @@ export default function EditorPage() {
   } = useEditorStore()
 
   const [activeTab, setActiveTab] = useState<Tab>('general')
+  const [editorDark, setEditorDark] = useState(true)
   const [toast, setToast] = useState<string | null>(null)
   const [cssPanel, setCssPanel] = useState<{ open: boolean; css: string }>({
     open: false,
@@ -129,38 +163,61 @@ export default function EditorPage() {
   }, [])
 
   return (
-    <div ref={containerRef} className="flex h-screen bg-[#F8F7F5] text-[#1C1917] overflow-hidden">
+    <div ref={containerRef} data-editor-theme={editorDark ? 'dark' : 'light'} className="flex h-screen bg-[var(--pt-bg)] text-[var(--pt-text)] overflow-hidden">
         {/* ── Left panel ── */}
         <div style={{ width: panelWidth, minWidth: 260, maxWidth: '50%' }} className="flex-shrink-0">
-          <div className="flex flex-col h-full overflow-hidden bg-white border-r border-[#E5E2DC]">
+          <div className="flex flex-col h-full overflow-hidden bg-[var(--pt-surface)] border-r border-[var(--pt-border)]">
             {/* Logo row */}
-            <div className="px-4 py-3 border-b border-[#E5E2DC] flex-shrink-0">
-              <div className="flex items-center gap-2">
-                {/* Geometric accent logo */}
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <rect width="16" height="16" rx="3" fill="#5B6CF0" />
-                  <rect x="4" y="4" width="8" height="8" rx="1.5" fill="#FFFFFF" />
-                </svg>
-                <h1 className="text-sm font-semibold text-[#1C1917] tracking-tight">
-                  payloadtwist
-                </h1>
-                <span
-                  className="text-[9px] text-[#78726C] bg-[#F0EDE8] px-1.5 py-0.5 rounded"
-                  style={{ fontFamily: mono }}
-                >
-                  v1.0
-                </span>
+            <div className="px-4 py-2.5 border-b border-[var(--pt-border)] flex-shrink-0">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <EditorLogoMark size={22} />
+                  <h1
+                    className="text-sm font-bold tracking-tight"
+                    style={{ fontFamily: "'Syne', sans-serif" }}
+                  >
+                    payload<span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">twist</span>
+                  </h1>
+                  <span
+                    className="text-[9px] text-[var(--pt-text-muted)] bg-[var(--pt-surface-hover)] px-1.5 py-0.5 rounded"
+                    style={{ fontFamily: mono }}
+                  >
+                    v1.0
+                  </span>
+                </div>
+                {/* Editor UI theme toggle */}
+                <div className="flex items-center bg-[var(--pt-bg)] rounded-full p-0.5" title="Editor theme">
+                  <button
+                    onClick={() => setEditorDark(false)}
+                    className={`p-1.5 rounded-full transition-colors ${
+                      !editorDark
+                        ? 'bg-[var(--pt-accent)] text-white'
+                        : 'text-[var(--pt-text-muted)] hover:text-[var(--pt-text)]'
+                    }`}
+                    aria-label="Light editor"
+                  >
+                    <Sun size={12} />
+                  </button>
+                  <button
+                    onClick={() => setEditorDark(true)}
+                    className={`p-1.5 rounded-full transition-colors ${
+                      editorDark
+                        ? 'bg-[var(--pt-accent)] text-white'
+                        : 'text-[var(--pt-text-muted)] hover:text-[var(--pt-text)]'
+                    }`}
+                    aria-label="Dark editor"
+                  >
+                    <Moon size={12} />
+                  </button>
+                </div>
               </div>
-              <p className="text-[10px] text-[#78726C] mt-0.5 ml-6 tracking-wide uppercase">
-                Payload CSS Editor
-              </p>
             </div>
 
             {/* Action bar */}
-            <div className="px-3 py-1.5 border-b border-[#E5E2DC] flex items-center gap-1 flex-shrink-0">
+            <div className="px-3 py-1.5 border-b border-[var(--pt-border)] flex items-center gap-1 flex-shrink-0">
               <button
                 onClick={handleCopyCSS}
-                className="flex items-center gap-1.5 text-xs bg-[#5B6CF0] hover:bg-[#4A5AD9] text-white rounded px-2.5 py-1.5 transition-colors active:scale-[0.97] font-medium"
+                className="flex items-center gap-1.5 text-xs bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 hover:from-purple-500 hover:via-pink-500 hover:to-cyan-500 text-white rounded-full px-3 py-1.5 transition-all active:scale-[0.97] font-medium"
               >
                 <Copy size={12} />
                 Export
@@ -172,17 +229,17 @@ export default function EditorPage() {
               </button>
               <button
                 onClick={handleReset}
-                className="p-1.5 rounded hover:bg-[#F0EDE8] text-[#78726C] hover:text-[#E5484D] transition-colors active:scale-[0.97]"
+                className="p-1.5 rounded hover:bg-[var(--pt-surface-hover)] text-[var(--pt-text-muted)] hover:text-[var(--pt-danger)] transition-colors active:scale-[0.97]"
                 title="Reset to defaults"
                 aria-label="Reset"
               >
                 <RotateCcw size={13} />
               </button>
-              <div className="w-px h-4 bg-[#E5E2DC] mx-0.5" />
+              <div className="w-px h-4 bg-[var(--pt-border)] mx-0.5" />
               <button
                 onClick={undo}
                 disabled={!canUndo()}
-                className="p-1.5 rounded hover:bg-[#F0EDE8] text-[#78726C] hover:text-[#1C1917] transition-colors disabled:opacity-20 disabled:cursor-not-allowed active:scale-[0.97]"
+                className="p-1.5 rounded hover:bg-[var(--pt-surface-hover)] text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] transition-colors disabled:opacity-20 disabled:cursor-not-allowed active:scale-[0.97]"
                 title="Undo"
                 aria-label="Undo"
               >
@@ -191,7 +248,7 @@ export default function EditorPage() {
               <button
                 onClick={redo}
                 disabled={!canRedo()}
-                className="p-1.5 rounded hover:bg-[#F0EDE8] text-[#78726C] hover:text-[#1C1917] transition-colors disabled:opacity-20 disabled:cursor-not-allowed active:scale-[0.97]"
+                className="p-1.5 rounded hover:bg-[var(--pt-surface-hover)] text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] transition-colors disabled:opacity-20 disabled:cursor-not-allowed active:scale-[0.97]"
                 title="Redo"
                 aria-label="Redo"
               >
@@ -200,15 +257,15 @@ export default function EditorPage() {
             </div>
 
             {/* Tab bar */}
-            <div className="flex gap-0.5 px-2 py-1.5 border-b border-[#E5E2DC] flex-shrink-0 overflow-x-auto">
+            <div className="flex gap-0.5 px-2 py-1.5 border-b border-[var(--pt-border)] flex-shrink-0 overflow-x-auto">
               {TABS.map(({ key, label }) => (
                 <button
                   key={key}
                   onClick={() => setActiveTab(key)}
                   className={`text-[11px] px-2.5 py-1 rounded transition-colors whitespace-nowrap active:scale-[0.97] font-medium ${
                     activeTab === key
-                      ? 'bg-[#5B6CF0] text-white'
-                      : 'text-[#78726C] hover:text-[#1C1917] hover:bg-[#F0EDE8]'
+                      ? 'bg-[var(--pt-accent)] text-white'
+                      : 'text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] hover:bg-[var(--pt-surface-hover)]'
                   }`}
                 >
                   {label}
@@ -249,21 +306,21 @@ export default function EditorPage() {
 
             {/* CSS slide-up panel */}
             {cssPanel.open && (
-              <div className="border-t border-[#E5E2DC] bg-[#F8F7F5] flex-shrink-0">
-                <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#E5E2DC]">
-                  <span className="text-[10px] uppercase tracking-wider text-[#78726C]">
+              <div className="border-t border-[var(--pt-border)] bg-[var(--pt-bg)] flex-shrink-0">
+                <div className="flex items-center justify-between px-3 py-1.5 border-b border-[var(--pt-border)]">
+                  <span className="text-[10px] uppercase tracking-wider text-[var(--pt-text-muted)]">
                     Generated CSS
                   </span>
                   <button
                     onClick={() => setCssPanel((s) => ({ ...s, open: false }))}
-                    className="p-1 rounded hover:bg-[#F0EDE8] text-[#78726C] hover:text-[#1C1917] transition-colors"
+                    className="p-1 rounded hover:bg-[var(--pt-surface-hover)] text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] transition-colors"
                     aria-label="Close"
                   >
                     <X size={12} />
                   </button>
                 </div>
                 <pre
-                  className="text-xs text-[#1C1917] p-3 overflow-x-auto overflow-y-auto max-h-48 whitespace-pre"
+                  className="text-xs text-[var(--pt-code-text)] bg-[var(--pt-code-bg)] p-3 overflow-x-auto overflow-y-auto max-h-48 whitespace-pre"
                   style={{ fontFamily: mono }}
                 >
                   {cssPanel.css || '/* No changes from defaults */'}
@@ -276,9 +333,9 @@ export default function EditorPage() {
         {/* Resize handle */}
         <div
           onMouseDown={onDragStart}
-          className="w-[6px] flex-shrink-0 bg-[#E5E2DC] hover:bg-[#5B6CF0]/20 transition-colors cursor-col-resize flex items-center justify-center group"
+          className="w-[6px] flex-shrink-0 bg-[var(--pt-border)] hover:bg-[var(--pt-accent)]/20 transition-colors cursor-col-resize flex items-center justify-center group"
         >
-          <GripVertical size={12} className="text-[#B8B4AE] group-hover:text-[#5B6CF0] transition-colors" />
+          <GripVertical size={12} className="text-[var(--pt-text-faint)] group-hover:text-[var(--pt-accent)] transition-colors" />
         </div>
 
         {/* ── Right panel: iframe preview ── */}
@@ -288,7 +345,7 @@ export default function EditorPage() {
 
       {/* Toast */}
       {toast && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-white border border-[#E5E2DC] border-l-2 border-l-[#5B6CF0] text-[#1C1917] text-xs px-4 py-2 rounded shadow-lg pointer-events-none z-50">
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-[var(--pt-surface)] border border-[var(--pt-border)] border-l-2 border-l-[var(--pt-accent)] text-[var(--pt-text)] text-xs px-4 py-2 rounded shadow-lg pointer-events-none z-50">
           {toast}
         </div>
       )}

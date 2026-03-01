@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import './landing.css'
 
 export const metadata: Metadata = {
@@ -78,7 +79,7 @@ function AnimatedLogo({ size = 180 }: { size?: number }) {
       <line x1="144" y1="144" x2="107" y2="107" stroke="#22c55e" strokeWidth="1" opacity="0.2" />
 
       {/* Center nexus */}
-      <circle cx="100" cy="100" r="10" fill="#08080c" />
+      <circle cx="100" cy="100" r="10" style={{ fill: 'var(--lp-logo-center)' }} />
       <circle cx="100" cy="100" r="7" fill="url(#hero-core)" filter="url(#hero-soft-glow)" className="logo-core-pulse" />
       <circle cx="100" cy="100" r="3" fill="white" opacity="0.9" />
 
@@ -118,7 +119,7 @@ function LogoMark({ size = 32 }: { size?: number }) {
       <path d="M 56 56 C 56 90, 90 95, 100 100 C 110 105, 144 110, 144 144" stroke={`url(#sm-s2-${size})`} strokeWidth="16" strokeLinecap="round" fill="none" opacity="0.35" />
       <path d="M 144 56 C 144 90, 110 95, 100 100 C 90 105, 56 110, 56 144" stroke={`url(#sm-s1-${size})`} strokeWidth="16" strokeLinecap="round" fill="none" />
       <path d="M 100 100 C 110 105, 144 110, 144 144" stroke={`url(#sm-s2-${size})`} strokeWidth="16" strokeLinecap="round" fill="none" />
-      <circle cx="100" cy="100" r="10" fill="#08080c" />
+      <circle cx="100" cy="100" r="10" style={{ fill: 'var(--lp-logo-center)' }} />
       <circle cx="100" cy="100" r="7" fill={`url(#sm-core-${size})`} />
       <circle cx="100" cy="100" r="3" fill="white" />
       <circle cx="144" cy="56" r="6" fill="#ec4899" />
@@ -212,23 +213,26 @@ export default function LandingPage() {
   return (
     <div className="landing">
       {/* ═══ Nav ═══ */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.04] bg-[#08080c]/80 backdrop-blur-xl">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--lp-nav-border)] bg-[var(--lp-nav-bg)] backdrop-blur-xl">
         <div className="mx-auto max-w-6xl flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
             <LogoMark size={28} />
             <Wordmark className="text-lg" />
           </div>
-          <div className="hidden md:flex items-center gap-8 text-sm text-white/40">
-            <a href="#how-it-works" className="hover:text-white/80 transition-colors">How it works</a>
-            <a href="#features" className="hover:text-white/80 transition-colors">Features</a>
-            <a href="#preview" className="hover:text-white/80 transition-colors">Preview</a>
+          <div className="hidden md:flex items-center gap-8 text-sm text-[var(--lp-text-muted)]">
+            <a href="#how-it-works" className="hover:text-[var(--lp-text)] transition-colors">How it works</a>
+            <a href="#features" className="hover:text-[var(--lp-text)] transition-colors">Features</a>
+            <a href="#preview" className="hover:text-[var(--lp-text)] transition-colors">Preview</a>
           </div>
-          <a
-            href="/editor"
-            className="rounded-full bg-white/[0.06] border border-white/[0.08] px-5 py-2 text-sm font-medium text-white/80 hover:bg-white/[0.1] hover:border-white/[0.14] transition-all"
-          >
-            Open Editor
-          </a>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <a
+              href="/editor"
+              className="rounded-full bg-[var(--lp-ghost-bg)] border border-[var(--lp-border-medium)] px-5 py-2 text-sm font-medium text-[var(--lp-text-secondary)] hover:bg-[var(--lp-ghost-bg-hover)] hover:border-[var(--lp-border-hover)] transition-all"
+            >
+              Open Editor
+            </a>
+          </div>
         </div>
       </nav>
 
@@ -248,7 +252,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="anim-fade-up anim-delay-1 inline-flex items-center gap-2 rounded-full border border-purple-500/20 bg-purple-500/[0.06] px-4 py-1.5 text-xs font-medium tracking-wide text-purple-300/80 uppercase">
+          <div className="anim-fade-up anim-delay-1 inline-flex items-center gap-2 rounded-full border border-[var(--lp-badge-border)] bg-[var(--lp-badge-bg)] px-4 py-1.5 text-xs font-medium tracking-wide text-[var(--lp-badge-text)] uppercase">
             <span className="h-1.5 w-1.5 rounded-full bg-purple-400 animate-pulse" />
             Visual CSS Theme Editor
           </div>
@@ -266,7 +270,7 @@ export default function LandingPage() {
             <span className="text-gradient-shimmer">admin panel</span> visually
           </h1>
 
-          <p className="anim-fade-up anim-delay-3 max-w-xl text-lg text-white/35 leading-relaxed font-light">
+          <p className="anim-fade-up anim-delay-3 max-w-xl text-lg text-[var(--lp-text-faint)] leading-relaxed font-light">
             Tweak colors, typography, spacing, and components with real-time preview on a live Payload instance.
             Export clean CSS. No plugin required.
           </p>
@@ -285,16 +289,16 @@ export default function LandingPage() {
             </a>
             <a
               href="#how-it-works"
-              className="inline-flex items-center gap-2.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-7 py-3.5 text-sm font-medium text-white/60 hover:text-white/80 hover:border-white/[0.14] hover:bg-white/[0.06] transition-all"
+              className="inline-flex items-center gap-2.5 rounded-full border border-[var(--lp-border-medium)] bg-[var(--lp-ghost-bg)] px-7 py-3.5 text-sm font-medium text-[var(--lp-text-secondary)] hover:text-[var(--lp-text)] hover:border-[var(--lp-border-hover)] hover:bg-[var(--lp-ghost-bg-hover)] transition-all"
             >
               See how it works
             </a>
           </div>
         </div>
 
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/15 anim-fade-up anim-delay-6">
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[var(--lp-text-ghost)] anim-fade-up anim-delay-6">
           <span className="text-[10px] uppercase tracking-[3px] font-light">Scroll</span>
-          <div className="w-px h-8 bg-gradient-to-b from-white/20 to-transparent" />
+          <div className="w-px h-8 bg-gradient-to-b from-[var(--lp-text-ghost)] to-transparent" />
         </div>
       </section>
 
@@ -302,8 +306,8 @@ export default function LandingPage() {
       <section id="how-it-works" className="relative py-32 px-6">
         <div className="mx-auto max-w-4xl">
           <div className="text-center mb-20">
-            <span className="text-[10px] uppercase tracking-[4px] text-cyan-400/50 font-medium">How it works</span>
-            <h2 className="mt-4 font-display font-extrabold text-4xl sm:text-5xl tracking-[-0.02em] text-white/90">
+            <span className="text-[10px] uppercase tracking-[4px] text-[var(--lp-section-label)] font-medium">How it works</span>
+            <h2 className="mt-4 font-display font-extrabold text-4xl sm:text-5xl tracking-[-0.02em] text-[var(--lp-heading)]">
               Three steps to a <span className="text-gradient">custom admin</span>
             </h2>
           </div>
@@ -314,8 +318,8 @@ export default function LandingPage() {
                 <div className="step-num bg-gradient-to-br from-purple-600/80 to-pink-600/80 text-white">
                   {step.num}
                 </div>
-                <h3 className="font-display font-bold text-xl text-white/85">{step.title}</h3>
-                <p className="text-sm text-white/35 leading-relaxed">{step.description}</p>
+                <h3 className="font-display font-bold text-xl text-[var(--lp-heading)]">{step.title}</h3>
+                <p className="text-sm text-[var(--lp-text-faint)] leading-relaxed">{step.description}</p>
               </div>
             ))}
           </div>
@@ -326,22 +330,22 @@ export default function LandingPage() {
       <section id="preview" className="relative py-32 px-6">
         <div className="mx-auto max-w-5xl">
           <div className="text-center mb-16">
-            <span className="text-[10px] uppercase tracking-[4px] text-purple-400/50 font-medium">The Editor</span>
-            <h2 className="mt-4 font-display font-extrabold text-4xl tracking-[-0.02em] text-white/90">
+            <span className="text-[10px] uppercase tracking-[4px] text-[var(--lp-section-label-alt)] font-medium">The Editor</span>
+            <h2 className="mt-4 font-display font-extrabold text-4xl tracking-[-0.02em] text-[var(--lp-heading)]">
               Controls on the left. <span className="text-gradient">Live preview</span> on the right.
             </h2>
           </div>
 
-          <div className="relative rounded-2xl border border-white/[0.06] bg-[#0d0d14] overflow-hidden shadow-[0_0_80px_rgba(168,85,247,0.04)]">
+          <div className="relative rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-surface)] overflow-hidden shadow-[0_0_80px_rgba(168,85,247,0.04)]">
             {/* Browser chrome */}
-            <div className="flex items-center gap-2 px-5 py-3.5 border-b border-white/[0.04] bg-[#0a0a10]">
+            <div className="flex items-center gap-2 px-5 py-3.5 border-b border-[var(--lp-border-subtle)] bg-[var(--lp-surface-2)]">
               <div className="flex gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-white/[0.08]" />
-                <div className="w-2.5 h-2.5 rounded-full bg-white/[0.08]" />
-                <div className="w-2.5 h-2.5 rounded-full bg-white/[0.08]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[var(--lp-ghost-bg)]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[var(--lp-ghost-bg)]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[var(--lp-ghost-bg)]" />
               </div>
-              <div className="ml-4 flex-1 h-6 rounded-md bg-white/[0.03] flex items-center justify-center">
-                <span className="text-[10px] text-white/20 font-mono">localhost:3000/editor</span>
+              <div className="ml-4 flex-1 h-6 rounded-md bg-[var(--lp-ghost-bg)] flex items-center justify-center">
+                <span className="text-[10px] text-[var(--lp-text-ghost)] font-mono">localhost:3000/editor</span>
               </div>
             </div>
 
@@ -508,7 +512,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <p className="mt-6 text-center text-xs text-white/20">
+          <p className="mt-6 text-center text-xs text-[var(--lp-text-ghost)]">
             The editor runs alongside Payload in the same Next.js app — same-origin iframe, zero CORS issues
           </p>
         </div>
@@ -518,11 +522,11 @@ export default function LandingPage() {
       <section id="features" className="relative py-32 px-6">
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-20">
-            <span className="text-[10px] uppercase tracking-[4px] text-purple-400/50 font-medium">Features</span>
-            <h2 className="mt-4 font-display font-extrabold text-4xl sm:text-5xl tracking-[-0.02em] text-white/90">
+            <span className="text-[10px] uppercase tracking-[4px] text-[var(--lp-section-label-alt)] font-medium">Features</span>
+            <h2 className="mt-4 font-display font-extrabold text-4xl sm:text-5xl tracking-[-0.02em] text-[var(--lp-heading)]">
               Built for Payload&apos;s <span className="text-gradient">CSS architecture</span>
             </h2>
-            <p className="mt-4 max-w-lg mx-auto text-sm text-white/30 leading-relaxed">
+            <p className="mt-4 max-w-lg mx-auto text-sm text-[var(--lp-text-faint)] leading-relaxed">
               PayloadTwist understands Payload&apos;s three-layer variable system — base palette, elevation aliases, and semantic theme vars — so your overrides are always correct.
             </p>
           </div>
@@ -531,10 +535,10 @@ export default function LandingPage() {
             {features.map((f) => (
               <div
                 key={f.title}
-                className={`group rounded-2xl border ${f.border} bg-gradient-to-br ${f.gradient} p-7 transition-all hover:border-white/[0.1] hover:shadow-[0_0_40px_rgba(168,85,247,0.04)]`}
+                className={`group rounded-2xl border ${f.border} bg-gradient-to-br ${f.gradient} p-7 transition-all hover:border-[var(--lp-border-hover)] hover:shadow-[0_0_40px_rgba(168,85,247,0.04)]`}
               >
-                <h3 className="font-display font-bold text-lg text-white/85 mb-3">{f.title}</h3>
-                <p className="text-sm text-white/35 leading-relaxed">{f.description}</p>
+                <h3 className="font-display font-bold text-lg text-[var(--lp-heading)] mb-3">{f.title}</h3>
+                <p className="text-sm text-[var(--lp-text-faint)] leading-relaxed">{f.description}</p>
               </div>
             ))}
           </div>
@@ -545,40 +549,40 @@ export default function LandingPage() {
       <section className="relative py-32 px-6">
         <div className="mx-auto max-w-3xl">
           <div className="text-center mb-16">
-            <span className="text-[10px] uppercase tracking-[4px] text-green-400/50 font-medium">The Output</span>
-            <h2 className="mt-4 font-display font-extrabold text-4xl tracking-[-0.02em] text-white/90">
+            <span className="text-[10px] uppercase tracking-[4px] text-[var(--lp-section-label-green)] font-medium">The Output</span>
+            <h2 className="mt-4 font-display font-extrabold text-4xl tracking-[-0.02em] text-[var(--lp-heading)]">
               Clean CSS you <span className="text-gradient">own</span>
             </h2>
-            <p className="mt-4 max-w-md mx-auto text-sm text-white/30 leading-relaxed">
+            <p className="mt-4 max-w-md mx-auto text-sm text-[var(--lp-text-faint)] leading-relaxed">
               PayloadTwist generates a minimal custom.scss containing only the variables you changed. Paste it into your Payload project and you&apos;re done.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/[0.06] bg-[#0d0d14] overflow-hidden">
-            <div className="flex items-center gap-3 px-6 py-3 border-b border-white/[0.04]">
-              <span className="text-[10px] uppercase tracking-[2px] text-white/20 font-medium">custom.scss</span>
+          <div className="rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-surface)] overflow-hidden">
+            <div className="flex items-center gap-3 px-6 py-3 border-b border-[var(--lp-border-subtle)]">
+              <span className="text-[10px] uppercase tracking-[2px] text-[var(--lp-text-ghost)] font-medium">custom.scss</span>
               <div className="flex-1" />
-              <span className="text-[9px] text-white/15 font-mono">generated by payloadtwist</span>
+              <span className="text-[9px] text-[var(--lp-text-ghost)] font-mono">generated by payloadtwist</span>
             </div>
             <pre className="p-6 overflow-x-auto">
               <code className="text-[13px] font-mono leading-relaxed whitespace-pre">{
-`\x1b[0m`}<span className="text-white/20">{`/* Custom Payload CMS Theme */
+`\x1b[0m`}<span className="text-[var(--lp-code-comment)]">{`/* Custom Payload CMS Theme */
 /* Paste into your project's custom.scss */
 
-`}</span><span className="text-purple-300/60">{`:root`}</span><span className="text-white/30">{` {
-  `}</span><span className="text-white/20">{`/* Base Color Scale */`}</span><span className="text-white/30">{`
-  `}</span><span className="text-cyan-300/50">{`--color-base-0`}</span><span className="text-white/30">{`: `}</span><span className="text-pink-300/60">{`#faf5f0`}</span><span className="text-white/30">{`;
-  `}</span><span className="text-cyan-300/50">{`--color-base-500`}</span><span className="text-white/30">{`: `}</span><span className="text-pink-300/60">{`#8b7355`}</span><span className="text-white/30">{`;
-  `}</span><span className="text-cyan-300/50">{`--color-base-1000`}</span><span className="text-white/30">{`: `}</span><span className="text-pink-300/60">{`#1a1510`}</span><span className="text-white/30">{`;
+`}</span><span className="text-[var(--lp-code-selector)]">{`:root`}</span><span className="text-[var(--lp-code-punct)]">{` {
+  `}</span><span className="text-[var(--lp-code-comment)]">{`/* Base Color Scale */`}</span><span className="text-[var(--lp-code-punct)]">{`
+  `}</span><span className="text-[var(--lp-code-prop)]">{`--color-base-0`}</span><span className="text-[var(--lp-code-punct)]">{`: `}</span><span className="text-[var(--lp-code-value)]">{`#faf5f0`}</span><span className="text-[var(--lp-code-punct)]">{`;
+  `}</span><span className="text-[var(--lp-code-prop)]">{`--color-base-500`}</span><span className="text-[var(--lp-code-punct)]">{`: `}</span><span className="text-[var(--lp-code-value)]">{`#8b7355`}</span><span className="text-[var(--lp-code-punct)]">{`;
+  `}</span><span className="text-[var(--lp-code-prop)]">{`--color-base-1000`}</span><span className="text-[var(--lp-code-punct)]">{`: `}</span><span className="text-[var(--lp-code-value)]">{`#1a1510`}</span><span className="text-[var(--lp-code-punct)]">{`;
 
-  `}</span><span className="text-white/20">{`/* Typography */`}</span><span className="text-white/30">{`
-  `}</span><span className="text-cyan-300/50">{`--font-body`}</span><span className="text-white/30">{`: `}</span><span className="text-pink-300/60">{`'DM Sans', sans-serif`}</span><span className="text-white/30">{`;
+  `}</span><span className="text-[var(--lp-code-comment)]">{`/* Typography */`}</span><span className="text-[var(--lp-code-punct)]">{`
+  `}</span><span className="text-[var(--lp-code-prop)]">{`--font-body`}</span><span className="text-[var(--lp-code-punct)]">{`: `}</span><span className="text-[var(--lp-code-value)]">{`'DM Sans', sans-serif`}</span><span className="text-[var(--lp-code-punct)]">{`;
 }`}</span>{`
 
-`}<span className="text-white/20">{`/* Dark mode — only explicit overrides */`}</span>{`
-`}<span className="text-purple-300/60">{`[data-theme="dark"]`}</span><span className="text-white/30">{` {
-  `}</span><span className="text-cyan-300/50">{`--theme-bg`}</span><span className="text-white/30">{`: `}</span><span className="text-pink-300/60">{`#0d0d0d`}</span><span className="text-white/30">{`;
-  `}</span><span className="text-cyan-300/50">{`--theme-text`}</span><span className="text-white/30">{`: `}</span><span className="text-pink-300/60">{`#f3f3f3`}</span><span className="text-white/30">{`;
+`}<span className="text-[var(--lp-code-comment)]">{`/* Dark mode — only explicit overrides */`}</span>{`
+`}<span className="text-[var(--lp-code-selector)]">{`[data-theme="dark"]`}</span><span className="text-[var(--lp-code-punct)]">{` {
+  `}</span><span className="text-[var(--lp-code-prop)]">{`--theme-bg`}</span><span className="text-[var(--lp-code-punct)]">{`: `}</span><span className="text-[var(--lp-code-value)]">{`#0d0d0d`}</span><span className="text-[var(--lp-code-punct)]">{`;
+  `}</span><span className="text-[var(--lp-code-prop)]">{`--theme-text`}</span><span className="text-[var(--lp-code-punct)]">{`: `}</span><span className="text-[var(--lp-code-value)]">{`#f3f3f3`}</span><span className="text-[var(--lp-code-punct)]">{`;
 }`}</span>
               </code>
             </pre>
@@ -596,7 +600,7 @@ export default function LandingPage() {
           <h2 className="font-display font-extrabold text-4xl sm:text-5xl tracking-[-0.02em]">
             Ready to <span className="text-gradient">twist</span>?
           </h2>
-          <p className="text-white/30 text-lg font-light max-w-md">
+          <p className="text-[var(--lp-text-faint)] text-lg font-light max-w-md">
             Stop guessing CSS variable names. Open the editor, design your admin panel visually, and export clean overrides.
           </p>
           <a
@@ -614,13 +618,13 @@ export default function LandingPage() {
       </section>
 
       {/* ═══ Footer ═══ */}
-      <footer className="border-t border-white/[0.03] py-8 px-6">
+      <footer className="border-t border-[var(--lp-border-subtle)] py-8 px-6">
         <div className="mx-auto max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-white/20 text-xs">
+          <div className="flex items-center gap-2 text-[var(--lp-text-ghost)] text-xs">
             <LogoMark size={16} />
             <span>payloadtwist — open source</span>
           </div>
-          <span className="text-xs text-white/20">MIT License</span>
+          <span className="text-xs text-[var(--lp-text-ghost)]">MIT License</span>
         </div>
       </footer>
     </div>

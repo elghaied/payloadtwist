@@ -119,7 +119,7 @@ export function ScrubberInput({
     return (
       <div className={`inline-flex items-center ${className}`}>
         {label && (
-          <span className="text-[10px] uppercase tracking-wider text-[#78726C] mr-2">{label}</span>
+          <span className="text-[10px] uppercase tracking-wider text-[var(--pt-text-muted)] mr-2">{label}</span>
         )}
         <input
           ref={inputRef}
@@ -128,10 +128,10 @@ export function ScrubberInput({
           onChange={(e) => setEditValue(e.target.value)}
           onBlur={commitEdit}
           onKeyDown={handleKeyDown}
-          className="w-16 text-xs bg-white border border-[#5B6CF0] rounded px-2 py-1 text-[#1C1917] font-mono text-right focus:outline-none"
+          className="w-16 text-xs bg-[var(--pt-surface)] border border-[var(--pt-accent)] rounded px-2 py-1 text-[var(--pt-text)] font-mono text-right focus:outline-none"
           style={{ fontFamily: mono }}
         />
-        {unit && <span className="text-[10px] text-[#78726C] ml-1">{unit}</span>}
+        {unit && <span className="text-[10px] text-[var(--pt-text-muted)] ml-1">{unit}</span>}
       </div>
     )
   }
@@ -139,7 +139,7 @@ export function ScrubberInput({
   return (
     <div className={`inline-flex items-center ${className}`}>
       {label && (
-        <span className="text-[10px] uppercase tracking-wider text-[#78726C] mr-2">{label}</span>
+        <span className="text-[10px] uppercase tracking-wider text-[var(--pt-text-muted)] mr-2">{label}</span>
       )}
       <div
         ref={containerRef}
@@ -150,9 +150,9 @@ export function ScrubberInput({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className={`
-          select-none px-2 py-1 rounded text-xs text-[#1C1917] font-mono text-right
-          bg-[#F8F7F5] border transition-colors min-w-[3.5rem] relative
-          ${isDragging ? 'cursor-ew-resize border-[#5B6CF0]' : 'cursor-ew-resize border-[#E5E2DC] hover:border-[#CCC8C2]'}
+          select-none px-2 py-1 rounded text-xs text-[var(--pt-text)] font-mono text-right
+          bg-[var(--pt-bg)] border transition-colors min-w-[3.5rem] relative
+          ${isDragging ? 'cursor-ew-resize border-[var(--pt-accent)]' : 'cursor-ew-resize border-[var(--pt-border)] hover:border-[var(--pt-border-strong)]'}
         `}
         style={{ fontFamily: mono }}
         title="Drag to scrub · Double-click to edit · Shift=10x · Alt=0.1x"
@@ -160,11 +160,11 @@ export function ScrubberInput({
         {isHovered && !isDragging && (
           <MoveHorizontal
             size={10}
-            className="absolute left-1 top-1/2 -translate-y-1/2 text-[#B8B4AE]"
+            className="absolute left-1 top-1/2 -translate-y-1/2 text-[var(--pt-text-faint)]"
           />
         )}
         {value}
-        {unit && <span className="text-[#78726C] ml-0.5">{unit}</span>}
+        {unit && <span className="text-[var(--pt-text-muted)] ml-0.5">{unit}</span>}
       </div>
     </div>
   )

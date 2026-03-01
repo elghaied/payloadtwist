@@ -44,15 +44,15 @@ export function ScaleStrip({
                   style={{
                     background: s.color,
                     boxShadow: isSelected
-                      ? '0 0 0 2px #5B6CF0, 0 0 6px rgba(91,108,240,0.4)'
-                      : '0 0 0 1px rgba(0,0,0,0.15)',
+                      ? '0 0 0 2px var(--pt-accent), 0 0 6px rgba(168,85,247,0.4)'
+                      : '0 0 0 1px rgba(255,255,255,0.15)',
                   }}
                   title={`Step ${s.step} — click to select`}
                 />
               ) : (
                 <button
                   onClick={() => onStepAddPoint?.(s.step)}
-                  className="w-3 h-3 rounded-full border border-dashed border-[#C4BFB8] bg-transparent hover:border-[#5B6CF0] hover:bg-[#5B6CF0]/10 transition-all"
+                  className="w-3 h-3 rounded-full border border-dashed border-[var(--pt-border-strong)] bg-transparent hover:border-[var(--pt-accent)] hover:bg-[var(--pt-accent-soft)] transition-all"
                   title={`Step ${s.step} — click to add anchor`}
                 />
               )}
@@ -80,7 +80,7 @@ export function ScaleStrip({
         {steps.map((s) => (
           <div key={s.step} className="flex-1 text-center">
             <span
-              className="text-[9px] text-[#78726C]"
+              className="text-[9px] text-[var(--pt-text-muted)]"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               {s.step}

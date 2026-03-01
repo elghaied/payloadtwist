@@ -96,38 +96,38 @@ export function PaletteSelector({ onApply, onReset }: PaletteSelectorProps) {
     <div className="space-y-4">
       {/* Preset dropdown */}
       <div>
-        <p className="text-[10px] uppercase tracking-wider text-[#78726C] mb-2 font-medium">Theme Preset</p>
+        <p className="text-[10px] uppercase tracking-wider text-[var(--pt-text-muted)] mb-2 font-medium">Theme Preset</p>
 
         <div ref={dropdownRef} className="relative">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 text-xs bg-[#F8F7F5] border border-[#E5E2DC] rounded hover:border-[#CCC8C2] transition-colors text-left focus-visible:ring-1 focus-visible:ring-[#5B6CF0] focus-visible:outline-none"
+            className="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 text-xs bg-[var(--pt-bg)] border border-[var(--pt-border)] rounded hover:border-[var(--pt-border-strong)] transition-colors text-left focus-visible:ring-1 focus-visible:ring-[var(--pt-accent)] focus-visible:outline-none"
           >
             <div className="flex items-center gap-2.5 min-w-0">
               {activeColors && <PreviewStrip colors={activeColors} />}
-              <span className="text-[#1C1917] truncate">
+              <span className="text-[var(--pt-text)] truncate">
                 {activePreset?.name ?? 'Select a preset'}
               </span>
               {activePreset && (
-                <span className="text-[10px] text-[#A8A29E] truncate hidden sm:inline">
+                <span className="text-[10px] text-[var(--pt-text-faint)] truncate hidden sm:inline">
                   {activePreset.description}
                 </span>
               )}
             </div>
             <ChevronDown
               size={12}
-              className={`text-[#78726C] flex-shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+              className={`text-[var(--pt-text-muted)] flex-shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}
             />
           </button>
 
           {isOpen && (
-            <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-[#E5E2DC] rounded-lg shadow-lg max-h-72 overflow-y-auto panel-scroll">
+            <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-[var(--pt-surface)] border border-[var(--pt-border)] rounded-lg shadow-lg max-h-72 overflow-y-auto panel-scroll">
               {PRESET_GROUPS.map((group) => {
                 const groupPresets = THEME_PRESETS.filter((p) => p.group === group.id)
                 if (groupPresets.length === 0) return null
                 return (
                   <div key={group.id}>
-                    <div className="px-2.5 py-1 text-[10px] uppercase tracking-wider text-[#78726C] bg-[#F8F7F5] sticky top-0 font-medium">
+                    <div className="px-2.5 py-1 text-[10px] uppercase tracking-wider text-[var(--pt-text-muted)] bg-[var(--pt-bg)] sticky top-0 font-medium">
                       {group.label}
                     </div>
                     {groupPresets.map((preset) => {
@@ -137,16 +137,16 @@ export function PaletteSelector({ onApply, onReset }: PaletteSelectorProps) {
                         <button
                           key={preset.id}
                           onClick={() => handlePresetClick(preset)}
-                          className={`w-full text-left px-2.5 py-2 flex items-center gap-2.5 hover:bg-[#F0EDE8] transition-colors ${
-                            isActive ? 'bg-[#F0EDE8]/60' : ''
+                          className={`w-full text-left px-2.5 py-2 flex items-center gap-2.5 hover:bg-[var(--pt-surface-hover)] transition-colors ${
+                            isActive ? 'bg-[var(--pt-surface-hover)]/60' : ''
                           }`}
                         >
                           <PreviewStrip colors={colors} />
                           <div className="min-w-0">
-                            <span className={`text-xs block ${isActive ? 'text-[#5B6CF0] font-medium' : 'text-[#1C1917]'}`}>
+                            <span className={`text-xs block ${isActive ? 'text-[var(--pt-accent)] font-medium' : 'text-[var(--pt-text)]'}`}>
                               {preset.name}
                             </span>
-                            <span className="text-[10px] text-[#A8A29E] block truncate">
+                            <span className="text-[10px] text-[var(--pt-text-faint)] block truncate">
                               {preset.description}
                             </span>
                           </div>
@@ -163,7 +163,7 @@ export function PaletteSelector({ onApply, onReset }: PaletteSelectorProps) {
 
       {/* Custom palette */}
       <div>
-        <p className="text-[10px] uppercase tracking-wider text-[#78726C] mb-2 font-medium">Custom Palette</p>
+        <p className="text-[10px] uppercase tracking-wider text-[var(--pt-text-muted)] mb-2 font-medium">Custom Palette</p>
 
         <div className="space-y-3">
           <div className="flex items-center gap-3">
@@ -174,10 +174,10 @@ export function PaletteSelector({ onApply, onReset }: PaletteSelectorProps) {
                 label="Neutral Base"
                 swatchSize="sm"
               />
-              <span className="text-[10px] text-[#78726C]">Neutral</span>
+              <span className="text-[10px] text-[var(--pt-text-muted)]">Neutral</span>
             </div>
 
-            <div className="w-px h-5 bg-[#E5E2DC]" />
+            <div className="w-px h-5 bg-[var(--pt-border)]" />
 
             <button
               type="button"
@@ -188,7 +188,7 @@ export function PaletteSelector({ onApply, onReset }: PaletteSelectorProps) {
             >
               <div
                 className={`w-7 h-4 rounded-full relative transition-colors ${
-                  accentEnabled ? 'bg-[#5B6CF0]' : 'bg-[#E5E2DC]'
+                  accentEnabled ? 'bg-[var(--pt-accent)]' : 'bg-[var(--pt-border)]'
                 }`}
               >
                 <div
@@ -197,7 +197,7 @@ export function PaletteSelector({ onApply, onReset }: PaletteSelectorProps) {
                   }`}
                 />
               </div>
-              <span className="text-[10px] text-[#78726C]">Accent</span>
+              <span className="text-[10px] text-[var(--pt-text-muted)]">Accent</span>
             </button>
 
             {accentEnabled && (
@@ -222,7 +222,7 @@ export function PaletteSelector({ onApply, onReset }: PaletteSelectorProps) {
 
           <button
             onClick={handleCustomApply}
-            className="w-full text-xs py-1.5 rounded bg-[#5B6CF0] hover:bg-[#4A5AD9] text-white font-medium transition-colors active:scale-[0.97]"
+            className="w-full text-xs py-1.5 rounded bg-[var(--pt-accent)] hover:bg-[var(--pt-accent-hover)] text-white font-medium transition-colors active:scale-[0.97]"
           >
             Apply Custom Palette
           </button>

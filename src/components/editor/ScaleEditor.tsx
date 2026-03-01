@@ -421,11 +421,11 @@ export function ScaleEditor({ config, importTheme, setBaseScale, setVariable }: 
       <div
         key={point.id}
         className={`flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer transition-colors ${
-          isSelected ? 'bg-[#5B6CF0]/10 border border-[#5B6CF0]/30' : 'border border-transparent hover:bg-[#F0EDE8]'
+          isSelected ? 'bg-[var(--pt-accent-soft)] border border-[var(--pt-accent-muted)]' : 'border border-transparent hover:bg-[var(--pt-surface-hover)]'
         }`}
         onClick={() => setSelectedId(point.id)}
       >
-        <span className="text-[9px] uppercase tracking-wider text-[#78726C] font-medium w-[72px] shrink-0">
+        <span className="text-[9px] uppercase tracking-wider text-[var(--pt-text-muted)] font-medium w-[72px] shrink-0">
           {label}
         </span>
         <ColorPopover
@@ -438,7 +438,7 @@ export function ScaleEditor({ config, importTheme, setBaseScale, setVariable }: 
           type="text"
           value={hexInputs[point.id] ?? hex}
           onChange={(e) => handleHexInputChange(point.id, e.target.value)}
-          className="flex-1 text-xs bg-[#F8F7F5] border border-[#E5E2DC] rounded px-2 py-1 text-[#1C1917] font-mono min-w-0 focus:outline-none focus:border-[#5B6CF0]"
+          className="flex-1 text-xs bg-[var(--pt-bg)] border border-[var(--pt-border)] rounded px-2 py-1 text-[var(--pt-text)] font-mono min-w-0 focus:outline-none focus:border-[var(--pt-accent)]"
           spellCheck={false}
           placeholder="#000000"
         />
@@ -487,7 +487,7 @@ export function ScaleEditor({ config, importTheme, setBaseScale, setVariable }: 
         <button
           onClick={addPoint}
           disabled={points.length >= 16}
-          className="flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded text-[#78726C] bg-[#F0EDE8] hover:bg-[#E5E2DC] hover:text-[#1C1917] transition-colors disabled:opacity-30 disabled:cursor-not-allowed font-medium"
+          className="flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded text-[var(--pt-text-muted)] bg-[var(--pt-surface-hover)] hover:bg-[var(--pt-border)] hover:text-[var(--pt-text)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed font-medium"
         >
           <Plus size={12} />
           Add point
@@ -495,7 +495,7 @@ export function ScaleEditor({ config, importTheme, setBaseScale, setVariable }: 
         <button
           onClick={removePoint}
           disabled={!canRemoveSelected}
-          className="flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded text-[#78726C] bg-[#F0EDE8] hover:bg-[#E5E2DC] hover:text-[#1C1917] transition-colors disabled:opacity-30 disabled:cursor-not-allowed font-medium"
+          className="flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded text-[var(--pt-text-muted)] bg-[var(--pt-surface-hover)] hover:bg-[var(--pt-border)] hover:text-[var(--pt-text)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed font-medium"
         >
           <Minus size={12} />
           Remove
@@ -503,7 +503,7 @@ export function ScaleEditor({ config, importTheme, setBaseScale, setVariable }: 
         {points.length > 3 && (
           <button
             onClick={resetToThreeAnchors}
-            className="flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded text-[#78726C] bg-[#F0EDE8] hover:bg-[#E5E2DC] hover:text-[#1C1917] transition-colors font-medium"
+            className="flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded text-[var(--pt-text-muted)] bg-[var(--pt-surface-hover)] hover:bg-[var(--pt-border)] hover:text-[var(--pt-text)] transition-colors font-medium"
           >
             <RotateCcw size={12} />
             Reset
@@ -511,12 +511,12 @@ export function ScaleEditor({ config, importTheme, setBaseScale, setVariable }: 
         )}
         <button
           onClick={randomizeScale}
-          className="flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded text-[#78726C] bg-[#F0EDE8] hover:bg-[#E5E2DC] hover:text-[#1C1917] transition-colors font-medium"
+          className="flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded text-[var(--pt-text-muted)] bg-[var(--pt-surface-hover)] hover:bg-[var(--pt-border)] hover:text-[var(--pt-text)] transition-colors font-medium"
         >
           <Dices size={12} />
           Random
         </button>
-        <span className="text-[10px] text-[#78726C] ml-1">{points.length}/16 points</span>
+        <span className="text-[10px] text-[var(--pt-text-muted)] ml-1">{points.length}/16 points</span>
       </div>
 
       {/* Always-visible anchor fields */}
@@ -526,7 +526,7 @@ export function ScaleEditor({ config, importTheme, setBaseScale, setVariable }: 
         {renderAnchorRow(structuralPoints.darkest, 'Darkest (1000)')}
         {selectedNonStructural && (
           <>
-            <div className="border-t border-[#E5E2DC] my-1" />
+            <div className="border-t border-[var(--pt-border)] my-1" />
             {renderAnchorRow(selectedNonStructural, `Step ${selectedNonStructural.step}`)}
           </>
         )}
@@ -534,7 +534,7 @@ export function ScaleEditor({ config, importTheme, setBaseScale, setVariable }: 
 
       {/* 16-step swatch strip */}
       <div>
-        <p className="text-[10px] text-[#78726C] mb-2">Scale steps — click to override individually</p>
+        <p className="text-[10px] text-[var(--pt-text-muted)] mb-2">Scale steps — click to override individually</p>
         <ScaleStrip
           steps={scaleSteps}
           onStepChange={handleSwatchOverride}

@@ -25,14 +25,14 @@ export function ColorSwatch({
       onClick={onClick}
       className={cn(
         dim,
-        'rounded-[4px] border border-[#E5E2DC] flex-shrink-0 relative transition-transform duration-150 hover:scale-110 focus-visible:ring-1 focus-visible:ring-[#5B6CF0] focus-visible:outline-none shadow-sm',
+        'rounded-[4px] border border-[var(--pt-border)] flex-shrink-0 relative transition-transform duration-150 hover:scale-110 focus-visible:ring-1 focus-visible:ring-[var(--pt-accent)] focus-visible:outline-none shadow-sm',
         className,
       )}
       style={{ background: color }}
       title={color}
     >
       {hasOverride && (
-        <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-[#5B6CF0]" />
+        <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-[var(--pt-accent)]" />
       )}
     </button>
   )

@@ -373,12 +373,12 @@ export function ColorPopover({
         </div>
       </PopoverTrigger>
       <PopoverContent
-        className="w-auto p-3 bg-white border-[#E5E2DC] text-[#1C1917] shadow-lg"
+        className="w-auto p-3 bg-[var(--pt-surface)] border-[var(--pt-border)] text-[var(--pt-text)] shadow-lg"
         sideOffset={6}
       >
         <div className="flex flex-col gap-3" style={{ width: 220 }}>
           {label && (
-            <p className="text-[10px] text-[#78726C] font-mono truncate">{label}</p>
+            <p className="text-[10px] text-[var(--pt-text-muted)] font-mono truncate">{label}</p>
           )}
 
           {/* SV Canvas */}
@@ -400,8 +400,8 @@ export function ColorPopover({
                 onClick={() => setInputMode(mode)}
                 className={`flex-1 text-[10px] uppercase tracking-wider py-1 rounded transition-colors font-medium ${
                   inputMode === mode
-                    ? 'bg-[#F0EDE8] text-[#1C1917]'
-                    : 'text-[#78726C] hover:text-[#1C1917]'
+                    ? 'bg-[var(--pt-surface-hover)] text-[var(--pt-text)]'
+                    : 'text-[var(--pt-text-muted)] hover:text-[var(--pt-text)]'
                 }`}
               >
                 {mode}
@@ -415,7 +415,7 @@ export function ColorPopover({
               type="text"
               value={hexInput}
               onChange={(e) => handleHexInput(e.target.value)}
-              className="w-full text-xs bg-[#F8F7F5] border border-[#E5E2DC] rounded px-2 py-1.5 text-[#1C1917] font-mono focus:outline-none focus:border-[#5B6CF0]"
+              className="w-full text-xs bg-[var(--pt-bg)] border border-[var(--pt-border)] rounded px-2 py-1.5 text-[var(--pt-text)] font-mono focus:outline-none focus:border-[var(--pt-accent)]"
               spellCheck={false}
               placeholder="#000000"
             />
@@ -425,7 +425,7 @@ export function ColorPopover({
             <div className="grid grid-cols-3 gap-1.5">
               {(['R', 'G', 'B'] as const).map((ch, i) => (
                 <div key={ch} className="flex flex-col gap-0.5">
-                  <span className="text-[9px] text-[#78726C] text-center">{ch}</span>
+                  <span className="text-[9px] text-[var(--pt-text-muted)] text-center">{ch}</span>
                   <input
                     type="number"
                     min={0}
@@ -438,7 +438,7 @@ export function ColorPopover({
                         '#' + vals.map((v) => v.toString(16).padStart(2, '0')).join('')
                       handleHexInput(newHex)
                     }}
-                    className="w-full text-xs bg-[#F8F7F5] border border-[#E5E2DC] rounded px-1.5 py-1 text-[#1C1917] font-mono text-center focus:outline-none focus:border-[#5B6CF0]"
+                    className="w-full text-xs bg-[var(--pt-bg)] border border-[var(--pt-border)] rounded px-1.5 py-1 text-[var(--pt-text)] font-mono text-center focus:outline-none focus:border-[var(--pt-accent)]"
                   />
                 </div>
               ))}
@@ -449,7 +449,7 @@ export function ColorPopover({
             <div className="grid grid-cols-3 gap-1.5">
               {(['H', 'S', 'L'] as const).map((ch, i) => (
                 <div key={ch} className="flex flex-col gap-0.5">
-                  <span className="text-[9px] text-[#78726C] text-center">
+                  <span className="text-[9px] text-[var(--pt-text-muted)] text-center">
                     {ch}{i > 0 ? '%' : '\u00B0'}
                   </span>
                   <input
@@ -469,7 +469,7 @@ export function ColorPopover({
                       setHexInput(newHex)
                       emitChange(newHex)
                     }}
-                    className="w-full text-xs bg-[#F8F7F5] border border-[#E5E2DC] rounded px-1.5 py-1 text-[#1C1917] font-mono text-center focus:outline-none focus:border-[#5B6CF0]"
+                    className="w-full text-xs bg-[var(--pt-bg)] border border-[var(--pt-border)] rounded px-1.5 py-1 text-[var(--pt-text)] font-mono text-center focus:outline-none focus:border-[var(--pt-accent)]"
                   />
                 </div>
               ))}
@@ -480,7 +480,7 @@ export function ColorPopover({
           {defaultValue && toHex(value) !== toHex(defaultValue) && (
             <button
               onClick={handleReset}
-              className="text-[10px] text-[#78726C] hover:text-[#1C1917] transition-colors text-left"
+              className="text-[10px] text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] transition-colors text-left"
             >
               Reset to default
             </button>

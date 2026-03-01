@@ -22,7 +22,7 @@ export function DashboardTab({ config, setComponentOverride }: DashboardTabProps
         setComponentOverride={setComponentOverride}
       />
 
-      <div className="border-t border-[#E5E2DC] pt-2">
+      <div className="border-t border-[var(--pt-border)] pt-2">
         <SectionHeader
           label="Raw CSS"
           isOpen={rawCssOpen}

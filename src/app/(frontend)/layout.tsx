@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { ThemeProvider } from '@/providers/theme-provider'
 import './globals.css'
 
 export const metadata = {
@@ -7,7 +8,7 @@ export const metadata = {
 
 export default function FrontendLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -18,10 +19,10 @@ export default function FrontendLayout({ children }: { children: ReactNode }) {
       </head>
       <body
         style={{
-          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          fontFamily: "'Outfit', sans-serif",
         }}
       >
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   )

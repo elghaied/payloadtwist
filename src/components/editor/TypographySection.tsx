@@ -39,14 +39,14 @@ export function TypographySection({ config, setVariable }: TypographySectionProp
 
       {sizeVars.length > 0 && (
         <>
-          <div className="border-t border-[#E5E2DC]" />
+          <div className="border-t border-[var(--pt-border)]" />
           {sizeVars.map((v) => {
             const value = config.light[v.var] ?? v.value
             const numVal = parsePx(value)
             return (
               <div key={v.var} className="flex items-center justify-between">
                 <label
-                  className="text-[11px] text-[#57534E]"
+                  className="text-[11px] text-[var(--pt-text-label)]"
                   style={{ fontFamily: mono }}
                 >
                   {v.var}
@@ -70,7 +70,7 @@ export function TypographySection({ config, setVariable }: TypographySectionProp
         return (
           <div key={v.var} className="space-y-1">
             <label
-              className="text-[11px] text-[#57534E] block"
+              className="text-[11px] text-[var(--pt-text-label)] block"
               style={{ fontFamily: mono }}
             >
               {v.var}
@@ -79,7 +79,7 @@ export function TypographySection({ config, setVariable }: TypographySectionProp
               type="text"
               value={value}
               onChange={(e) => setVariable(v.var, e.target.value, 'light')}
-              className="w-full text-xs bg-[#F8F7F5] border border-[#E5E2DC] rounded px-2 py-1.5 text-[#1C1917] focus:outline-none focus:border-[#5B6CF0]"
+              className="w-full text-xs bg-[var(--pt-bg)] border border-[var(--pt-border)] rounded px-2 py-1.5 text-[var(--pt-text)] focus:outline-none focus:border-[var(--pt-accent)]"
               style={{ fontFamily: mono }}
             />
           </div>

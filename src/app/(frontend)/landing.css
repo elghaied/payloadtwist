@@ -5,23 +5,94 @@
   --font-body: 'Outfit', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  --lp-void: #08080c;
-  --lp-surface: #0d0d14;
-  --lp-surface-2: #0a0a10;
-  --lp-border: rgba(255, 255, 255, 0.06);
-  --lp-text: #e2e2e8;
-  --lp-text-muted: rgba(255, 255, 255, 0.4);
-  --lp-text-faint: rgba(255, 255, 255, 0.2);
+  /* ── Light mode tokens (default) ── */
+  --lp-void: #f8f8fc;
+  --lp-surface: #eeeef4;
+  --lp-surface-2: #e4e4ec;
+  --lp-nav-bg: rgba(248, 248, 252, 0.85);
+  --lp-nav-border: rgba(0, 0, 0, 0.06);
+
+  --lp-text: #1a1a2e;
+  --lp-heading: #1a1a2e;
+  --lp-text-secondary: rgba(26, 26, 46, 0.65);
+  --lp-text-muted: rgba(26, 26, 46, 0.5);
+  --lp-text-faint: rgba(26, 26, 46, 0.35);
+  --lp-text-ghost: rgba(26, 26, 46, 0.18);
+
+  --lp-border: rgba(26, 26, 46, 0.08);
+  --lp-border-subtle: rgba(26, 26, 46, 0.04);
+  --lp-border-medium: rgba(26, 26, 46, 0.1);
+  --lp-border-hover: rgba(26, 26, 46, 0.18);
+
+  --lp-ghost-bg: rgba(26, 26, 46, 0.04);
+  --lp-ghost-bg-hover: rgba(26, 26, 46, 0.08);
+
   --lp-purple: #a855f7;
   --lp-pink: #ec4899;
   --lp-cyan: #06b6d4;
   --lp-green: #22c55e;
 
+  --lp-badge-border: rgba(168, 85, 247, 0.25);
+  --lp-badge-bg: rgba(168, 85, 247, 0.08);
+  --lp-badge-text: #7c3aed;
+
+  --lp-section-label: rgba(6, 182, 212, 0.6);
+  --lp-section-label-alt: rgba(168, 85, 247, 0.6);
+  --lp-section-label-green: rgba(34, 197, 94, 0.6);
+
+  --lp-code-comment: rgba(26, 26, 46, 0.3);
+  --lp-code-selector: rgba(126, 34, 206, 0.7);
+  --lp-code-prop: rgba(6, 132, 164, 0.8);
+  --lp-code-value: rgba(190, 50, 120, 0.7);
+  --lp-code-punct: rgba(26, 26, 46, 0.4);
+
+  --lp-logo-center: #f8f8fc;
+
   font-family: var(--font-body);
   background: var(--lp-void);
-  color: white;
+  color: var(--lp-text);
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+/* ── Dark mode tokens ── */
+.dark .landing {
+  --lp-void: #08080c;
+  --lp-surface: #0d0d14;
+  --lp-surface-2: #0a0a10;
+  --lp-nav-bg: rgba(8, 8, 12, 0.8);
+  --lp-nav-border: rgba(255, 255, 255, 0.04);
+
+  --lp-text: #e2e2e8;
+  --lp-heading: rgba(255, 255, 255, 0.9);
+  --lp-text-secondary: rgba(255, 255, 255, 0.6);
+  --lp-text-muted: rgba(255, 255, 255, 0.4);
+  --lp-text-faint: rgba(255, 255, 255, 0.3);
+  --lp-text-ghost: rgba(255, 255, 255, 0.15);
+
+  --lp-border: rgba(255, 255, 255, 0.06);
+  --lp-border-subtle: rgba(255, 255, 255, 0.03);
+  --lp-border-medium: rgba(255, 255, 255, 0.08);
+  --lp-border-hover: rgba(255, 255, 255, 0.14);
+
+  --lp-ghost-bg: rgba(255, 255, 255, 0.06);
+  --lp-ghost-bg-hover: rgba(255, 255, 255, 0.1);
+
+  --lp-badge-border: rgba(168, 85, 247, 0.2);
+  --lp-badge-bg: rgba(168, 85, 247, 0.06);
+  --lp-badge-text: rgba(192, 160, 255, 0.8);
+
+  --lp-section-label: rgba(6, 182, 212, 0.5);
+  --lp-section-label-alt: rgba(168, 85, 247, 0.5);
+  --lp-section-label-green: rgba(34, 197, 94, 0.5);
+
+  --lp-code-comment: rgba(255, 255, 255, 0.2);
+  --lp-code-selector: rgba(192, 160, 255, 0.6);
+  --lp-code-prop: rgba(103, 210, 223, 0.5);
+  --lp-code-value: rgba(236, 130, 180, 0.6);
+  --lp-code-punct: rgba(255, 255, 255, 0.3);
+
+  --lp-logo-center: #08080c;
 }
 
 .landing .font-display {

@@ -126,7 +126,7 @@ export function FontPicker({ value, onChange, varName }: FontPickerProps) {
   return (
     <div className="space-y-2">
       <label
-        className="text-[11px] text-[#57534E] block"
+        className="text-[11px] text-[var(--pt-text-label)] block"
         style={{ fontFamily: mono }}
       >
         {varName}
@@ -135,30 +135,30 @@ export function FontPicker({ value, onChange, varName }: FontPickerProps) {
       <div ref={dropdownRef} className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 text-xs bg-[#F8F7F5] border border-[#E5E2DC] rounded hover:border-[#CCC8C2] transition-colors text-left focus-visible:ring-1 focus-visible:ring-[#5B6CF0] focus-visible:outline-none"
+          className="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 text-xs bg-[var(--pt-bg)] border border-[var(--pt-border)] rounded hover:border-[var(--pt-border-strong)] transition-colors text-left focus-visible:ring-1 focus-visible:ring-[var(--pt-accent)] focus-visible:outline-none"
         >
-          <span className="text-[#1C1917] truncate" style={{ fontFamily: value || undefined }}>
+          <span className="text-[var(--pt-text)] truncate" style={{ fontFamily: value || undefined }}>
             {currentLabel}
           </span>
           <ChevronDown
             size={12}
-            className={`text-[#78726C] flex-shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            className={`text-[var(--pt-text-muted)] flex-shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           />
         </button>
 
         {isOpen && (
-          <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-[#E5E2DC] rounded shadow-lg max-h-64 overflow-y-auto panel-scroll">
+          <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-[var(--pt-surface)] border border-[var(--pt-border)] rounded shadow-lg max-h-64 overflow-y-auto panel-scroll">
             {FONT_OPTIONS.map((group) => (
               <div key={group.group}>
-                <div className="px-2.5 py-1 text-[10px] uppercase tracking-wider text-[#78726C] bg-[#F8F7F5] sticky top-0 font-medium">
+                <div className="px-2.5 py-1 text-[10px] uppercase tracking-wider text-[var(--pt-text-muted)] bg-[var(--pt-bg)] sticky top-0 font-medium">
                   {group.group}
                 </div>
                 {group.fonts.map((font) => (
                   <button
                     key={font.value}
                     onClick={() => handleSelect(font)}
-                    className={`w-full text-left px-2.5 py-1.5 text-xs hover:bg-[#F0EDE8] transition-colors ${
-                      font.value === value ? 'text-[#5B6CF0] bg-[#F0EDE8]/50' : 'text-[#1C1917]'
+                    className={`w-full text-left px-2.5 py-1.5 text-xs hover:bg-[var(--pt-surface-hover)] transition-colors ${
+                      font.value === value ? 'text-[var(--pt-accent)] bg-[var(--pt-surface-hover)]/50' : 'text-[var(--pt-text)]'
                     }`}
                     style={{ fontFamily: font.value }}
                   >
@@ -171,11 +171,11 @@ export function FontPicker({ value, onChange, varName }: FontPickerProps) {
         )}
       </div>
 
-      <div className="rounded border border-[#E5E2DC] bg-[#F8F7F5] px-3 py-2">
-        <p className="text-sm text-[#1C1917]" style={{ fontFamily: value || undefined }}>
+      <div className="rounded border border-[var(--pt-border)] bg-[var(--pt-bg)] px-3 py-2">
+        <p className="text-sm text-[var(--pt-text)]" style={{ fontFamily: value || undefined }}>
           The quick brown fox jumps over the lazy dog
         </p>
-        <p className="text-[10px] text-[#78726C] mt-1" style={{ fontFamily: value || undefined }}>
+        <p className="text-[10px] text-[var(--pt-text-muted)] mt-1" style={{ fontFamily: value || undefined }}>
           ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789
         </p>
       </div>

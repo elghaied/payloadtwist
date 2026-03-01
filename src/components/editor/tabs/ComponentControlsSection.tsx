@@ -84,12 +84,12 @@ export function ComponentControlsSection({
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         placeholder="Search components..."
-        className="w-full text-xs bg-[#F8F7F5] border border-[#E5E2DC] rounded px-2.5 py-1.5 text-[#1C1917] placeholder-[#A8A29E] focus:outline-none focus:border-[#5B6CF0] mb-2"
+        className="w-full text-xs bg-[var(--pt-bg)] border border-[var(--pt-border)] rounded px-2.5 py-1.5 text-[var(--pt-text)] placeholder-[var(--pt-text-faint)] focus:outline-none focus:border-[var(--pt-accent)] mb-2"
       />
 
       {allComponents.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-[11px] text-[#78726C]">
+          <p className="text-[11px] text-[var(--pt-text-muted)]">
             {searchQuery ? 'No matching components' : 'No components in this category'}
           </p>
         </div>
@@ -114,7 +114,7 @@ export function ComponentControlsSection({
               {comp.bemBlock && (
                 <button
                   onClick={() => highlightBemBlock(comp.bemBlock)}
-                  className="p-1 rounded hover:bg-[#F0EDE8] text-[#78726C] hover:text-[#1C1917] transition-colors flex-shrink-0"
+                  className="p-1 rounded hover:bg-[var(--pt-surface-hover)] text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] transition-colors flex-shrink-0"
                   title="Highlight in preview"
                   aria-label="Highlight"
                 >
@@ -132,7 +132,7 @@ export function ComponentControlsSection({
             )}
 
             {isExpanded && controls.length === 0 && (
-              <p className="text-[10px] text-[#78726C] pl-6 pb-2">
+              <p className="text-[10px] text-[var(--pt-text-muted)] pl-6 pb-2">
                 No visual controls — use Raw CSS for manual overrides.
               </p>
             )}
@@ -168,7 +168,7 @@ function ComponentControls({
         if (!roleControls?.length) return null
         return (
           <div key={role}>
-            <div className="text-[9px] uppercase tracking-widest text-[#78726C] mb-0.5 pt-0.5 font-medium">
+            <div className="text-[9px] uppercase tracking-widest text-[var(--pt-text-muted)] mb-0.5 pt-0.5 font-medium">
               {ROLE_LABELS[role]}
             </div>
             {roleControls.map((control) => (

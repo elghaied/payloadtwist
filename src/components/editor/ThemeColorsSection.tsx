@@ -22,11 +22,11 @@ export function ThemeColorsSection({ config, setVariable }: ThemeColorsSectionPr
           return (
             <div
               key={v.var}
-              className="flex items-center gap-2 py-1.5 border-b border-[#E5E2DC] last:border-0"
+              className="flex items-center gap-2 py-1.5 border-b border-[var(--pt-border)] last:border-0"
             >
               <div className="flex-1 min-w-0">
                 <code
-                  className="text-[11px] text-[#57534E] block truncate"
+                  className="text-[11px] text-[var(--pt-text-label)] block truncate"
                   style={{ fontFamily: "'JetBrains Mono', monospace" }}
                 >
                   {v.var}
@@ -41,7 +41,7 @@ export function ThemeColorsSection({ config, setVariable }: ThemeColorsSectionPr
                     defaultValue={v.value}
                     swatchSize="sm"
                   />
-                  <span className="text-[9px] text-[#78726C]">light</span>
+                  <span className="text-[9px] text-[var(--pt-text-muted)]">light</span>
                 </div>
                 {v.darkMode === 'explicit' && (
                   <div className="flex flex-col items-center gap-0.5">
@@ -51,7 +51,7 @@ export function ThemeColorsSection({ config, setVariable }: ThemeColorsSectionPr
                       label={`${v.var} (dark)`}
                       swatchSize="sm"
                     />
-                    <span className="text-[9px] text-[#78726C]">dark</span>
+                    <span className="text-[9px] text-[var(--pt-text-muted)]">dark</span>
                   </div>
                 )}
               </div>
@@ -59,7 +59,7 @@ export function ThemeColorsSection({ config, setVariable }: ThemeColorsSectionPr
           )
         })}
       </div>
-      <p className="text-[10px] text-[#78726C] italic">
+      <p className="text-[10px] text-[var(--pt-text-muted)] italic">
         Elevation colors auto-invert in dark mode — no overrides needed.
       </p>
     </div>

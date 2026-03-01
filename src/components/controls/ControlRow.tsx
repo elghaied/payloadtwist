@@ -17,14 +17,14 @@ export function ControlRow({ label, subtitle, control, onReset, hasOverride, tok
     <div className="flex items-center gap-1.5 py-1 group min-h-[28px]">
       <div className="flex-1 min-w-0">
         <span
-          className="text-[11px] text-[#57534E] block truncate"
+          className="text-[11px] text-[var(--pt-text-label)] block truncate"
           title={label}
         >
           {label}
         </span>
         {subtitle && (
           <span
-            className="text-[9px] text-[#A8A29E] block truncate"
+            className="text-[9px] text-[var(--pt-text-faint)] block truncate"
             title={subtitle}
           >
             {subtitle}
@@ -39,7 +39,7 @@ export function ControlRow({ label, subtitle, control, onReset, hasOverride, tok
       {hasOverride && onReset && (
         <button
           onClick={onReset}
-          className="text-[#78726C] hover:text-[#1C1917] opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 p-0.5"
+          className="text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 p-0.5"
           title="Reset to default"
           aria-label="Reset"
         >

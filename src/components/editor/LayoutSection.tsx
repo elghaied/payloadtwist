@@ -45,7 +45,7 @@ export function LayoutSection({ config, setVariable, setBaseRadius }: LayoutSect
       {radiusVars.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] uppercase tracking-wider text-[#78726C] font-medium">Roundness</span>
+            <span className="text-[10px] uppercase tracking-wider text-[var(--pt-text-muted)] font-medium">Roundness</span>
             <ScrubberInput
               value={radiusM}
               onChange={(v) => setBaseRadius(v)}
@@ -64,11 +64,11 @@ export function LayoutSection({ config, setVariable, setBaseRadius }: LayoutSect
             ].map(({ label, value }) => (
               <div key={label} className="flex items-center gap-1.5">
                 <div
-                  className="w-8 h-6 bg-[#E5E2DC] border border-[#CCC8C2]"
+                  className="w-8 h-6 bg-[var(--pt-border)] border border-[var(--pt-border-strong)]"
                   style={{ borderRadius: `${value}px` }}
                 />
                 <span
-                  className="text-[10px] text-[#78726C]"
+                  className="text-[10px] text-[var(--pt-text-muted)]"
                   style={{ fontFamily: mono }}
                 >
                   {label}: {value}px
@@ -80,7 +80,7 @@ export function LayoutSection({ config, setVariable, setBaseRadius }: LayoutSect
       )}
 
       {radiusVars.length > 0 && nonRadiusVars.length > 0 && (
-        <div className="border-t border-[#E5E2DC]" />
+        <div className="border-t border-[var(--pt-border)]" />
       )}
 
       {nonRadiusVars.map((v) => {
@@ -91,7 +91,7 @@ export function LayoutSection({ config, setVariable, setBaseRadius }: LayoutSect
           return (
             <div key={v.var} className="flex items-center gap-2">
               <label
-                className="text-[11px] text-[#57534E] flex-1 truncate"
+                className="text-[11px] text-[var(--pt-text-label)] flex-1 truncate"
                 style={{ fontFamily: mono }}
               >
                 {v.var}
@@ -103,7 +103,7 @@ export function LayoutSection({ config, setVariable, setBaseRadius }: LayoutSect
                 max={9999}
                 step={1}
                 onChange={(e) => setVariable(v.var, e.target.value, 'light')}
-                className="w-20 text-xs bg-[#F8F7F5] border border-[#E5E2DC] rounded px-1.5 py-1 text-[#1C1917] text-right focus:outline-none focus:border-[#5B6CF0]"
+                className="w-20 text-xs bg-[var(--pt-bg)] border border-[var(--pt-border)] rounded px-1.5 py-1 text-[var(--pt-text)] text-right focus:outline-none focus:border-[var(--pt-accent)]"
                 style={{ fontFamily: mono }}
               />
             </div>
@@ -116,7 +116,7 @@ export function LayoutSection({ config, setVariable, setBaseRadius }: LayoutSect
           <div key={v.var} className="space-y-1">
             <div className="flex items-center justify-between">
               <label
-                className="text-[11px] text-[#57534E]"
+                className="text-[11px] text-[var(--pt-text-label)]"
                 style={{ fontFamily: mono }}
               >
                 {v.var}
@@ -131,7 +131,7 @@ export function LayoutSection({ config, setVariable, setBaseRadius }: LayoutSect
               />
             </div>
             {isResponsive && v.note && (
-              <p className="text-[10px] text-[#78726C] italic">{v.note}</p>
+              <p className="text-[10px] text-[var(--pt-text-muted)] italic">{v.note}</p>
             )}
           </div>
         )

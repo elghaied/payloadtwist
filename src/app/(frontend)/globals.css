@@ -48,48 +48,86 @@
 :root {
     --radius: 0.625rem;
 
-    /* ── Payloadtwist editor design tokens — warm light ── */
-    --pt-bg: #F8F7F5;
-    --pt-surface: #FFFFFF;
-    --pt-border: #E5E2DC;
-    --pt-text: #1C1917;
-    --pt-text-muted: #78726C;
-    --pt-accent: #5B6CF0;
+    /* ── Payloadtwist editor design tokens — always dark ── */
+    --pt-bg: #08080c;
+    --pt-surface: #0d0d14;
+    --pt-surface-alt: #0a0a10;
+    --pt-surface-hover: #16161e;
+    --pt-surface-active: #1e1e28;
+    --pt-text: #e2e2e8;
+    --pt-text-muted: #7a7a8a;
+    --pt-text-label: #8a8a9a;
+    --pt-text-subtle: #606078;
+    --pt-text-faint: #505060;
+    --pt-border: #1e1e28;
+    --pt-border-strong: #2a2a35;
+    --pt-accent: #a855f7;
+    --pt-accent-hover: #9333ea;
+    --pt-accent-soft: rgba(168,85,247,0.1);
+    --pt-accent-muted: rgba(168,85,247,0.3);
     --pt-danger: #E5484D;
     --pt-success: #30A46C;
+    --pt-code-bg: #06060a;
+    --pt-code-text: #e2e2e8;
+    --pt-code-btn: #16161e;
 
-    /* ── shadcn overrides — light editor chrome ── */
-    --background: #F8F7F5;
-    --foreground: #1C1917;
-    --card: #FFFFFF;
-    --card-foreground: #1C1917;
-    --popover: #FFFFFF;
-    --popover-foreground: #1C1917;
-    --primary: #1C1917;
-    --primary-foreground: #FFFFFF;
-    --secondary: #F0EDE8;
-    --secondary-foreground: #1C1917;
-    --muted: #F0EDE8;
-    --muted-foreground: #78726C;
-    --accent: #F0EDE8;
-    --accent-foreground: #1C1917;
+    /* ── shadcn — dark by default (editor chrome) ── */
+    --background: #08080c;
+    --foreground: #e2e2e8;
+    --card: #0d0d14;
+    --card-foreground: #e2e2e8;
+    --popover: #0d0d14;
+    --popover-foreground: #e2e2e8;
+    --primary: #e2e2e8;
+    --primary-foreground: #08080c;
+    --secondary: #16161e;
+    --secondary-foreground: #e2e2e8;
+    --muted: #16161e;
+    --muted-foreground: #7a7a8a;
+    --accent: #16161e;
+    --accent-foreground: #e2e2e8;
     --destructive: #E5484D;
-    --border: #E5E2DC;
-    --input: #E5E2DC;
-    --ring: #5B6CF0;
-    --chart-1: #5B6CF0;
+    --border: #1e1e28;
+    --input: #1e1e28;
+    --ring: #a855f7;
+    --chart-1: #a855f7;
     --chart-2: #30A46C;
     --chart-3: #E5484D;
     --chart-4: #E5A000;
     --chart-5: #8B5CF6;
-    --sidebar: #F8F7F5;
-    --sidebar-foreground: #1C1917;
-    --sidebar-primary: #5B6CF0;
+    --sidebar: #08080c;
+    --sidebar-foreground: #e2e2e8;
+    --sidebar-primary: #a855f7;
     --sidebar-primary-foreground: #FFFFFF;
-    --sidebar-accent: #F0EDE8;
-    --sidebar-accent-foreground: #1C1917;
-    --sidebar-border: #E5E2DC;
-    --sidebar-ring: #5B6CF0;
+    --sidebar-accent: #16161e;
+    --sidebar-accent-foreground: #e2e2e8;
+    --sidebar-border: #1e1e28;
+    --sidebar-ring: #a855f7;
+}
+
+/* ── Editor light mode overrides ── */
+[data-editor-theme="light"] {
+    --pt-bg: #f5f5f7;
+    --pt-surface: #ffffff;
+    --pt-surface-alt: #fafafa;
+    --pt-surface-hover: #ededf0;
+    --pt-surface-active: #e2e2e6;
+    --pt-text: #1a1a2e;
+    --pt-text-muted: #6b6b80;
+    --pt-text-label: #5a5a70;
+    --pt-text-subtle: #8888a0;
+    --pt-text-faint: #a0a0b0;
+    --pt-border: #dddde3;
+    --pt-border-strong: #ccccda;
+    --pt-accent: #9333ea;
+    --pt-accent-hover: #7e22ce;
+    --pt-accent-soft: rgba(147,51,234,0.08);
+    --pt-accent-muted: rgba(147,51,234,0.2);
+    --pt-danger: #dc2626;
+    --pt-success: #16a34a;
+    --pt-code-bg: #f0f0f3;
+    --pt-code-text: #1a1a2e;
+    --pt-code-btn: #e2e2e6;
 }
 
 @layer base {
@@ -104,7 +142,7 @@
 /* ── Panel scrollbar ── */
 .panel-scroll {
   scrollbar-width: thin;
-  scrollbar-color: #D1CEC9 transparent;
+  scrollbar-color: #2a2a35 transparent;
 }
 .panel-scroll::-webkit-scrollbar {
   width: 4px;
@@ -113,9 +151,18 @@
   background: transparent;
 }
 .panel-scroll::-webkit-scrollbar-thumb {
-  background: #D1CEC9;
+  background: #2a2a35;
   border-radius: 2px;
 }
 .panel-scroll::-webkit-scrollbar-thumb:hover {
-  background: #B8B4AE;
+  background: #3a3a48;
+}
+[data-editor-theme="light"] .panel-scroll {
+  scrollbar-color: #ccccda transparent;
+}
+[data-editor-theme="light"] .panel-scroll::-webkit-scrollbar-thumb {
+  background: #ccccda;
+}
+[data-editor-theme="light"] .panel-scroll::-webkit-scrollbar-thumb:hover {
+  background: #b0b0c0;
 }
