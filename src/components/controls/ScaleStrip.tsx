@@ -1,6 +1,5 @@
 'use client'
 
-import { ColorSwatch } from './ColorSwatch'
 import { ColorPopover } from './ColorPopover'
 
 interface ScaleStep {
@@ -15,11 +14,53 @@ interface ScaleStripProps {
   steps: ScaleStep[]
   onStepChange?: (step: number, color: string) => void
   onStepReset?: (step: number) => void
+  selectedStep?: number | null
+  onStepAddPoint?: (step: number) => void
+  onStepSelectPoint?: (step: number) => void
 }
 
-export function ScaleStrip({ steps, onStepChange, onStepReset }: ScaleStripProps) {
+export function ScaleStrip({
+  steps,
+  onStepChange,
+  onStepReset,
+  selectedStep,
+  onStepAddPoint,
+  onStepSelectPoint,
+}: ScaleStripProps) {
   return (
     <div>
+      {/* Indicator dots */}
+      <div className="flex gap-0.5 mb-1">
+        {steps.map((s) => {
+          const isSelected = s.step === selectedStep
+          const isAnchor = s.isAnchor
+
+          return (
+            <div key={s.step} className="flex-1 flex justify-center">
+              {isAnchor ? (
+                <button
+                  onClick={() => onStepSelectPoint?.(s.step)}
+                  className="w-3 h-3 rounded-full transition-all"
+                  style={{
+                    background: s.color,
+                    boxShadow: isSelected
+                      ? '0 0 0 2px #5B6CF0, 0 0 6px rgba(91,108,240,0.4)'
+                      : '0 0 0 1px rgba(0,0,0,0.15)',
+                  }}
+                  title={`Step ${s.step} — click to select`}
+                />
+              ) : (
+                <button
+                  onClick={() => onStepAddPoint?.(s.step)}
+                  className="w-3 h-3 rounded-full border border-dashed border-[#C4BFB8] bg-transparent hover:border-[#5B6CF0] hover:bg-[#5B6CF0]/10 transition-all"
+                  title={`Step ${s.step} — click to add anchor`}
+                />
+              )}
+            </div>
+          )
+        })}
+      </div>
+      {/* Color swatches */}
       <div className="flex gap-0.5">
         {steps.map((s) => (
           <div key={s.step} className="flex-1 flex justify-center">

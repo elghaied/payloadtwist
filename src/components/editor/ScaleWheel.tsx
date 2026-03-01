@@ -8,6 +8,7 @@ export interface ScalePoint {
   hue: number        // 0-360
   saturation: number  // 0-100
   lightness: number   // 0-100
+  step: number        // BASE_STEP this point is pinned to (0-1000)
   label?: string      // "Lightest", "Midpoint", "Darkest"
 }
 
@@ -352,7 +353,7 @@ export function ScaleWheel({
 
         {svgLines}
 
-        {/* Draggable handles */}
+        {/* Draggable handles with step labels */}
         {localPoints.map((p) => {
           const pos = handlePositions[p.id]
           if (!pos) return null
@@ -360,6 +361,14 @@ export function ScaleWheel({
           const isSelected = p.id === selectedId
           const handleSize = isSelected ? 20 : 16
           const offset = handleSize / 2
+
+          // Position label offset: push away from center
+          const dx = x - cx
+          const dy = y - cy
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1
+          const labelOffset = handleSize / 2 + 10
+          const lx = (dx / dist) * labelOffset
+          const ly = (dy / dist) * labelOffset
 
           return (
             <div
@@ -387,6 +396,20 @@ export function ScaleWheel({
                 }}
                 title={p.label ? `${p.label}: ${hslToHex(p.hue, p.saturation, p.lightness)}` : hslToHex(p.hue, p.saturation, p.lightness)}
               />
+              {/* Step label */}
+              <span
+                className="absolute pointer-events-none select-none text-[9px] font-medium"
+                style={{
+                  left: `calc(50% + ${lx}px)`,
+                  top: `calc(50% + ${ly}px)`,
+                  transform: 'translate(-50%, -50%)',
+                  color: isSelected ? '#fff' : 'rgba(255,255,255,0.7)',
+                  textShadow: '0 1px 3px rgba(0,0,0,0.6)',
+                  fontFamily: "'JetBrains Mono', monospace",
+                }}
+              >
+                {p.step}
+              </span>
             </div>
           )
         })}
