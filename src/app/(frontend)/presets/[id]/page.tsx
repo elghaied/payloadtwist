@@ -3,6 +3,8 @@ import { getPresetById, getUserRating } from '@/lib/actions/presets'
 import { PresetDetailClient } from './preset-detail-client'
 import '../../landing.css'
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const preset = await getPresetById(id)

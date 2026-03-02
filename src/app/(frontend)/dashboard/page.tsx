@@ -1,8 +1,11 @@
+import Link from 'next/link'
 import { headers } from 'next/headers'
 import { auth } from '@/lib/auth'
 import { getMyPresets } from '@/lib/actions/presets'
 import { DashboardClient } from './dashboard-client'
 import '../landing.css'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title: 'Dashboard — payloadtwist',
@@ -27,12 +30,12 @@ export default async function DashboardPage() {
               Welcome back, {session!.user.name}
             </p>
           </div>
-          <a
+          <Link
             href="/editor"
             className="rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 hover:from-purple-500 hover:via-pink-500 hover:to-cyan-500 text-white px-5 py-2 text-sm font-medium transition-all"
           >
             New Preset
-          </a>
+          </Link>
         </div>
 
         <DashboardClient presets={presets} />

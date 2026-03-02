@@ -1,7 +1,10 @@
+import Link from 'next/link'
 import { getPublicPresets } from '@/lib/actions/presets'
 import { PresetCard } from '@/components/presets/PresetCard'
 import { PresetGrid } from '@/components/presets/PresetGrid'
 import '../landing.css'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title: 'Theme Gallery — payloadtwist',
@@ -28,12 +31,12 @@ export default async function PresetsGalleryPage() {
         {presets.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-[var(--lp-text-muted)] mb-4">No public presets yet</p>
-            <a
+            <Link
               href="/editor"
               className="text-sm text-purple-400 hover:text-purple-300 transition-colors"
             >
               Be the first to create and share a theme
-            </a>
+            </Link>
           </div>
         ) : (
           <PresetGrid>

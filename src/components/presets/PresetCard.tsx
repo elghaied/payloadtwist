@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Star, Globe, Lock } from 'lucide-react'
 import type { PayloadThemeConfig } from '@/payload-theme/types'
 
@@ -58,9 +59,9 @@ export function PresetCard({
       <ColorSwatches themeData={themeData} />
 
       <div className="flex items-start justify-between gap-2 mb-1">
-        <a href={`/presets/${id}`} className="text-sm font-semibold text-[var(--lp-text)] hover:text-purple-400 transition-colors truncate">
+        <Link href={`/presets/${id}`} className="text-sm font-semibold text-[var(--lp-text)] hover:text-purple-400 transition-colors truncate">
           {name}
-        </a>
+        </Link>
         <span className="flex-shrink-0" title={isPublic ? 'Public' : 'Private'}>
           {isPublic ? (
             <Globe size={12} className="text-[var(--lp-text-faint)]" />

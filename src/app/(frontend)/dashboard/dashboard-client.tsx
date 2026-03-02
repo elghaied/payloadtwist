@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { PresetCard } from '@/components/presets/PresetCard'
 import { PresetGrid } from '@/components/presets/PresetGrid'
@@ -23,12 +24,12 @@ export function DashboardClient({ presets }: { presets: PresetRow[] }) {
     return (
       <div className="text-center py-16">
         <p className="text-[var(--lp-text-muted)] mb-4">No presets yet</p>
-        <a
+        <Link
           href="/editor"
           className="text-sm text-purple-400 hover:text-purple-300 transition-colors"
         >
           Open the editor to create your first theme
-        </a>
+        </Link>
       </div>
     )
   }
