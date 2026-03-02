@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { getPublicPresets } from '@/lib/actions/presets'
 import { PresetCard } from '@/components/presets/PresetCard'
 import { PresetGrid } from '@/components/presets/PresetGrid'
+import { AppNavbar } from '@/components/AppNavbar'
 import '../landing.css'
 
 export const dynamic = 'force-dynamic'
@@ -17,7 +18,8 @@ export default async function PresetsGalleryPage() {
 
   return (
     <div className="landing min-h-screen">
-      <div className="mx-auto max-w-4xl px-6 py-16">
+      <AppNavbar />
+      <div className="mx-auto max-w-4xl px-6 pt-24 pb-16">
         <div className="mb-8">
           <h1
             className="text-2xl font-bold text-[var(--lp-text)]"
