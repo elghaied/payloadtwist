@@ -13,29 +13,54 @@ Output is a custom.scss snippet the user copies into their Payload project.
 src/
 ├── app/
 │   ├── (frontend)/
+│   │   ├── page.tsx             ← Landing page
+│   │   ├── layout.tsx           ← Frontend layout
+│   │   ├── globals.css          ← Editor chrome styles
+│   │   ├── landing.css          ← Landing page styles
 │   │   ├── editor/              ← Main editor UI (the product)
 │   │   │   ├── page.tsx         ← Editor shell, tab state, layout
 │   │   │   └── layout.tsx
-│   │   └── globals.css          ← Editor chrome styles only
+│   │   ├── dashboard/           ← User dashboard (preset management)
+│   │   ├── presets/             ← Browse/view presets
+│   │   │   └── [id]/           ← Individual preset page
+│   │   ├── login/              ← Better Auth login
+│   │   └── register/           ← Better Auth registration
 │   └── (payload)/               ← Payload CMS — DO NOT TOUCH
 │       ├── admin/               ← Admin panel at /admin
 │       ├── api/                 ← Payload API routes
 │       └── custom.scss          ← Payload's CSS entry point
 ├── components/
 │   ├── editor/                  ← All editor UI components
-│   │   ├── BaseScaleEditor.tsx  ← 3-anchor color scale generator
+│   │   ├── ScaleEditor.tsx      ← Color scale generator
+│   │   ├── ScaleWheel.tsx       ← Visual color wheel
+│   │   ├── LightnessSlider.tsx  ← Lightness control
+│   │   ├── PaletteSelector.tsx  ← Palette presets
 │   │   ├── BemSection.tsx       ← Legacy raw CSS editor
-│   │   ├── BemTab.tsx           ← Visual component editor + legacy tab
-│   │   ├── ColorPicker.tsx      ← Reusable color picker
 │   │   ├── FontPicker.tsx       ← Font dropdown with live preview
 │   │   ├── IframePanel.tsx      ← Right panel with /admin iframe
 │   │   ├── LayoutSection.tsx    ← Spacing, radius, z-index controls
 │   │   ├── ScrubberInput.tsx    ← Click-drag numeric input
 │   │   ├── StatusColorsSection.tsx
 │   │   ├── ThemeColorsSection.tsx
-│   │   └── TypographySection.tsx
+│   │   ├── TypographySection.tsx
+│   │   └── tabs/               ← Tab panels for component editor
+│   │       ├── GeneralTab.tsx
+│   │       ├── UIElementsTab.tsx
+│   │       ├── FieldsTab.tsx
+│   │       ├── ViewsTab.tsx
+│   │       ├── OverlaysTab.tsx
+│   │       ├── DashboardTab.tsx
+│   │       └── ComponentControlsSection.tsx
 │   └── ui/
-│       └── popover.tsx          ← Radix popover (only shadcn piece)
+│       ├── popover.tsx          ← Radix popover
+│       └── resizable.tsx        ← Resizable panels
+├── lib/
+│   ├── auth.ts                  ← Better Auth server config (drizzle + PostgreSQL)
+│   ├── auth-client.ts           ← Client-side auth hooks
+│   ├── actions/presets.ts       ← Server actions for preset CRUD
+│   ├── validate-redirect.ts     ← Redirect URL validation
+│   └── utils.ts
+├── middleware.ts                ← Route protection (auth)
 ├── payload-theme/               ← ALL theming logic — source of truth
 │   ├── payload-theme-schema.json  ← BUILD ARTIFACT — never hand-edit
 │   ├── payload-theme-schema.md    ← Human-readable reference
@@ -49,7 +74,14 @@ src/
 │   └── editor-store.ts          ← Zustand store (PayloadThemeConfig)
 ├── scripts/
 │   └── extract-payload-theme.ts ← Run: pnpm extract-payload-theme
-├── collections/                 ← Payload collections (Media, Users)
+├── collections/                 ← Payload collections
+│   ├── Categories.ts
+│   ├── Media.ts
+│   ├── Pages.ts
+│   ├── Posts.ts
+│   ├── Products.ts
+│   ├── TeamMembers.ts
+│   └── Users.ts
 ├── seed/                        ← Seed data for Payload
 └── payload.config.ts            ← Payload configuration
 ```
@@ -58,8 +90,31 @@ src/
 ```bash
 pnpm dev                      # Start dev server
 pnpm extract-payload-theme    # Regenerate schema from @payloadcms/ui
-pnpm build                    # Build
+pnpm build                    # Build (uses --max-old-space-size=8000)
+pnpm seed                     # Seed Payload with sample data
+pnpm devsafe                  # rm -rf .next && dev (clears cache)
 ```
+
+## Authentication
+
+Uses Better Auth (not Payload's built-in auth) for user accounts:
+- `src/lib/auth.ts` — server-side config (drizzle adapter, PostgreSQL)
+- `src/lib/auth-client.ts` — client-side auth hooks
+- `src/middleware.ts` — route protection
+- `src/lib/actions/presets.ts` — server actions for preset CRUD
+
+## Databases
+
+Two databases — Payload and auth are separate:
+- **Payload CMS**: SQLite via `@payloadcms/db-sqlite` (`file:./data/payloadtwist.db`)
+- **Better Auth**: PostgreSQL via drizzle-orm (`AUTH_DATABASE_URL`)
+
+## Infrastructure
+
+- `Dockerfile` — standalone Next.js build, node:22-slim, copies node_modules for libsql native
+- `docker-compose.yml` — app + postgres (auth DB), SQLite volume for Payload
+- `next.config.mjs` — `output: 'standalone'`, `serverExternalPackages: ['libsql']`
+- libsql native binaries require special handling: allowed in pnpm lifecycle scripts, externalized in webpack
 
 ## Payload CSS variable system — READ THIS FIRST
 
@@ -232,6 +287,10 @@ Only variables that differ from Payload defaults are included.
 
 Working:
 - Payload embedded at /admin with SQLite, auto-login
+- Public landing page at /
+- Better Auth login/register flows
+- User dashboard with preset management
+- Presets browsing with per-preset pages
 - Extraction script with full schema:
   - base-scale (--color-base-* vars, overridable)
   - elevation (--theme-elevation-*, overridable: false, hidden)
@@ -239,19 +298,16 @@ Working:
 - Zustand store with PayloadThemeConfig
 - iframe injection with correct [data-theme="dark"] targeting
 - Full editor UI at /editor:
-  - 3-anchor HSL color scale generator
+  - Color scale generator with color wheel + lightness slider
+  - Palette presets selector
+  - Tabbed component editor (General, UI Elements, Fields, Views, Overlays, Dashboard)
   - Theme colors with light/dark pickers
   - Status color controls
   - Font picker with Google Fonts
   - Scrubber inputs for numeric values
   - Single roundness control deriving s/m/l radius
-  - BEM tab: visual component editor + legacy raw CSS
-
-In progress:
-- Visual component editor (BEM tab) wiring to component-controls.ts
+  - BEM legacy raw CSS editor
+- Docker build with standalone output
 
 Not started:
-- Showcase collection with all field types + seed data
-- Copy CSS export polish
-- Public landing page
-- Deployment
+- Deployment to production
