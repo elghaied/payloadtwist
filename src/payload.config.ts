@@ -25,10 +25,11 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
-    autoLogin:
-      process.env.NODE_ENV !== 'production'
-        ? { email: 'dev@payloadcms.com', password: 'test', prefillOnly: false }
-        : false,
+    autoLogin: {
+      email: 'dev@payloadcms.com',
+      password: 'test',
+      prefillOnly: false,
+    },
     components: {
       views: {
         showcase: {
@@ -61,6 +62,9 @@ export default buildConfig({
   sharp,
   onInit: async (payload) => {
     await seed(payload)
+  },
+  graphQL: {
+    disable: true,
   },
   plugins: [],
 })
