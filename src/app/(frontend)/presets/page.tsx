@@ -7,7 +7,9 @@ import '../landing.css'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-  title: 'Theme Gallery — payloadtwist',
+  title: 'Theme Gallery',
+  description:
+    'Browse community-created Payload CMS themes. Preview color scales, typography and component styles, then load them into the editor.',
 }
 
 export default async function PresetsGalleryPage() {

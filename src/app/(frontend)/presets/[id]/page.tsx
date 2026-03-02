@@ -9,7 +9,14 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params
   const preset = await getPresetById(id)
   if (!preset) return { title: 'Preset not found' }
-  return { title: `${preset.name} — payloadtwist` }
+  return {
+    title: preset.name,
+    description: preset.description || `${preset.name} — a Payload CMS theme preset on payloadtwist.`,
+    openGraph: {
+      title: `${preset.name} | payloadtwist`,
+      description: preset.description || `${preset.name} — a Payload CMS theme preset.`,
+    },
+  }
 }
 
 export default async function PresetDetailPage({ params }: { params: Promise<{ id: string }> }) {

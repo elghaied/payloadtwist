@@ -8,7 +8,8 @@ import '../landing.css'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-  title: 'Dashboard — payloadtwist',
+  title: 'Dashboard',
+  description: 'Manage your saved Payload CMS theme presets.',
 }
 
 export default async function DashboardPage() {

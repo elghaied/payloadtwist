@@ -49,10 +49,16 @@ export default buildConfig({
     client: {
       url: process.env.DATABASE_URL || '',
     },
+    push: true,
   }),
   sharp,
   onInit: async (payload) => {
-    await seed(payload)
+    try {
+      await seed(payload)
+    } catch (err) {
+      payload.logger.error('Seed failed (expected on first run if tables are being created):')
+      payload.logger.error(err)
+    }
   },
   plugins: [],
 })

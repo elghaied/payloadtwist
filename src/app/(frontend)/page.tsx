@@ -6,9 +6,14 @@ import { UserMenu } from '@/components/auth/UserMenu'
 import './landing.css'
 
 export const metadata: Metadata = {
-  title: 'PayloadTwist — Visual Theme Editor for Payload CMS',
+  title: 'payloadtwist — Visual Theme Editor for Payload CMS',
   description:
     'A visual CSS theme editor for the Payload CMS admin panel. Tweak colors, typography, spacing and components with real-time preview, then export clean CSS.',
+  openGraph: {
+    title: 'payloadtwist — Visual Theme Editor for Payload CMS',
+    description:
+      'Design your Payload admin panel visually. Tweak colors, typography, spacing and components with real-time preview, then export clean CSS.',
+  },
 }
 
 /* ─────────────────────────────────────────────────
