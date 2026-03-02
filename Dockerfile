@@ -1,8 +1,7 @@
-FROM node:22-alpine AS base
+FROM node:22-slim AS base
 
 # --- Install dependencies ---
 FROM base AS deps
-RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
@@ -20,7 +19,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_URL=file:./payloadtwist.db
 ENV PAYLOAD_SECRET=build-time-secret-placeholder
 ENV AUTH_DATABASE_URL=postgresql://localhost:5432/placeholder
-ENV BETTER_AUTH_SECRET=build-time-secret-placeholder
+ENV BETTER_AUTH_SECRET=build-time-secret-placeholder-minimum-32chars
 
 RUN corepack enable pnpm && pnpm run build
 
