@@ -4,6 +4,16 @@ import { devUser } from './credentials.js'
 import { seedImages } from './seed-images.js'
 
 export const seed = async (payload: Payload) => {
+  // Guard: check that tables exist before attempting any operations
+  try {
+    await payload.count({ collection: 'users' })
+  } catch {
+    payload.logger.warn(
+      'Database tables do not exist yet. If running in Docker, ensure the build-time database was copied to the data volume.',
+    )
+    return
+  }
+
   // Seed dev user if needed
   const { totalDocs: userCount } = await payload.count({
     collection: 'users',

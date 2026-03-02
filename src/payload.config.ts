@@ -49,16 +49,14 @@ export default buildConfig({
     client: {
       url: process.env.DATABASE_URL || '',
     },
+    // push:true only runs schema sync when NODE_ENV !== 'production'
+    // In Docker production, the build-time database (with schema) is copied
+    // to the data volume. See Dockerfile for details.
     push: true,
   }),
   sharp,
   onInit: async (payload) => {
-    try {
-      await seed(payload)
-    } catch (err) {
-      payload.logger.error('Seed failed (expected on first run if tables are being created):')
-      payload.logger.error(err)
-    }
+    await seed(payload)
   },
   plugins: [],
 })
