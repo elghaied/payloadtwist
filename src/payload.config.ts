@@ -35,6 +35,10 @@ export default buildConfig({
           Component: '@/components/admin/ShowcaseView',
           path: '/showcase',
         },
+        palette: {
+          Component: '@/components/admin/ScaleImpactPaletteView',
+          path: '/palette',
+        },
       },
     },
   },
