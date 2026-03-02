@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
+import { readOnlyAccess } from '@/access/readOnly'
 import { Hero } from '../blocks/Hero'
 import { Content } from '../blocks/Content'
 import { Gallery } from '../blocks/Gallery'
@@ -10,7 +11,9 @@ import { Stats } from '../blocks/Stats'
 export const Pages: CollectionConfig = {
   slug: 'pages',
   admin: { useAsTitle: 'title' },
-  access: { read: () => true },
+  access: readOnlyAccess,
+  endpoints: false,
+  graphQL: false,
   fields: [
     { name: 'title', type: 'text', required: true },
     {

@@ -1,9 +1,13 @@
 import type { CollectionConfig } from 'payload'
 
+import { readOnlyAccess } from '@/access/readOnly'
+
 export const Products: CollectionConfig = {
   slug: 'products',
   admin: { useAsTitle: 'name' },
-  access: { read: () => true },
+  access: readOnlyAccess,
+  endpoints: false,
+  graphQL: false,
   fields: [
     {
       type: 'tabs',

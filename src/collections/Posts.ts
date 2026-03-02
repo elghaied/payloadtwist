@@ -1,9 +1,13 @@
 import type { CollectionConfig } from 'payload'
 
+import { readOnlyAccess } from '@/access/readOnly'
+
 export const Posts: CollectionConfig = {
   slug: 'posts',
   admin: { useAsTitle: 'title' },
-  access: { read: () => true },
+  access: readOnlyAccess,
+  endpoints: false,
+  graphQL: false,
   fields: [
     { name: 'title', type: 'text', required: true },
     {
