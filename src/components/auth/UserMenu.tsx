@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { useSession, signOut } from '@/lib/auth-client'
-import { LogOut, LayoutDashboard } from 'lucide-react'
+import { LogOut, LayoutDashboard, Settings } from 'lucide-react'
 
 export function UserMenu() {
   const { data: session, isPending } = useSession()
@@ -73,6 +73,14 @@ export function UserMenu() {
             >
               <LayoutDashboard size={14} />
               Dashboard
+            </Link>
+            <Link
+              href="/dashboard/settings"
+              className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--lp-text-secondary)] hover:bg-[var(--lp-surface-2)] transition-colors"
+              onClick={() => setOpen(false)}
+            >
+              <Settings size={14} />
+              Settings
             </Link>
             <button
               onClick={async () => {
@@ -161,6 +169,14 @@ export function EditorUserMenu() {
             >
               <LayoutDashboard size={12} />
               Dashboard
+            </Link>
+            <Link
+              href="/dashboard/settings"
+              className="flex items-center gap-2 px-3 py-1.5 text-xs text-[var(--pt-text-muted)] hover:bg-[var(--pt-surface-hover)] hover:text-[var(--pt-text)] transition-colors"
+              onClick={() => setOpen(false)}
+            >
+              <Settings size={12} />
+              Settings
             </Link>
             <button
               onClick={async () => {
