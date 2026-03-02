@@ -3,6 +3,7 @@ import { headers } from 'next/headers'
 import { auth } from '@/lib/auth'
 import { getMyPresets } from '@/lib/actions/presets'
 import { DashboardClient } from './dashboard-client'
+import { AppNavbar } from '@/components/AppNavbar'
 import '../landing.css'
 
 export const dynamic = 'force-dynamic'
@@ -18,7 +19,8 @@ export default async function DashboardPage() {
 
   return (
     <div className="landing min-h-screen">
-      <div className="mx-auto max-w-4xl px-6 py-16">
+      <AppNavbar />
+      <div className="mx-auto max-w-4xl px-6 pt-24 pb-16">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1
