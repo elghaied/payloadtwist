@@ -81,7 +81,14 @@
     "onlyBuiltDependencies": [
       "sharp",
       "esbuild",
-      "unrs-resolver"
+      "unrs-resolver",
+      "libsql",
+      "@libsql/linux-x64-gnu",
+      "@libsql/linux-x64-musl",
+      "@libsql/linux-arm64-gnu",
+      "@libsql/linux-arm64-musl",
+      "@libsql/darwin-arm64",
+      "@libsql/darwin-x64"
     ]
   }
 }
