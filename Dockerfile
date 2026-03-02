@@ -47,7 +47,13 @@ COPY --from=deps /app/node_modules ./node_modules
 
 # Writable directory for SQLite database
 RUN mkdir -p /app/data && chown nextjs:nodejs /app/data
+# Copy build-time database (has schema from push:true during build)
+# Docker named volumes initialize from this on first mount
+COPY --from=builder --chown=nextjs:nodejs /app/payloadtwist.db ./data/payloadtwist.db
 ENV DATABASE_URL=file:./data/payloadtwist.db
+
+# Drizzle migrations for auth DB (PostgreSQL)
+COPY --from=builder --chown=nextjs:nodejs /app/drizzle ./drizzle
 
 USER nextjs
 
