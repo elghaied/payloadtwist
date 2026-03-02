@@ -13,6 +13,7 @@ services:
       - PAYLOAD_SECRET=${PAYLOAD_SECRET}
       - AUTH_DATABASE_URL=postgresql://postgres:postgres@postgres:5432/payloadtwist_auth
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+      - BETTER_AUTH_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
       - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
       - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID:-}
       - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET:-}
