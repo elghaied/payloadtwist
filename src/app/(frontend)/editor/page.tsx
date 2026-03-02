@@ -152,7 +152,7 @@ function EditorContent() {
   const mono = "'JetBrains Mono', monospace"
 
   // ── Custom resizable panel logic ──
-  const [panelWidth, setPanelWidth] = useState(340)
+  const [panelWidth, setPanelWidth] = useState(420)
   const dragging = useRef(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
