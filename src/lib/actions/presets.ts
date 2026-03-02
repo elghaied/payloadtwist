@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { db } from '@/db'
 import { presets, ratings } from '@/db/schema'
 import { auth } from '@/lib/auth'
-import { eq, and, desc, sql } from 'drizzle-orm'
+import { eq, and, desc, sql, ilike } from 'drizzle-orm'
 import type { PayloadThemeConfig } from '@/payload-theme/types'
 
 async function getSessionOrThrow() {
@@ -139,24 +139,34 @@ export async function ratePreset(presetId: string, score: number) {
   revalidatePath(`/presets/${presetId}`)
 }
 
-export async function getMyPresets() {
+export async function getMyPresets(opts?: { search?: string }) {
   const session = await getSessionOrThrow()
+
+  const conditions = [eq(presets.userId, session.user.id)]
+  if (opts?.search?.trim()) {
+    conditions.push(ilike(presets.name, `%${opts.search.trim()}%`))
+  }
 
   return db
     .select()
     .from(presets)
-    .where(eq(presets.userId, session.user.id))
+    .where(and(...conditions))
     .orderBy(desc(presets.updatedAt))
 }
 
-export async function getPublicPresets(opts?: { limit?: number; offset?: number }) {
+export async function getPublicPresets(opts?: { limit?: number; offset?: number; search?: string }) {
   const limit = opts?.limit ?? 24
   const offset = opts?.offset ?? 0
+
+  const conditions = [eq(presets.isPublic, true)]
+  if (opts?.search?.trim()) {
+    conditions.push(ilike(presets.name, `%${opts.search.trim()}%`))
+  }
 
   return db
     .select()
     .from(presets)
-    .where(eq(presets.isPublic, true))
+    .where(and(...conditions))
     .orderBy(desc(presets.averageRating), desc(presets.updatedAt))
     .limit(limit)
     .offset(offset)

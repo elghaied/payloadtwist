@@ -96,7 +96,7 @@ export function PaletteSelector({ onApply, onReset }: PaletteSelectorProps) {
     <div className="space-y-4">
       {/* Preset dropdown */}
       <div>
-        <p className="text-[10px] uppercase tracking-wider text-[var(--pt-text-muted)] mb-2 font-medium">Theme Preset</p>
+        <p className="text-[10px] uppercase tracking-wider text-[var(--pt-text-muted)] mb-2 font-medium">Color Preset</p>
 
         <div ref={dropdownRef} className="relative">
           <button

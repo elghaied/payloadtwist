@@ -15,6 +15,7 @@ import { Undo2, Redo2, Copy, RotateCcw, X, GripVertical, Sun, Moon, Save } from 
 import { EditorUserMenu } from '@/components/auth/UserMenu'
 import { useSession } from '@/lib/auth-client'
 import { SavePresetDialog } from '@/components/presets/SavePresetDialog'
+import { ThemePresetSelector } from '@/components/editor/ThemePresetSelector'
 import { getPresetById } from '@/lib/actions/presets'
 import { getDefaultTheme } from '@/payload-theme/config'
 import { generateExportCSS } from '@/payload-theme/generator'
@@ -276,6 +277,7 @@ function EditorContent() {
                   Save
                 </Link>
               )}
+              <ThemePresetSelector onApply={importTheme} isLoggedIn={!!session} />
               <button
                 onClick={handleReset}
                 className="p-1.5 rounded hover:bg-[var(--pt-surface-hover)] text-[var(--pt-text-muted)] hover:text-[var(--pt-danger)] transition-colors active:scale-[0.97]"
