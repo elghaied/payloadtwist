@@ -2,6 +2,7 @@
 
 import { useSearchParams } from 'next/navigation'
 import { RegisterForm } from '@/components/auth/RegisterForm'
+import { AppNavbar } from '@/components/AppNavbar'
 import { Suspense } from 'react'
 import '../landing.css'
 
@@ -10,8 +11,11 @@ function RegisterContent() {
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
 
   return (
-    <div className="landing min-h-screen flex items-center justify-center px-6">
-      <RegisterForm callbackUrl={callbackUrl} />
+    <div className="landing min-h-screen">
+      <AppNavbar />
+      <div className="min-h-screen flex items-center justify-center px-6 pt-16">
+        <RegisterForm callbackUrl={callbackUrl} />
+      </div>
     </div>
   )
 }
