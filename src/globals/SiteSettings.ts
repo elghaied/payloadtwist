@@ -1,8 +1,12 @@
 import type { GlobalConfig } from 'payload'
 
+import { readOnlyGlobalAccess } from '@/access/readOnly'
+
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
-  access: { read: () => true },
+  access: readOnlyGlobalAccess,
+  endpoints: false,
+  graphQL: false,
   fields: [
     { name: 'siteName', type: 'text', required: true },
     { name: 'siteDescription', type: 'textarea' },

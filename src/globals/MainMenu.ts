@@ -1,8 +1,12 @@
 import type { GlobalConfig } from 'payload'
 
+import { readOnlyGlobalAccess } from '@/access/readOnly'
+
 export const MainMenu: GlobalConfig = {
   slug: 'main-menu',
-  access: { read: () => true },
+  access: readOnlyGlobalAccess,
+  endpoints: false,
+  graphQL: false,
   fields: [
     {
       name: 'items',
