@@ -12,6 +12,7 @@ import { getDefaultTheme } from '@/payload-theme/config'
 import { Plus, Minus, RotateCcw, Dices } from 'lucide-react'
 
 const BASE_STEPS = [0, 50, 100, 150, 200, 250, 300, 400, 500, 600, 700, 800, 850, 900, 950, 1000]
+const STRUCTURAL_STEPS = [0, 500, 1000]
 
 function getStepVar(step: number): string {
   return `--color-base-${step}`
@@ -244,8 +245,6 @@ export function ScaleEditor({ config, importTheme, setBaseScale, setVariable }: 
     },
     [applyScale, overrides],
   )
-
-  const STRUCTURAL_STEPS = [0, 500, 1000]
 
   // Find the step at midpoint of the largest gap between existing anchors
   const findBestNewStep = useCallback((pts: ScalePoint[]): number | null => {

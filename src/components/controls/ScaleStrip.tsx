@@ -22,7 +22,7 @@ interface ScaleStripProps {
 export function ScaleStrip({
   steps,
   onStepChange,
-  onStepReset,
+  onStepReset: _onStepReset,
   selectedStep,
   onStepAddPoint,
   onStepSelectPoint,

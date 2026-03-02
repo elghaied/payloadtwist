@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { ArchitectureDiagram } from '@/components/architecture/ArchitectureDiagram'
+import { UserMenu } from '@/components/auth/UserMenu'
 import './landing.css'
 
 export const metadata: Metadata = {
@@ -224,15 +226,17 @@ export default function LandingPage() {
             <a href="#how-it-works" className="hover:text-[var(--lp-text)] transition-colors">How it works</a>
             <a href="#features" className="hover:text-[var(--lp-text)] transition-colors">Features</a>
             <a href="#preview" className="hover:text-[var(--lp-text)] transition-colors">Preview</a>
+            <Link href="/presets" className="hover:text-[var(--lp-text)] transition-colors">Themes</Link>
           </div>
           <div className="flex items-center gap-3">
+            <UserMenu />
             <ThemeToggle />
-            <a
+            <Link
               href="/editor"
               className="rounded-full bg-[var(--lp-ghost-bg)] border border-[var(--lp-border-medium)] px-5 py-2 text-sm font-medium text-[var(--lp-text-secondary)] hover:bg-[var(--lp-ghost-bg-hover)] hover:border-[var(--lp-border-hover)] transition-all"
             >
               Open Editor
-            </a>
+            </Link>
           </div>
         </div>
       </nav>
@@ -277,7 +281,7 @@ export default function LandingPage() {
           </p>
 
           <div className="anim-fade-up anim-delay-4 flex flex-col sm:flex-row items-center gap-4 mt-2">
-            <a
+            <Link
               href="/editor"
               className="group relative inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-sm font-semibold text-white overflow-hidden transition-all hover:shadow-[0_0_40px_rgba(168,85,247,0.15)]"
             >
@@ -287,7 +291,7 @@ export default function LandingPage() {
                 <line x1="5" y1="12" x2="19" y2="12" />
                 <polyline points="12 5 19 12 12 19" />
               </svg>
-            </a>
+            </Link>
             <a
               href="#how-it-works"
               className="inline-flex items-center gap-2.5 rounded-full border border-[var(--lp-border-medium)] bg-[var(--lp-ghost-bg)] px-7 py-3.5 text-sm font-medium text-[var(--lp-text-secondary)] hover:text-[var(--lp-text)] hover:border-[var(--lp-border-hover)] hover:bg-[var(--lp-ghost-bg-hover)] transition-all"
@@ -678,7 +682,7 @@ export default function LandingPage() {
           <p className="text-[var(--lp-text-faint)] text-lg font-light max-w-md">
             Stop guessing CSS variable names. Open the editor, design your admin panel visually, and export clean overrides.
           </p>
-          <a
+          <Link
             href="/editor"
             className="group relative inline-flex items-center gap-2.5 rounded-full px-8 py-4 text-sm font-semibold text-white overflow-hidden transition-all hover:shadow-[0_0_40px_rgba(168,85,247,0.15)]"
           >
@@ -688,7 +692,7 @@ export default function LandingPage() {
               <line x1="5" y1="12" x2="19" y2="12" />
               <polyline points="12 5 19 12 12 19" />
             </svg>
-          </a>
+          </Link>
         </div>
       </section>
 

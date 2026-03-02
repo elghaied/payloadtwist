@@ -1,0 +1,90 @@
+'use client'
+
+import { useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { signIn } from '@/lib/auth-client'
+import { safeRedirectUrl } from '@/lib/validate-redirect'
+import { OAuthButtons } from './OAuthButtons'
+
+export function LoginForm({ callbackUrl = '/dashboard' }: { callbackUrl?: string }) {
+  const router = useRouter()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+
+    const result = await signIn.email({ email, password })
+
+    if (result.error) {
+      setError(result.error.message || 'Invalid email or password')
+      setLoading(false)
+    } else {
+      router.push(safeRedirectUrl(callbackUrl))
+    }
+  }
+
+  return (
+    <div className="w-full max-w-sm mx-auto">
+      <div className="text-center mb-8">
+        <h1 className="text-2xl font-bold text-[var(--lp-text)]" style={{ fontFamily: "'Syne', sans-serif" }}>
+          Sign in
+        </h1>
+        <p className="text-sm text-[var(--lp-text-muted)] mt-1">
+          Welcome back to payloadtwist
+        </p>
+      </div>
+
+      <OAuthButtons callbackUrl={callbackUrl} />
+
+      <div className="flex items-center gap-3 my-5">
+        <div className="flex-1 h-px bg-[var(--lp-border)]" />
+        <span className="text-xs text-[var(--lp-text-muted)]">or</span>
+        <div className="flex-1 h-px bg-[var(--lp-border)]" />
+      </div>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className="w-full rounded-lg border border-[var(--lp-border)] bg-[var(--lp-surface)] px-4 py-2.5 text-sm text-[var(--lp-text)] placeholder:text-[var(--lp-text-faint)] focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500/50 transition-colors"
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          className="w-full rounded-lg border border-[var(--lp-border)] bg-[var(--lp-surface)] px-4 py-2.5 text-sm text-[var(--lp-text)] placeholder:text-[var(--lp-text-faint)] focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500/50 transition-colors"
+        />
+
+        {error && (
+          <p className="text-xs text-red-500">{error}</p>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full rounded-lg bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 hover:from-purple-500 hover:via-pink-500 hover:to-cyan-500 text-white px-4 py-2.5 text-sm font-medium transition-all disabled:opacity-50"
+        >
+          {loading ? 'Signing in...' : 'Sign in'}
+        </button>
+      </form>
+
+      <p className="text-center text-sm text-[var(--lp-text-muted)] mt-5">
+        Don&apos;t have an account?{' '}
+        <Link href="/register" className="text-purple-400 hover:text-purple-300 transition-colors">
+          Sign up
+        </Link>
+      </p>
+    </div>
+  )
+}

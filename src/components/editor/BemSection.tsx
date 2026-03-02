@@ -75,7 +75,7 @@ export function BemSection({ config }: BemSectionProps) {
   const [selectedBlock, setSelectedBlock] = useState<BemBlock | null>(null)
   const [editorValue, setEditorValue] = useState('')
 
-  const overrides = config.bemOverrides ?? {}
+  const overrides = useMemo(() => config.bemOverrides ?? {}, [config.bemOverrides])
   const overrideCount = Object.keys(overrides).length
 
   const toggleCategory = useCallback((cat: string) => {

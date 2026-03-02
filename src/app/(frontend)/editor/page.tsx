@@ -1,6 +1,8 @@
 'use client'
 
-import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
+import { useState, useCallback, useMemo, useRef, useEffect, Suspense } from 'react'
+import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { useEditorStore } from '@/store/editor-store'
 import { IframePanel } from '@/components/editor/IframePanel'
 import { GeneralTab } from '@/components/editor/tabs/GeneralTab'
@@ -9,7 +11,11 @@ import { FieldsTab } from '@/components/editor/tabs/FieldsTab'
 import { ViewsTab } from '@/components/editor/tabs/ViewsTab'
 import { DashboardTab } from '@/components/editor/tabs/DashboardTab'
 import { OverlaysTab } from '@/components/editor/tabs/OverlaysTab'
-import { Undo2, Redo2, Copy, RotateCcw, X, GripVertical, Sun, Moon } from 'lucide-react'
+import { Undo2, Redo2, Copy, RotateCcw, X, GripVertical, Sun, Moon, Save } from 'lucide-react'
+import { EditorUserMenu } from '@/components/auth/UserMenu'
+import { useSession } from '@/lib/auth-client'
+import { SavePresetDialog } from '@/components/presets/SavePresetDialog'
+import { getPresetById } from '@/lib/actions/presets'
 import { getDefaultTheme } from '@/payload-theme/config'
 import { generateExportCSS } from '@/payload-theme/generator'
 
@@ -72,6 +78,14 @@ function countModifiedVars(
 }
 
 export default function EditorPage() {
+  return (
+    <Suspense>
+      <EditorContent />
+    </Suspense>
+  )
+}
+
+function EditorContent() {
   const {
     config,
     setVariable,
@@ -84,7 +98,6 @@ export default function EditorPage() {
     canUndo,
     canRedo,
     setComponentOverride,
-    resetComponentOverrides,
   } = useEditorStore()
 
   const [activeTab, setActiveTab] = useState<Tab>('general')
@@ -94,6 +107,22 @@ export default function EditorPage() {
     open: false,
     css: '',
   })
+
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false)
+  const { data: session } = useSession()
+  const searchParams = useSearchParams()
+
+  // Load preset from URL param on mount
+  const presetLoaded = useRef(false)
+  useEffect(() => {
+    const presetId = searchParams.get('preset')
+    if (presetId && !presetLoaded.current) {
+      presetLoaded.current = true
+      getPresetById(presetId).then((preset) => {
+        if (preset) importTheme(preset.themeData)
+      })
+    }
+  }, [searchParams, importTheme])
 
   const defaults = useMemo(() => getDefaultTheme(), [])
   const modifiedCount = useMemo(() => countModifiedVars(config, defaults), [config, defaults])
@@ -170,7 +199,7 @@ export default function EditorPage() {
             {/* Logo row */}
             <div className="px-4 py-2.5 border-b border-[var(--pt-border)] flex-shrink-0">
               <div className="flex items-center justify-between">
-                <a href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                   <EditorLogoMark size={22} />
                   <h1
                     className="text-sm font-bold tracking-tight"
@@ -184,7 +213,9 @@ export default function EditorPage() {
                   >
                     v1.0
                   </span>
-                </a>
+                </Link>
+                <div className="flex items-center gap-2">
+                <EditorUserMenu />
                 {/* Editor UI theme toggle */}
                 <div className="flex items-center bg-[var(--pt-bg)] rounded-full p-0.5" title="Editor theme">
                   <button
@@ -210,6 +241,7 @@ export default function EditorPage() {
                     <Moon size={12} />
                   </button>
                 </div>
+                </div>
               </div>
             </div>
 
@@ -227,6 +259,23 @@ export default function EditorPage() {
                   </span>
                 )}
               </button>
+              {session ? (
+                <button
+                  onClick={() => setSaveDialogOpen(true)}
+                  className="flex items-center gap-1.5 text-xs border border-[var(--pt-border)] text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] hover:border-[var(--pt-border-strong)] rounded-full px-3 py-1.5 transition-all active:scale-[0.97] font-medium"
+                >
+                  <Save size={12} />
+                  Save
+                </button>
+              ) : (
+                <Link
+                  href="/login?callbackUrl=/editor"
+                  className="flex items-center gap-1.5 text-xs border border-[var(--pt-border)] text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] hover:border-[var(--pt-border-strong)] rounded-full px-3 py-1.5 transition-all font-medium"
+                >
+                  <Save size={12} />
+                  Save
+                </Link>
+              )}
               <button
                 onClick={handleReset}
                 className="p-1.5 rounded hover:bg-[var(--pt-surface-hover)] text-[var(--pt-text-muted)] hover:text-[var(--pt-danger)] transition-colors active:scale-[0.97]"
@@ -349,6 +398,14 @@ export default function EditorPage() {
           {toast}
         </div>
       )}
+
+      {/* Save preset dialog */}
+      <SavePresetDialog
+        open={saveDialogOpen}
+        onClose={() => setSaveDialogOpen(false)}
+        themeData={config}
+        onSaved={() => showToast('Preset saved')}
+      />
     </div>
   )
 }

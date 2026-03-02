@@ -131,7 +131,7 @@ function deriveControlType(role: ControlRole): ControlType {
   return 'size'
 }
 
-const ROLE_LABEL: Record<ControlRole, string> = {
+export const ROLE_LABEL: Record<ControlRole, string> = {
   background: 'Background',
   text: 'Text Color',
   border: 'Border',

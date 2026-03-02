@@ -1,0 +1,30 @@
+import { notFound } from 'next/navigation'
+import { getPresetById, getUserRating } from '@/lib/actions/presets'
+import { PresetDetailClient } from './preset-detail-client'
+import '../../landing.css'
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const preset = await getPresetById(id)
+  if (!preset) return { title: 'Preset not found' }
+  return { title: `${preset.name} — payloadtwist` }
+}
+
+export default async function PresetDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const preset = await getPresetById(id)
+
+  if (!preset || !preset.isPublic) {
+    notFound()
+  }
+
+  const userRating = await getUserRating(preset.id)
+
+  return (
+    <div className="landing min-h-screen">
+      <div className="mx-auto max-w-2xl px-6 py-16">
+        <PresetDetailClient preset={preset} userRating={userRating} />
+      </div>
+    </div>
+  )
+}
