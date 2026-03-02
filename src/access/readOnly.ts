@@ -10,6 +10,7 @@ export const readOnlyAccess = {
   create: (() => false) satisfies Access,
   update: (() => false) satisfies Access,
   delete: (() => false) satisfies Access,
+  unlock: (() => false) satisfies Access,
 }
 
 /**
