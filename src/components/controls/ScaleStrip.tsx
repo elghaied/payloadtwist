@@ -8,6 +8,8 @@ interface ScaleStep {
   isOverridden: boolean
   isAnchor?: boolean
   defaultColor?: string
+  impactLabels?: string[]
+  impactCount?: number
 }
 
 interface ScaleStripProps {
@@ -88,6 +90,38 @@ export function ScaleStrip({
           </div>
         ))}
       </div>
+      {/* Impact labels — vertical text under each step */}
+      {steps.some(s => s.impactLabels && s.impactLabels.length > 0) && (
+        <div className="flex gap-0.5 mt-1.5 pt-1.5 border-t border-[var(--pt-border)]">
+          {steps.map((s) => (
+            <div key={s.step} className="flex-1 flex flex-col items-center gap-0">
+              {(s.impactLabels ?? []).map((label, i) => (
+                <span
+                  key={label}
+                  className="text-[8px] leading-none text-[var(--pt-text-muted)] truncate"
+                  style={{
+                    writingMode: 'vertical-rl',
+                    textOrientation: 'mixed',
+                    maxHeight: '60px',
+                    opacity: i === 0 ? 0.9 : 0.5,
+                  }}
+                  title={`Step ${s.step}: ${s.impactCount} components — ${label}`}
+                >
+                  {label}
+                </span>
+              ))}
+              {(s.impactCount ?? 0) > (s.impactLabels?.length ?? 0) && (
+                <span
+                  className="text-[7px] text-[var(--pt-text-muted)] opacity-40"
+                  title={`${s.impactCount} total components use step ${s.step}`}
+                >
+                  +{(s.impactCount ?? 0) - (s.impactLabels?.length ?? 0)}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

@@ -1,0 +1,1417 @@
+{
+  "meta": {
+    "generatedAt": "2026-03-02T09:21:46.169Z",
+    "schemaSource": "payload-theme-schema.json"
+  },
+  "steps": {
+    "0": [
+      {
+        "component": "Pill",
+        "category": "elements",
+        "count": 4,
+        "properties": [
+          "background",
+          "color"
+        ],
+        "selectors": [
+          ".pill--style-white",
+          ".pill--style-always-white",
+          ".pill--style-dark"
+        ]
+      },
+      {
+        "component": "PillSelector",
+        "category": "elements",
+        "count": 2,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".pill-selector__pill.pill-selector__pill--selected",
+          ".pill-selector__pill.pill-selector__pill--selected:hover"
+        ]
+      },
+      {
+        "component": "ArrayAction",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".array-actions__button:hover"
+        ]
+      },
+      {
+        "component": "Button",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "--color"
+        ],
+        "selectors": [
+          ".btn--style-primary"
+        ]
+      },
+      {
+        "component": "Card",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".btn__icon:hover"
+        ]
+      },
+      {
+        "component": "Collapsible",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".collapsible__content"
+        ]
+      },
+      {
+        "component": "DatePicker",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".react-datepicker__day--keyboard-selected"
+        ]
+      },
+      {
+        "component": "Loading",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".loading-overlay:after"
+        ]
+      },
+      {
+        "component": "Tooltip",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".tooltip"
+        ]
+      },
+      {
+        "component": "Relationship",
+        "category": "fields",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".relationship__error-loading"
+        ]
+      }
+    ],
+    "50": [
+      {
+        "component": "Card",
+        "category": "elements",
+        "count": 2,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".card",
+          ".card--has-onclick:hover"
+        ]
+      },
+      {
+        "component": "Table",
+        "category": "elements",
+        "count": 2,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          "tr:nth-child(odd)",
+          "thead"
+        ]
+      },
+      {
+        "component": "Button",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "--hover-bg"
+        ],
+        "selectors": [
+          ".btn--style-tab"
+        ]
+      },
+      {
+        "component": "Collapsible",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".collapsible__toggle-wrap"
+        ]
+      },
+      {
+        "component": "Combobox",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".combobox__search-input"
+        ]
+      },
+      {
+        "component": "DatePicker",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          "option"
+        ]
+      },
+      {
+        "component": "FieldDiffContainer",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".field-diff-content"
+        ]
+      },
+      {
+        "component": "GroupByBuilder",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".group-by-builder"
+        ]
+      },
+      {
+        "component": "PillSelector",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".pill-selector"
+        ]
+      },
+      {
+        "component": "SearchBar",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "--search-bg"
+        ],
+        "selectors": [
+          ".search-bar"
+        ]
+      },
+      {
+        "component": "SearchFilter",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".search-filter__input"
+        ]
+      },
+      {
+        "component": "ShimmerEffect",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".shimmer-effect"
+        ]
+      },
+      {
+        "component": "Upload",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".file-field"
+        ]
+      },
+      {
+        "component": "WhereBuilder",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".where-builder"
+        ]
+      },
+      {
+        "component": "RadioGroup",
+        "category": "fields",
+        "count": 1,
+        "properties": [
+          "border-color"
+        ],
+        "selectors": [
+          ".radio-input:hover"
+        ]
+      }
+    ],
+    "100": [
+      {
+        "component": "DatePicker",
+        "category": "elements",
+        "count": 5,
+        "properties": [
+          "background",
+          "background-color"
+        ],
+        "selectors": [
+          ".react-datepicker__month-text:hover",
+          ".react-datepicker__day-names",
+          ".react-datepicker__day:hover",
+          ".react-datepicker__time-container\n      .react-datepicker__time\n      .react-datepicker__time-box\n      ul.react-datepicker__time-list\n      li.react-datepicker__time-list-item:hover",
+          ".react-datepicker__header--time"
+        ]
+      },
+      {
+        "component": "Pill",
+        "category": "elements",
+        "count": 4,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".pill--style-white.pill--has-action:hover,\n        .pill--style-white.pill--has-action:active",
+          ".pill--style-light.pill--has-action:hover,\n        .pill--style-light.pill--has-action:active",
+          ".pill--style-light-gray",
+          ".pill--style-always-white.pill--has-action:hover,\n          .pill--style-always-white.pill--has-action:active"
+        ]
+      },
+      {
+        "component": "Button",
+        "category": "elements",
+        "count": 3,
+        "properties": [
+          "--hover-bg",
+          "--bg-color"
+        ],
+        "selectors": [
+          ".btn--style-pill",
+          ".btn--style-subtle",
+          ".btn--style-tab.btn--disabled"
+        ]
+      },
+      {
+        "component": "DocumentControls",
+        "category": "elements",
+        "count": 3,
+        "properties": [
+          "background",
+          "background-color"
+        ],
+        "selectors": [
+          ".doc-controls__divider",
+          ".doc-controls__dots:hover",
+          ".doc-controls__dots"
+        ]
+      },
+      {
+        "component": "Tooltip",
+        "category": "elements",
+        "count": 3,
+        "properties": [
+          "background-color",
+          "border-top-color",
+          "border-bottom-color"
+        ],
+        "selectors": [
+          ".tooltip:not(.field-error)",
+          ".tooltip--position-top:not(.field-error):after",
+          ".tooltip--position-bottom:not(.field-error):after"
+        ]
+      },
+      {
+        "component": "PreviewButton",
+        "category": "elements",
+        "count": 2,
+        "properties": [
+          "border-color",
+          "background-color"
+        ],
+        "selectors": [
+          ".preview-btn",
+          ".preview-btn:hover"
+        ]
+      },
+      {
+        "component": "PreviewSizes",
+        "category": "elements",
+        "count": 2,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".preview-sizes__sizeOption:hover",
+          ".preview-sizes--selected"
+        ]
+      },
+      {
+        "component": "Banner",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".banner"
+        ]
+      },
+      {
+        "component": "Collapsible",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".collapsible__toggle-wrap:not(.toggle-disabled):hover"
+        ]
+      },
+      {
+        "component": "Combobox",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".combobox__search-input:focus,\n      .combobox__search-input:focus-visible"
+        ]
+      },
+      {
+        "component": "FieldDiffContainer",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".field-diff__locale-label"
+        ]
+      },
+      {
+        "component": "Hamburger",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".hamburger:hover"
+        ]
+      },
+      {
+        "component": "IDLabel",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".id-label"
+        ]
+      },
+      {
+        "component": "Pagination",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".paginator__page--is-current"
+        ]
+      },
+      {
+        "component": "PillSelector",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".pill-selector__pill.pill-selector__pill:hover"
+        ]
+      },
+      {
+        "component": "ReactSelect",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".rs__option--is-focused"
+        ]
+      },
+      {
+        "component": "SortComplex",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".sort-complex"
+        ]
+      },
+      {
+        "component": "List",
+        "category": "views",
+        "count": 1,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".btn"
+        ]
+      },
+      {
+        "component": "Global: Inputs & Forms",
+        "category": "global",
+        "count": 1,
+        "properties": [],
+        "selectors": []
+      },
+      {
+        "component": "Global: Toasts",
+        "category": "global",
+        "count": 1,
+        "properties": [],
+        "selectors": []
+      }
+    ],
+    "150": [
+      {
+        "component": "DatePicker",
+        "category": "elements",
+        "count": 4,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".react-datepicker__day--selected:focus",
+          ".react-datepicker__day--keyboard-selected:focus",
+          ".react-datepicker__day--keyboard-selected,\n    .react-datepicker__month-text--keyboard-selected,\n    .react-datepicker__time-container\n      .react-datepicker__time\n      .react-datepicker__time-box\n      ul.react-datepicker__time-list\n      li.react-datepicker__time-list-item--selected",
+          ".react-datepicker__time-container\n      .react-datepicker__time\n      .react-datepicker__time-box\n      ul.react-datepicker__time-list\n      li.react-datepicker__time-list-item--selected,\n    .react-datepicker__day--selected,\n    .react-datepicker__day--in-selecting-range,\n    .react-datepicker__day--in-range,\n    .react-datepicker__month-text--selected,\n    .react-datepicker__month-text--in-selecting-range,\n    .react-datepicker__month-text--in-range"
+        ]
+      },
+      {
+        "component": "Button",
+        "category": "elements",
+        "count": 2,
+        "properties": [
+          "--bg-color",
+          "--hover-bg"
+        ],
+        "selectors": [
+          ".btn--style-pill",
+          ".btn--style-subtle"
+        ]
+      },
+      {
+        "component": "Global: Inputs & Forms",
+        "category": "global",
+        "count": 2,
+        "properties": [],
+        "selectors": []
+      },
+      {
+        "component": "EditUpload",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".edit-upload__reset"
+        ]
+      },
+      {
+        "component": "Pill",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".pill"
+        ]
+      },
+      {
+        "component": "Popup",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "--popup-button-highlight"
+        ],
+        "selectors": [
+          ".popup__content"
+        ]
+      },
+      {
+        "component": "BrowseByFolder",
+        "category": "views",
+        "count": 1,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          "background-color: transparent .folder-list__toggle-view-button--active"
+        ]
+      },
+      {
+        "component": "Dots",
+        "category": "icons",
+        "count": 1,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".dots"
+        ]
+      }
+    ],
+    "200": [
+      {
+        "component": "Button",
+        "category": "elements",
+        "count": 3,
+        "properties": [
+          "--bg-color",
+          "--color"
+        ],
+        "selectors": [
+          ".btn--style-primary.btn--disabled",
+          ".btn--style-secondary.btn--disabled",
+          ".btn--style-icon-label,\n    .btn--style-icon-label.btn--icon-position-left,\n    .btn--style-icon-label.btn--icon-position-right.btn--disabled"
+        ]
+      },
+      {
+        "component": "DatePicker",
+        "category": "elements",
+        "count": 2,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".react-datepicker__month .react-datepicker__day.react-datepicker__day--disabled",
+          ".react-datepicker__time-container\n      .react-datepicker__time\n      .react-datepicker__time-box\n      ul.react-datepicker__time-list\n      li.react-datepicker__time-list-item.react-datepicker__time-list-item--disabled"
+        ]
+      },
+      {
+        "component": "NavGroup",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "stroke"
+        ],
+        "selectors": [
+          "svg .stroke"
+        ]
+      },
+      {
+        "component": "List",
+        "category": "views",
+        "count": 1,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".btn:hover"
+        ]
+      }
+    ],
+    "250": [
+      {
+        "component": "Global: Toasts",
+        "category": "global",
+        "count": 3,
+        "properties": [],
+        "selectors": []
+      },
+      {
+        "component": "Button",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "--color"
+        ],
+        "selectors": [
+          ".btn--style-dashed.btn--disabled"
+        ]
+      },
+      {
+        "component": "Checkbox",
+        "category": "fields",
+        "count": 1,
+        "properties": [
+          "border-color"
+        ],
+        "selectors": [
+          ".checkbox-input__input,\n        .checkbox-input:not(.checkbox-input--read-only):hover input[type='checkbox']"
+        ]
+      },
+      {
+        "component": "RadioGroup",
+        "category": "fields",
+        "count": 1,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".radio-input__styled-radio:before"
+        ]
+      },
+      {
+        "component": "Dots",
+        "category": "icons",
+        "count": 1,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".dots:hover"
+        ]
+      },
+      {
+        "component": "Global: Inputs & Forms",
+        "category": "global",
+        "count": 1,
+        "properties": [],
+        "selectors": []
+      }
+    ],
+    "300": [
+      {
+        "component": "PreviewButton",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "border-color"
+        ],
+        "selectors": [
+          ".preview-btn:hover"
+        ]
+      },
+      {
+        "component": "ReactSelect",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".rs__option--is-selected"
+        ]
+      },
+      {
+        "component": "Array",
+        "category": "fields",
+        "count": 1,
+        "properties": [
+          "--btn-color"
+        ],
+        "selectors": [
+          ".array-field__add-row.btn:disabled"
+        ]
+      }
+    ],
+    "400": [
+      {
+        "component": "Global: Inputs & Forms",
+        "category": "global",
+        "count": 4,
+        "properties": [],
+        "selectors": []
+      },
+      {
+        "component": "DatePicker",
+        "category": "elements",
+        "count": 3,
+        "properties": [
+          "border-left-color",
+          "border-right-color",
+          "background"
+        ],
+        "selectors": [
+          ".react-datepicker__navigation--next",
+          ".react-datepicker__navigation--previous",
+          ".react-datepicker__day:focus"
+        ]
+      },
+      {
+        "component": "Pagination",
+        "category": "elements",
+        "count": 2,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".paginator__page--is-current",
+          ".paginator__separator"
+        ]
+      },
+      {
+        "component": "Combobox",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".combobox__search-input::placeholder"
+        ]
+      },
+      {
+        "component": "DocumentFields",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".document-fields__label"
+        ]
+      },
+      {
+        "component": "HTMLDiff",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".html-diff-no-value"
+        ]
+      },
+      {
+        "component": "NavGroup",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".nav-group__toggle"
+        ]
+      },
+      {
+        "component": "SortComplex",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".sort-complex__label"
+        ]
+      },
+      {
+        "component": "Table",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          "thead"
+        ]
+      },
+      {
+        "component": "TimezonePicker",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".field-label"
+        ]
+      },
+      {
+        "component": "Array",
+        "category": "fields",
+        "count": 1,
+        "properties": [
+          "--btn-color"
+        ],
+        "selectors": [
+          ".array-field__add-row.btn"
+        ]
+      },
+      {
+        "component": "Blocks",
+        "category": "fields",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".btn"
+        ]
+      },
+      {
+        "component": "Checkbox",
+        "category": "fields",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          "label"
+        ]
+      },
+      {
+        "component": "FieldDescription",
+        "category": "fields",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".field-description"
+        ]
+      },
+      {
+        "component": "RadioGroup",
+        "category": "fields",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".radio-input__label"
+        ]
+      }
+    ],
+    "450": [
+      {
+        "component": "Button",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "--color"
+        ],
+        "selectors": [
+          ".btn--style-subtle.btn--disabled"
+        ]
+      }
+    ],
+    "500": [
+      {
+        "component": "Upload",
+        "category": "elements",
+        "count": 4,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".file-field__orText",
+          ".file-field__dragAndDropText",
+          ".upload__dropzoneContent__orText",
+          ".upload__dragAndDropText"
+        ]
+      },
+      {
+        "component": "DatePicker",
+        "category": "elements",
+        "count": 2,
+        "properties": [
+          "border-left-color",
+          "border-right-color"
+        ],
+        "selectors": [
+          ".react-datepicker__navigation--next:focus",
+          ".react-datepicker__navigation--previous:focus"
+        ]
+      },
+      {
+        "component": "Button",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "--color"
+        ],
+        "selectors": [
+          ".btn--style-dashed"
+        ]
+      },
+      {
+        "component": "DocumentControls",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".doc-controls__label"
+        ]
+      },
+      {
+        "component": "GroupByBuilder",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".group-by-builder__clear-button"
+        ]
+      },
+      {
+        "component": "ListSelection",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".list-selection"
+        ]
+      },
+      {
+        "component": "PerPage",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".per-page__button"
+        ]
+      },
+      {
+        "component": "Status",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".status__label"
+        ]
+      }
+    ],
+    "600": [
+      {
+        "component": "Button",
+        "category": "elements",
+        "count": 4,
+        "properties": [
+          "--hover-bg",
+          "--hover-color",
+          "--color"
+        ],
+        "selectors": [
+          ".btn--style-primary",
+          ".btn--style-secondary",
+          ".btn--style-pill.btn--disabled",
+          ".btn--style-icon-label,\n    .btn--style-icon-label.btn--icon-position-left,\n    .btn--style-icon-label.btn--icon-position-right"
+        ]
+      },
+      {
+        "component": "Global: Toasts",
+        "category": "global",
+        "count": 2,
+        "properties": [],
+        "selectors": []
+      },
+      {
+        "component": "IDLabel",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".id-label"
+        ]
+      },
+      {
+        "component": "PreviewSizes",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".preview-sizes__sizeName,\n    .file-meta__size-type"
+        ]
+      },
+      {
+        "component": "Array",
+        "category": "fields",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".array-field__header-action:hover,\n      .array-field__header-action:focus-visible"
+        ]
+      }
+    ],
+    "700": [
+      {
+        "component": "Pill",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".pill--style-dark.pill--has-action:active"
+        ]
+      }
+    ],
+    "750": [
+      {
+        "component": "Pill",
+        "category": "elements",
+        "count": 2,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".pill--style-always-white.pill--has-action:hover,\n        .pill--style-always-white.pill--has-action:active",
+          ".pill--style-dark.pill--has-action:hover"
+        ]
+      }
+    ],
+    "800": [
+      {
+        "component": "Button",
+        "category": "elements",
+        "count": 4,
+        "properties": [
+          "--bg-color",
+          "--color",
+          "--hover-color"
+        ],
+        "selectors": [
+          ".btn--style-primary",
+          ".btn--style-primary.btn--disabled",
+          ".btn--style-pill"
+        ]
+      },
+      {
+        "component": "Pill",
+        "category": "elements",
+        "count": 4,
+        "properties": [
+          "color",
+          "background"
+        ],
+        "selectors": [
+          ".pill",
+          ".pill--style-light-gray",
+          ".pill--style-dark",
+          ".pill--style-always-white"
+        ]
+      },
+      {
+        "component": "DatePicker",
+        "category": "elements",
+        "count": 3,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".react-datepicker",
+          ".react-datepicker__day--keyboard-selected,\n    .react-datepicker__month-text--keyboard-selected,\n    .react-datepicker__time-container\n      .react-datepicker__time\n      .react-datepicker__time-box\n      ul.react-datepicker__time-list\n      li.react-datepicker__time-list-item--selected",
+          ".react-datepicker__time-container\n      .react-datepicker__time\n      .react-datepicker__time-box\n      ul.react-datepicker__time-list\n      li.react-datepicker__time-list-item--selected,\n    .react-datepicker__day--selected,\n    .react-datepicker__day--in-selecting-range,\n    .react-datepicker__day--in-range,\n    .react-datepicker__month-text--selected,\n    .react-datepicker__month-text--in-selecting-range,\n    .react-datepicker__month-text--in-range"
+        ]
+      },
+      {
+        "component": "ReactSelect",
+        "category": "elements",
+        "count": 2,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".rs__group-heading",
+          ".rs__option"
+        ]
+      },
+      {
+        "component": "Array",
+        "category": "fields",
+        "count": 2,
+        "properties": [
+          "color",
+          "--btn-color"
+        ],
+        "selectors": [
+          ".array-field__header-actions",
+          ".array-field__add-row.btn:hover:not(:disabled)"
+        ]
+      },
+      {
+        "component": "Global: Toasts",
+        "category": "global",
+        "count": 2,
+        "properties": [],
+        "selectors": []
+      },
+      {
+        "component": "Banner",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".banner"
+        ]
+      },
+      {
+        "component": "Drawer",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".drawer__close"
+        ]
+      },
+      {
+        "component": "ListSelection",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".list-selection__button"
+        ]
+      },
+      {
+        "component": "Pagination",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".paginator__page"
+        ]
+      },
+      {
+        "component": "Tooltip",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background-color"
+        ],
+        "selectors": [
+          ".tooltip"
+        ]
+      },
+      {
+        "component": "Blocks",
+        "category": "fields",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".btn:hover"
+        ]
+      },
+      {
+        "component": "FieldLabel",
+        "category": "fields",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          "label.field-label:not(.unstyled)"
+        ]
+      },
+      {
+        "component": "DragHandle",
+        "category": "icons",
+        "count": 1,
+        "properties": [
+          "fill"
+        ],
+        "selectors": [
+          ".fill"
+        ]
+      },
+      {
+        "component": "More",
+        "category": "icons",
+        "count": 1,
+        "properties": [
+          "fill"
+        ],
+        "selectors": [
+          ".fill"
+        ]
+      },
+      {
+        "component": "Sort",
+        "category": "icons",
+        "count": 1,
+        "properties": [
+          "fill"
+        ],
+        "selectors": [
+          ".fill"
+        ]
+      },
+      {
+        "component": "Global: Inputs & Forms",
+        "category": "global",
+        "count": 1,
+        "properties": [],
+        "selectors": []
+      }
+    ],
+    "850": [
+      {
+        "component": "Pill",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".pill--style-always-white"
+        ]
+      }
+    ],
+    "900": [
+      {
+        "component": "Banner",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".banner--type-default.button--has-action:hover"
+        ]
+      }
+    ],
+    "950": [
+      {
+        "component": "Banner",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".banner--type-default.button--has-action:active"
+        ]
+      }
+    ],
+    "1000": [
+      {
+        "component": "NavGroup",
+        "category": "elements",
+        "count": 2,
+        "properties": [
+          "color",
+          "stroke"
+        ],
+        "selectors": [
+          ".nav-group__toggle:hover,\n      .nav-group__toggle:focus-visible",
+          ".stroke"
+        ]
+      },
+      {
+        "component": "DatePicker",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".react-datepicker__current-month,\n      .react-datepicker__header,\n      .react-datepicker-year-header,\n      .react-datepicker__day-name,\n      .react-datepicker__day,\n      .react-datepicker__time-name,\n      .react-datepicker-time__header"
+        ]
+      },
+      {
+        "component": "Drawer",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "background"
+        ],
+        "selectors": [
+          ".drawer__close"
+        ]
+      },
+      {
+        "component": "ReactSelect",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".rs__input-container"
+        ]
+      },
+      {
+        "component": "Tooltip",
+        "category": "elements",
+        "count": 1,
+        "properties": [
+          "color"
+        ],
+        "selectors": [
+          ".tooltip:not(.field-error)"
+        ]
+      }
+    ]
+  }
+}

@@ -10,6 +10,7 @@ import { generateBaseScaleFromAnchors, generateRandomScale, hexToHsl, hslToHex }
 import { deriveDarkVarsFromScale } from '@/payload-theme/palette-mapper'
 import { getDefaultTheme } from '@/payload-theme/config'
 import { Plus, Minus, RotateCcw, Dices } from 'lucide-react'
+import { getAllStepSummaries } from '@/payload-theme/scale-impact'
 
 const BASE_STEPS = [0, 50, 100, 150, 200, 250, 300, 400, 500, 600, 700, 800, 850, 900, 950, 1000]
 const STRUCTURAL_STEPS = [0, 500, 1000]
@@ -368,6 +369,7 @@ export function ScaleEditor({ config, importTheme, setBaseScale, setVariable }: 
   // Build steps for ScaleStrip
   const generated = useMemo(() => pointsToScale(points), [points])
   const anchorStepSet = useMemo(() => new Set(points.map(p => p.step)), [points])
+  const impactSummaries = useMemo(() => getAllStepSummaries(2), [])
   const scaleSteps = useMemo(
     () =>
       BASE_STEPS.map((step) => {
@@ -378,9 +380,11 @@ export function ScaleEditor({ config, importTheme, setBaseScale, setVariable }: 
           isOverridden: varName in overrides,
           isAnchor: anchorStepSet.has(step),
           defaultColor: generated[varName],
+          impactLabels: impactSummaries[step]?.labels ?? [],
+          impactCount: impactSummaries[step]?.totalCount ?? 0,
         }
       }),
-    [config.light, overrides, generated, anchorStepSet],
+    [config.light, overrides, generated, anchorStepSet, impactSummaries],
   )
 
   // Find selected point's step for ScaleStrip highlighting
