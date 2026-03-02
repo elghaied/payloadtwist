@@ -9,7 +9,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      - DATABASE_URL=file:./payloadtwist.db
+      - DATABASE_URL=file:./data/payloadtwist.db
       - PAYLOAD_SECRET=${PAYLOAD_SECRET}
       - AUTH_DATABASE_URL=postgresql://postgres:postgres@postgres:5432/payloadtwist_auth
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}

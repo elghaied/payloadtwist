@@ -41,6 +41,10 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Native modules (libsql) aren't traced by Next.js standalone output.
+# Copy full node_modules from deps stage to ensure they're available.
+COPY --from=deps /app/node_modules ./node_modules
+
 # Writable directory for SQLite database
 RUN mkdir -p /app/data && chown nextjs:nodejs /app/data
 ENV DATABASE_URL=file:./data/payloadtwist.db
