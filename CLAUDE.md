@@ -8,100 +8,85 @@ The Payload admin dashboard (running at /admin in the same Next.js app)
 reflects changes in real time via iframe CSS injection.
 Output is a custom.scss snippet the user copies into their Payload project.
 
-## Project structure
+## Project structure (Turborepo monorepo)
 ```
-src/
-├── app/
-│   ├── (frontend)/
-│   │   ├── page.tsx             ← Landing page
-│   │   ├── layout.tsx           ← Frontend layout
-│   │   ├── globals.css          ← Editor chrome styles
-│   │   ├── landing.css          ← Landing page styles
-│   │   ├── editor/              ← Main editor UI (the product)
-│   │   │   ├── page.tsx         ← Editor shell, tab state, layout
-│   │   │   └── layout.tsx
-│   │   ├── dashboard/           ← User dashboard (preset management)
-│   │   ├── presets/             ← Browse/view presets
-│   │   │   └── [id]/           ← Individual preset page
-│   │   ├── login/              ← Better Auth login
-│   │   └── register/           ← Better Auth registration
-│   └── (payload)/               ← Payload CMS — DO NOT TOUCH
-│       ├── admin/               ← Admin panel at /admin
-│       ├── cms-api/             ← Payload API routes (at /cms-api)
-│       └── custom.scss          ← Payload's CSS entry point
-├── components/
-│   ├── editor/                  ← All editor UI components
-│   │   ├── ScaleEditor.tsx      ← Color scale generator
-│   │   ├── ScaleWheel.tsx       ← Visual color wheel
-│   │   ├── LightnessSlider.tsx  ← Lightness control
-│   │   ├── PaletteSelector.tsx  ← Palette presets
-│   │   ├── BemSection.tsx       ← Legacy raw CSS editor
-│   │   ├── FontPicker.tsx       ← Font dropdown with live preview
-│   │   ├── IframePanel.tsx      ← Right panel with /admin iframe
-│   │   ├── LayoutSection.tsx    ← Spacing, radius, z-index controls
-│   │   ├── ScrubberInput.tsx    ← Click-drag numeric input
-│   │   ├── StatusColorsSection.tsx
-│   │   ├── ThemeColorsSection.tsx
-│   │   ├── TypographySection.tsx
-│   │   └── tabs/               ← Tab panels for component editor
-│   │       ├── GeneralTab.tsx
-│   │       ├── UIElementsTab.tsx
-│   │       ├── FieldsTab.tsx
-│   │       ├── ViewsTab.tsx
-│   │       ├── OverlaysTab.tsx
-│   │       ├── DashboardTab.tsx
-│   │       └── ComponentControlsSection.tsx
-│   └── ui/
-│       ├── popover.tsx          ← Radix popover
-│       └── resizable.tsx        ← Resizable panels
-├── lib/
-│   ├── auth.ts                  ← Better Auth server config (drizzle + PostgreSQL)
-│   ├── auth-client.ts           ← Client-side auth hooks
-│   ├── actions/presets.ts       ← Server actions for preset CRUD
-│   ├── validate-redirect.ts     ← Redirect URL validation
-│   └── utils.ts
-├── middleware.ts                ← Route protection (auth)
-├── payload-theme/               ← ALL theming logic — source of truth
-│   ├── payload-theme-schema.json  ← BUILD ARTIFACT — never hand-edit
-│   ├── payload-theme-schema.md    ← Human-readable reference
-│   ├── types.ts                 ← TypeScript interfaces
-│   ├── config.ts                ← Schema loader, getDefaultTheme(),
-│   │                               getVariablesByCategory()
-│   ├── generator.ts             ← CSS output + injectIntoIframe()
-│   ├── scale-generator.ts       ← HSL interpolation for base scale
-│   └── component-controls.ts   ← Visual region map, control descriptors
-├── store/
-│   └── editor-store.ts          ← Zustand store (PayloadThemeConfig)
-├── scripts/
-│   └── extract-payload-theme.ts ← Run: pnpm extract-payload-theme
-├── collections/                 ← Payload collections
-│   ├── Categories.ts
-│   ├── Media.ts
-│   ├── Pages.ts
-│   ├── Posts.ts
-│   ├── Products.ts
-│   ├── TeamMembers.ts
-│   └── Users.ts
-├── seed/                        ← Seed data for Payload
-└── payload.config.ts            ← Payload configuration
+payloadtwist/                        ← Workspace root
+├── apps/
+│   └── web/                         ← Main Next.js + Payload app
+│       ├── src/
+│       │   ├── app/
+│       │   │   ├── (frontend)/      ← Editor/landing/auth UI
+│       │   │   │   ├── page.tsx     ← Landing page
+│       │   │   │   ├── layout.tsx   ← Frontend layout
+│       │   │   │   ├── globals.css  ← Editor chrome styles
+│       │   │   │   ├── editor/      ← Main editor UI (the product)
+│       │   │   │   ├── dashboard/   ← User dashboard (preset management)
+│       │   │   │   ├── presets/     ← Browse/view presets
+│       │   │   │   ├── login/       ← Better Auth login
+│       │   │   │   └── register/    ← Better Auth registration
+│       │   │   └── (payload)/       ← Payload CMS — DO NOT TOUCH
+│       │   │       ├── admin/       ← Admin panel at /admin
+│       │   │       ├── cms-api/     ← Payload API routes (at /cms-api)
+│       │   │       └── custom.scss  ← Payload's CSS entry point
+│       │   ├── components/          ← All UI components
+│       │   │   ├── editor/          ← Editor UI components
+│       │   │   └── ui/              ← Shared UI (radix, resizable)
+│       │   ├── lib/                 ← Auth, actions, utils
+│       │   ├── payload-theme/       ← ALL theming logic — source of truth
+│       │   ├── store/               ← Zustand store
+│       │   ├── collections/         ← Payload collections
+│       │   ├── seed/                ← Seed data for Payload
+│       │   └── payload.config.ts    ← Payload configuration
+│       ├── tests/                   ← Integration + e2e tests
+│       ├── drizzle/                 ← Auth DB migrations
+│       ├── public/
+│       ├── next.config.mjs
+│       ├── package.json             ← @payloadtwist/web
+│       └── tsconfig.json
+├── packages/
+│   └── ui-sandbox/                  ← Payload UI component sandbox
+│       ├── src/
+│       │   ├── PayloadUIShell.tsx   ← 7-provider wrapper for Payload UI
+│       │   ├── FieldPreview.tsx     ← Field component preview (FieldContext)
+│       │   ├── ViewPreview.tsx      ← View component preview
+│       │   ├── ThemeToggle.tsx      ← Light/dark toggle button
+│       │   ├── ErrorBoundary.tsx    ← Render error catcher
+│       │   ├── mock/               ← Mock configs for providers
+│       │   └── styles/             ← Sandbox-specific CSS
+│       ├── package.json             ← @payloadtwist/ui-sandbox
+│       └── tsconfig.json
+├── turbo.json                       ← Turborepo task config
+├── pnpm-workspace.yaml              ← Workspace definition
+├── package.json                     ← Root workspace (payloadtwist-monorepo)
+├── docker-compose.yml
+├── .prettierrc.json
+├── .npmrc
+└── CLAUDE.md
 ```
 
 ## Dev commands
 ```bash
-pnpm dev                      # Start dev server
-pnpm extract-payload-theme    # Regenerate schema from @payloadcms/ui
-pnpm build                    # Build (uses --max-old-space-size=8000)
-pnpm seed                     # Seed Payload with sample data
-pnpm devsafe                  # rm -rf .next && dev (clears cache)
+# Workspace-level (from repo root)
+pnpm dev                                    # Start all packages (turbo)
+pnpm build                                  # Build all packages (turbo)
+pnpm lint                                   # Lint all packages (turbo)
+pnpm typecheck                              # Typecheck all packages (turbo)
+
+# App-specific (filter to web app)
+pnpm --filter @payloadtwist/web dev         # Start only the web app
+pnpm --filter @payloadtwist/web build       # Build only the web app
+pnpm --filter @payloadtwist/web seed        # Seed Payload with sample data
+pnpm --filter @payloadtwist/web devsafe     # rm -rf .next && dev (clears cache)
+pnpm --filter @payloadtwist/web extract-payload-theme  # Regen schema
 ```
 
 ## Authentication
 
 Uses Better Auth (not Payload's built-in auth) for user accounts:
-- `src/lib/auth.ts` — server-side config (drizzle adapter, PostgreSQL)
-- `src/lib/auth-client.ts` — client-side auth hooks
-- `src/middleware.ts` — route protection
-- `src/lib/actions/presets.ts` — server actions for preset CRUD
+- `apps/web/src/lib/auth.ts` — server-side config (drizzle adapter, PostgreSQL)
+- `apps/web/src/lib/auth-client.ts` — client-side auth hooks
+- `apps/web/src/middleware.ts` — route protection
+- `apps/web/src/lib/actions/presets.ts` — server actions for preset CRUD
 
 ## Databases
 
@@ -111,10 +96,12 @@ Two databases — Payload and auth are separate:
 
 ## Infrastructure
 
-- `Dockerfile` — standalone Next.js build, node:22-slim, copies node_modules for libsql native
+- Turborepo monorepo with pnpm workspaces
+- `apps/web/Dockerfile` — uses `turbo prune` for efficient Docker builds, standalone Next.js output
 - `docker-compose.yml` — app + postgres (auth DB), SQLite volume for Payload
-- `next.config.mjs` — `output: 'standalone'`, `serverExternalPackages: ['libsql']`
-- libsql native binaries require special handling: allowed in pnpm lifecycle scripts, externalized in webpack
+- `apps/web/next.config.mjs` — `output: 'standalone'`, `serverExternalPackages: ['libsql']`, wrapped by `withPayload()`
+- libsql native binaries require special handling: `pnpm.onlyBuiltDependencies` at workspace root
+- `.env` files live in `apps/web/` (Next.js loads from app working directory)
 
 ## Payload CSS variable system — READ THIS FIRST
 
@@ -176,12 +163,12 @@ iframe.contentDocument?.documentElement
 
 ## Schema — source of truth
 
-`src/payload-theme/payload-theme-schema.json` is generated by the
+`apps/web/src/payload-theme/payload-theme-schema.json` is generated by the
 extraction script. NEVER hand-edit this file.
 
 Regenerate after Payload UI version updates:
 ```bash
-pnpm extract-payload-theme
+pnpm --filter @payloadtwist/web extract-payload-theme
 ```
 
 Schema structure:
@@ -273,6 +260,76 @@ const {
 
 Only variables that differ from Payload defaults are included.
 
+## UI Sandbox package (`@payloadtwist/ui-sandbox`)
+
+### What it is and why it exists
+
+PayloadTwist generates AI-powered Payload CMS custom components. Users need
+to see these components rendered with real Payload admin styling. The problem:
+Payload UI components (`@payloadcms/ui`) require ~20 providers, specific HTML
+structure, and CSS to render. Outside the admin panel, they crash.
+
+`@payloadtwist/ui-sandbox` solves this by providing wrapper components that
+recreate the minimal Payload admin environment.
+
+### Core components
+
+- **PayloadUIShell** — sets up 7 Payload providers: ConfigProvider,
+  TranslationProvider, ThemeProvider, RouteTransitionProvider,
+  ServerFunctionsProvider, UploadHandlersProvider, OperationProvider.
+  AuthProvider is deliberately omitted (it makes API calls on mount).
+
+- **FieldPreview** — THE PRIMARY WAY to render field components. Wraps a
+  component in PayloadUIShell + `FieldContext.Provider` so that `useField()`
+  works. Manages field state with `useState`. Also passes `value`/`onChange`
+  as props for presentational Input components.
+
+- **ViewPreview** — same concept for view-level components (dashboards, etc.)
+
+- **ThemeToggle** — simple light/dark toggle using Payload CSS vars
+
+- **ErrorBoundary** — catches render errors, shows green/red border
+
+### How FieldPreview works (critical architecture)
+
+FieldPreview does NOT use Payload's `Form` component. Form requires Auth,
+Locale, and DocumentInfo providers that are impractical to mock. Instead:
+
+1. Uses `FieldContext` (exported from `@payloadcms/ui`, marked @experimental)
+2. `useField()` checks for FieldContext first — if found with matching path,
+   it returns the context value directly, bypassing `useFieldInForm` and all
+   its provider requirements
+3. For presentational `*Input` components (TextInput, SelectInput, etc.),
+   FieldPreview passes `value`/`onChange`/`label` as direct props
+
+### Rules for ui-sandbox maintenance
+
+- **FieldPreview is the primary way to render field components — do NOT
+  bypass it** by using raw Input components with manual `useState`. If
+  FieldPreview breaks, fix the package — don't remove the wrapper.
+- **Mock providers** in `packages/ui-sandbox/src/mock/` must stay compatible
+  with the installed `@payloadcms/ui` version (currently 3.78.0).
+- When sandbox rendering breaks, **fix the package** (mock data, providers,
+  FieldPreview internals) — never by removing the package's wrapper components.
+- The `/sandbox` test route (at `apps/web/src/app/sandbox/`) imports
+  `@payloadcms/ui/css` in its own layout to isolate Payload styles.
+
+### Consumer usage pattern
+```tsx
+import { FieldPreview, ErrorBoundary } from '@payloadtwist/ui-sandbox'
+import { TextInput } from '@payloadcms/ui'
+
+<ErrorBoundary name="TextInput">
+  <FieldPreview
+    component={TextInput}
+    fieldConfig={{ name: 'title', label: 'Title', type: 'text' }}
+    initialValue="Hello"
+    theme="light"
+    componentProps={{ placeholder: 'Enter title...' }}
+  />
+</ErrorBoundary>
+```
+
 ## What NOT to do
 
 - Never hand-edit `payload-theme-schema.json`
@@ -280,8 +337,10 @@ Only variables that differ from Payload defaults are included.
 - Never use `.dark` selector — Payload uses `[data-theme="dark"]`
 - Never override `--theme-elevation-*` — breaks dark mode inversion
 - Never import Payload CSS into editor routes
-- Never touch `src/app/(payload)/` — Payload manages these
+- Never touch `apps/web/src/app/(payload)/` — Payload manages these
 - Never change `id="payload-preview"` on the iframe
+- Never bypass FieldPreview by using raw Input components with manual useState
+- Never use Payload's Form component in ui-sandbox (it needs Auth/Locale/DocumentInfo providers)
 
 ## Current status
 
@@ -308,6 +367,8 @@ Working:
   - Single roundness control deriving s/m/l radius
   - BEM legacy raw CSS editor
 - Docker build with standalone output
+- UI sandbox package (`@payloadtwist/ui-sandbox`) with FieldPreview, PayloadUIShell
+- Sandbox test route at /sandbox exercising ui-sandbox components
 
 Not started:
 - Deployment to production
