@@ -27,7 +27,7 @@ src/
 │   │   └── register/           ← Better Auth registration
 │   └── (payload)/               ← Payload CMS — DO NOT TOUCH
 │       ├── admin/               ← Admin panel at /admin
-│       ├── api/                 ← Payload API routes
+│       ├── cms-api/             ← Payload API routes (at /cms-api)
 │       └── custom.scss          ← Payload's CSS entry point
 ├── components/
 │   ├── editor/                  ← All editor UI components
