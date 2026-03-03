@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useMemo } from 'react'
 import { FieldContext } from '@payloadcms/ui'
 import { PayloadUIShell } from './PayloadUIShell'
+import { useInsideShell } from './SandboxContext'
 import type { FieldPreviewProps } from './types'
 
 /**
@@ -24,6 +25,7 @@ export function FieldPreview({
   theme = 'light',
   componentProps,
 }: FieldPreviewProps) {
+  const insideShell = useInsideShell()
   const [value, setValue] = useState<unknown>(initialValue ?? '')
   const path = fieldConfig.name
 
@@ -69,21 +71,29 @@ export function FieldPreview({
     [setFieldValue],
   )
 
+  const fieldContent = (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    <FieldContext.Provider value={fieldContextValue as any}>
+      <div className="render-fields">
+        <Component
+          path={path}
+          field={fieldConfig}
+          value={value}
+          onChange={onChange}
+          label={fieldConfig.label}
+          {...componentProps}
+        />
+      </div>
+    </FieldContext.Provider>
+  )
+
+  if (insideShell) {
+    return fieldContent
+  }
+
   return (
     <PayloadUIShell theme={theme} gutter={true}>
-      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      <FieldContext.Provider value={fieldContextValue as any}>
-        <div className="render-fields">
-          <Component
-            path={path}
-            field={fieldConfig}
-            value={value}
-            onChange={onChange}
-            label={fieldConfig.label}
-            {...componentProps}
-          />
-        </div>
-      </FieldContext.Provider>
+      {fieldContent}
     </PayloadUIShell>
   )
 }
