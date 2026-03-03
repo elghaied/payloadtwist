@@ -3,7 +3,6 @@
 import React, { useState, useCallback, useMemo } from 'react'
 import { FieldContext } from '@payloadcms/ui'
 import { PayloadUIShell } from './PayloadUIShell'
-import { useInsideShell } from './SandboxContext'
 import type { FieldPreviewProps } from './types'
 
 /**
@@ -11,7 +10,10 @@ import type { FieldPreviewProps } from './types'
  *
  * Wraps a field component in PayloadUIShell + FieldContext so that:
  * - Components using `useField()` get a working field state (via FieldContext)
- * - Presentational *Input components receive `value`/`onChange` as props
+ * - Presentational *Input components receive type-appropriate props:
+ *   - text/textarea: value (string) + onChange (DOM event handler)
+ *   - select: value (string) + onChange (handles Option→string extraction) + options + name
+ *   - checkbox: checked (boolean) + onToggle (toggle handler)
  *
  * Does NOT use Payload's Form component. Form requires Auth, Locale, and
  * DocumentInfo providers that are impractical to mock outside the admin panel.
@@ -25,21 +27,46 @@ export function FieldPreview({
   theme = 'light',
   componentProps,
 }: FieldPreviewProps) {
-  const insideShell = useInsideShell()
-  const [value, setValue] = useState<unknown>(initialValue ?? '')
+  const defaultValue = fieldConfig.type === 'checkbox' ? false : ''
+  const [value, setValue] = useState<unknown>(initialValue ?? defaultValue)
   const path = fieldConfig.name
 
-  // setValue compatible with useField's signature: (val | event, disableModifyingForm?) => void
-  const setFieldValue = useCallback((val: unknown) => {
-    // Handle React events (e.g. from <input onChange>)
-    const isEvent =
-      val && typeof val === 'object' && typeof (val as any).preventDefault === 'function'
-    setValue(isEvent ? (val as any).target.value : val)
+  // --- Stable change handlers (don't read `value`, so no stale closures) ---
+
+  /** TextInput/TextareaInput: receives DOM ChangeEvent, extracts target.value */
+  const handleTextChange = useCallback((e: unknown) => {
+    if (
+      e &&
+      typeof e === 'object' &&
+      typeof (e as Record<string, unknown>).preventDefault === 'function'
+    ) {
+      setValue((e as React.ChangeEvent<HTMLInputElement>).target.value)
+    } else {
+      setValue(e)
+    }
   }, [])
 
-  // Provide the full FieldType<unknown> shape that useField() returns.
-  // Components using useField() will get this directly via FieldContext,
-  // bypassing useFieldInForm and its provider requirements.
+  /** SelectInput: receives Option object { label, value }, extracts .value */
+  const handleSelectChange = useCallback((option: unknown) => {
+    if (Array.isArray(option)) {
+      // hasMany: Option[] → string[]
+      setValue(option.map((o: Record<string, unknown>) => o.value))
+    } else if (option && typeof option === 'object' && 'value' in option) {
+      // Single select: Option → string
+      setValue((option as Record<string, unknown>).value)
+    } else {
+      // null (cleared) or primitive
+      setValue(option)
+    }
+  }, [])
+
+  /** CheckboxInput: toggles boolean. Uses functional update — never stale. */
+  const handleCheckboxToggle = useCallback(() => {
+    setValue((prev: unknown) => !prev)
+  }, [])
+
+  // --- FieldContext for components using useField() -----------------------
+
   const fieldContextValue = useMemo(
     () => ({
       blocksFilterOptions: undefined,
@@ -51,49 +78,58 @@ export function FieldPreview({
       formInitializing: false,
       formProcessing: false,
       formSubmitted: false,
-      initialValue: initialValue ?? '',
+      initialValue: initialValue ?? defaultValue,
       path,
       rows: undefined,
       selectFilterOptions: undefined,
-      setValue: setFieldValue,
+      setValue,
       showError: false,
       valid: true,
       value,
     }),
-    [initialValue, path, setFieldValue, value],
+    [initialValue, defaultValue, path, value],
   )
 
-  // Build onChange handler for presentational Input components
-  const onChange = useCallback(
-    (e: unknown) => {
-      setFieldValue(e)
-    },
-    [setFieldValue],
-  )
+  // --- Type-specific props for presentational *Input components -----------
 
-  const fieldContent = (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    <FieldContext.Provider value={fieldContextValue as any}>
-      <div className="render-fields">
-        <Component
-          path={path}
-          field={fieldConfig}
-          value={value}
-          onChange={onChange}
-          label={fieldConfig.label}
-          {...componentProps}
-        />
-      </div>
-    </FieldContext.Provider>
-  )
+  const typeProps = useMemo(() => {
+    const type = fieldConfig.type
 
-  if (insideShell) {
-    return fieldContent
-  }
+    if (type === 'checkbox') {
+      return {
+        name: fieldConfig.name,
+        checked: Boolean(value),
+        onToggle: handleCheckboxToggle,
+        label: fieldConfig.label,
+      }
+    }
+
+    if (type === 'select') {
+      return {
+        name: fieldConfig.name,
+        value: value as string | string[],
+        options: fieldConfig.options ?? [],
+        onChange: handleSelectChange,
+        label: fieldConfig.label,
+      }
+    }
+
+    // Default: text, textarea, email, number, etc.
+    return {
+      value: (value ?? '') as string,
+      onChange: handleTextChange,
+      label: fieldConfig.label,
+    }
+  }, [fieldConfig, value, handleCheckboxToggle, handleSelectChange, handleTextChange])
 
   return (
     <PayloadUIShell theme={theme} gutter={true}>
-      {fieldContent}
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      <FieldContext.Provider value={fieldContextValue as any}>
+        <div className="render-fields">
+          <Component path={path} field={fieldConfig} {...typeProps} {...componentProps} />
+        </div>
+      </FieldContext.Provider>
     </PayloadUIShell>
   )
 }
