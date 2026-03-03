@@ -1,54 +1,45 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
-/node_modules
-/.pnp
-.pnp.js
-.yarn/install-state.gz
+node_modules/
 
-/.idea/*
-!/.idea/runConfigurations
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
+# IDE
+.idea/*
+!.idea/runConfigurations
 .DS_Store
-*.pem
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# build outputs
+.next/
+out/
+dist/
+build/
 
-# local env files
+# turbo
+.turbo/
+
+# env files
+.env
 .env*.local
-
-# vercel
-.vercel
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 
-.env
+# testing
+coverage/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
 
-/media
-
-# Playwright
-node_modules/
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-
-
+# project-specific
+media/
+*.pem
 claudefiles
 docs
+
+# debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# vercel
+.vercel
