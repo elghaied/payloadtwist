@@ -299,8 +299,11 @@ Locale, and DocumentInfo providers that are impractical to mock. Instead:
 2. `useField()` checks for FieldContext first — if found with matching path,
    it returns the context value directly, bypassing `useFieldInForm` and all
    its provider requirements
-3. For presentational `*Input` components (TextInput, SelectInput, etc.),
-   FieldPreview passes `value`/`onChange`/`label` as direct props
+3. For presentational `*Input` components, FieldPreview builds type-specific
+   props based on `fieldConfig.type`:
+   - text/textarea: `value` (string) + `onChange` (DOM event handler)
+   - select: `value` (string) + `onChange` (handles Option→string) + `options` + `name`
+   - checkbox: `checked` (boolean) + `onToggle` (toggle handler)
 
 ### Rules for ui-sandbox maintenance
 
@@ -317,17 +320,32 @@ Locale, and DocumentInfo providers that are impractical to mock. Instead:
 ### Consumer usage pattern
 ```tsx
 import { FieldPreview, ErrorBoundary } from '@payloadtwist/ui-sandbox'
-import { TextInput } from '@payloadcms/ui'
+import { TextInput, SelectInput, CheckboxInput } from '@payloadcms/ui'
 
-<ErrorBoundary name="TextInput">
-  <FieldPreview
-    component={TextInput}
-    fieldConfig={{ name: 'title', label: 'Title', type: 'text' }}
-    initialValue="Hello"
-    theme="light"
-    componentProps={{ placeholder: 'Enter title...' }}
-  />
-</ErrorBoundary>
+// Text fields — FieldPreview handles value/onChange
+<FieldPreview
+  component={TextInput}
+  fieldConfig={{ name: 'title', label: 'Title', type: 'text' }}
+  initialValue="Hello"
+  componentProps={{ placeholder: 'Enter title...' }}
+/>
+
+// Select fields — options in fieldConfig, FieldPreview handles Option→string
+<FieldPreview
+  component={SelectInput}
+  fieldConfig={{
+    name: 'status', label: 'Status', type: 'select',
+    options: [{ label: 'Draft', value: 'draft' }, { label: 'Published', value: 'published' }],
+  }}
+  initialValue="draft"
+/>
+
+// Checkbox fields — FieldPreview handles checked/onToggle automatically
+<FieldPreview
+  component={CheckboxInput}
+  fieldConfig={{ name: 'featured', label: 'Featured', type: 'checkbox' }}
+  initialValue={false}
+/>
 ```
 
 ## What NOT to do
