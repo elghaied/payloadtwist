@@ -1,0 +1,17 @@
+{
+  "name": "@payloadtwist/ui-sandbox",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "echo 'placeholder — no build step yet'",
+    "dev": "echo 'placeholder — no dev step yet'",
+    "lint": "echo 'placeholder — no lint step yet'",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "5.7.3"
+  }
+}
