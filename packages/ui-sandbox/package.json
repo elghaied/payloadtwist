@@ -1,17 +1,43 @@
 {
   "name": "@payloadtwist/ui-sandbox",
-  "version": "0.0.1",
-  "private": true,
-  "type": "module",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "version": "0.1.0",
+  "description": "Render Payload CMS UI components outside the admin panel. Preview shell for PayloadTwist.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./css": {
+      "import": "./dist/styles/shell.css"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "echo 'placeholder — no build step yet'",
-    "dev": "echo 'placeholder — no dev step yet'",
-    "lint": "echo 'placeholder — no lint step yet'",
+    "build": "tsup",
+    "dev": "tsup --watch",
     "typecheck": "tsc --noEmit"
   },
+  "peerDependencies": {
+    "@payloadcms/translations": ">=3.0.0",
+    "@payloadcms/ui": ">=3.0.0",
+    "react": ">=19.0.0",
+    "react-dom": ">=19.0.0"
+  },
   "devDependencies": {
-    "typescript": "5.7.3"
-  }
+    "@payloadcms/translations": "^3.78.0",
+    "@payloadcms/ui": "^3.78.0",
+    "@types/react": "19.2.9",
+    "@types/react-dom": "19.2.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "license": "MIT"
 }
