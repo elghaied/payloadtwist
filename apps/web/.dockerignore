@@ -1,9 +1,0 @@
-node_modules
-.next
-.git
-*.db-journal
-# Allow payloadtwist.db (has schema needed for production)
-!payloadtwist.db
-.env
-.env.*
-!.env.example

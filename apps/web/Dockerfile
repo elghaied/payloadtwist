@@ -1,17 +1,23 @@
 FROM node:22-slim AS base
 
-# --- Install dependencies ---
+# --- Prune workspace for web app ---
+FROM base AS pruner
+WORKDIR /app
+RUN corepack enable pnpm && npm install -g turbo@^2
+COPY . .
+RUN turbo prune @payloadtwist/web --docker
+
+# --- Install dependencies from pruned lockfile ---
 FROM base AS deps
 WORKDIR /app
-
-COPY package.json pnpm-lock.yaml ./
+COPY --from=pruner /app/out/json/ .
 RUN corepack enable pnpm && pnpm i --frozen-lockfile
 
 # --- Build ---
 FROM base AS builder
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY --from=deps /app/ .
+COPY --from=pruner /app/out/full/ .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
@@ -21,7 +27,7 @@ ENV PAYLOAD_SECRET=build-time-secret-placeholder
 ENV AUTH_DATABASE_URL=postgresql://localhost:5432/placeholder
 ENV BETTER_AUTH_SECRET=build-time-secret-placeholder-minimum-32chars
 
-RUN corepack enable pnpm && pnpm run build
+RUN corepack enable pnpm && pnpm run build --filter=@payloadtwist/web
 
 # --- Production ---
 FROM base AS runner
@@ -33,27 +39,24 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/public ./public
+COPY --from=builder /app/apps/web/public ./public
 
 # Standalone output
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./.next/static
 
-# Native modules (libsql) aren't traced by Next.js standalone output.
-# Copy full node_modules from deps stage to ensure they're available.
+# Native modules (libsql) aren't traced by Next.js standalone output
 COPY --from=deps /app/node_modules ./node_modules
 
 # Writable directory for SQLite database
 RUN mkdir -p /app/data && chown nextjs:nodejs /app/data
-# Copy build-time database (has schema from push:true during build)
-# Docker named volumes initialize from this on first mount
-COPY --from=builder --chown=nextjs:nodejs /app/payloadtwist.db ./data/payloadtwist.db
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/payloadtwist.db ./data/payloadtwist.db
 ENV DATABASE_URL=file:./data/payloadtwist.db
 
 # Drizzle migrations for auth DB (PostgreSQL)
-COPY --from=builder --chown=nextjs:nodejs /app/drizzle ./drizzle
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/drizzle ./drizzle
 
 USER nextjs
 
