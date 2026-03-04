@@ -1,6 +1,17 @@
 import { getDefaultTheme, getVariablesByCategory, PAYLOAD_VARIABLES } from './config.js'
 import type { PayloadThemeConfig } from './types.ts'
 
+// Theme vars that must have both light AND dark values emitted together.
+// Our unlayered CSS beats Payload's @layer payload-default, so if we emit
+// :root { --theme-text: #custom } without a matching [data-theme="dark"]
+// rule, the light value bleeds into dark mode.
+const LINKED_DARK_VARS = new Set([
+  '--theme-text',
+  '--theme-bg',
+  '--theme-input-bg',
+  '--theme-overlay',
+])
+
 // ─── Internal helpers ────────────────────────────────────────────────────────
 
 function lightBlock(vars: Record<string, string>): string {
@@ -328,6 +339,16 @@ export function generateMinimalPayloadCSS(config: PayloadThemeConfig): string {
     }
   }
 
+  // Ensure linked theme vars always emit both light + dark values together.
+  for (const varName of LINKED_DARK_VARS) {
+    if (changedLight[varName] && !changedDark[varName] && config.dark[varName]) {
+      changedDark[varName] = config.dark[varName]
+    }
+    if (changedDark[varName] && !changedLight[varName] && config.light[varName]) {
+      changedLight[varName] = config.light[varName]
+    }
+  }
+
   const parts: string[] = []
   const light = lightBlock(changedLight)
   if (light) parts.push(light)
@@ -363,6 +384,16 @@ export function generateExportCSS(config: PayloadThemeConfig): string {
   for (const [k, v] of Object.entries(config.dark)) {
     if (v !== (defaults.dark[k] ?? '')) {
       changedDark[k] = v
+    }
+  }
+
+  // Ensure linked theme vars always emit both light + dark values together.
+  for (const varName of LINKED_DARK_VARS) {
+    if (changedLight[varName] && !changedDark[varName] && config.dark[varName]) {
+      changedDark[varName] = config.dark[varName]
+    }
+    if (changedDark[varName] && !changedLight[varName] && config.light[varName]) {
+      changedLight[varName] = config.light[varName]
     }
   }
 
