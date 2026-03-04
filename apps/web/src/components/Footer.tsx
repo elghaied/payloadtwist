@@ -41,6 +41,15 @@ export function Footer() {
           <span className="text-muted-foreground/40">·</span>
           <GShellBrand showPrefix prefixText="Built by" size="sm" />
           <span className="text-muted-foreground/40">·</span>
+          <a
+            href="https://github.com/elghaied/payloadtwist"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-foreground transition-colors"
+          >
+            GitHub
+          </a>
+          <span className="text-muted-foreground/40">·</span>
           <span>MIT License</span>
         </div>
       </div>

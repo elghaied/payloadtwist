@@ -1,11 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { signIn } from '@/lib/auth-client'
 import { safeRedirectUrl } from '@/lib/validate-redirect'
+import { verifyTurnstile } from '@/lib/actions/turnstile'
 import { OAuthButtons } from './OAuthButtons'
+
+const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
 export function LoginForm({ callbackUrl = '/dashboard' }: { callbackUrl?: string }) {
   const router = useRouter()
@@ -13,17 +17,38 @@ export function LoginForm({ callbackUrl = '/dashboard' }: { callbackUrl?: string
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const turnstileRef = useRef<TurnstileInstance>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setLoading(true)
 
+    if (siteKey) {
+      if (!turnstileToken) {
+        setError('Please complete the CAPTCHA')
+        setLoading(false)
+        return
+      }
+
+      const verification = await verifyTurnstile(turnstileToken)
+      if (!verification.success) {
+        setError(verification.error || 'CAPTCHA verification failed')
+        setLoading(false)
+        turnstileRef.current?.reset()
+        setTurnstileToken(null)
+        return
+      }
+    }
+
     const result = await signIn.email({ email, password })
 
     if (result.error) {
       setError(result.error.message || 'Invalid email or password')
       setLoading(false)
+      turnstileRef.current?.reset()
+      setTurnstileToken(null)
     } else {
       router.push(safeRedirectUrl(callbackUrl))
     }
@@ -82,13 +107,24 @@ export function LoginForm({ callbackUrl = '/dashboard' }: { callbackUrl?: string
           />
         </div>
 
+        {siteKey && (
+          <Turnstile
+            ref={turnstileRef}
+            siteKey={siteKey}
+            onSuccess={setTurnstileToken}
+            onError={() => setTurnstileToken(null)}
+            onExpire={() => setTurnstileToken(null)}
+            options={{ theme: 'dark', size: 'flexible' }}
+          />
+        )}
+
         {error && (
           <p id="login-error" role="alert" className="text-xs text-red-500">{error}</p>
         )}
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || (!!siteKey && !turnstileToken)}
           className="w-full rounded-lg bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 hover:from-purple-500 hover:via-pink-500 hover:to-cyan-500 text-white px-4 py-2.5 text-sm font-medium transition-all disabled:opacity-50"
         >
           {loading ? 'Signing in...' : 'Sign in'}

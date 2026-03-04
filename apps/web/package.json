@@ -22,6 +22,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@marsidev/react-turnstile": "^1.4.2",
     "@payloadcms/translations": "3.78.0",
     "@payloadcms/ui": "3.78.0",
     "@payloadtwist/ui-sandbox": "workspace:^",
