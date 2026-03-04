@@ -13,7 +13,7 @@ export default function PreviewLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" data-theme="light">
+    <html lang="en" data-theme="light" suppressHydrationWarning>
       <body>{children}</body>
     </html>
   )

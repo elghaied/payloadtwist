@@ -1,5 +1,5 @@
 # Payload UI Theme Schema
-Extracted from @payloadcms/ui v3.78.0 on 2026-03-02
+Extracted from @payloadcms/ui v3.78.0 on 2026-03-04
 
 **338** CSS variables (214 overridable) · **184** BEM component blocks · **149** component SCSS files
 
