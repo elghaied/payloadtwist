@@ -17,7 +17,7 @@ export default async function SettingsPage() {
   return (
     <div className="landing min-h-screen">
       <AppNavbar />
-      <div className="mx-auto max-w-2xl px-6 pt-24 pb-16">
+      <div id="main-content" className="mx-auto max-w-2xl px-6 pt-24 pb-16">
         <h1
           className="text-2xl font-bold text-[var(--lp-text)] mb-8"
           style={{ fontFamily: "'Syne', sans-serif" }}

@@ -13,7 +13,7 @@ function RegisterContent() {
   return (
     <div className="landing min-h-screen">
       <AppNavbar />
-      <div className="min-h-screen flex items-center justify-center px-6 pt-16">
+      <div id="main-content" className="min-h-screen flex items-center justify-center px-6 pt-16">
         <RegisterForm callbackUrl={callbackUrl} />
       </div>
     </div>

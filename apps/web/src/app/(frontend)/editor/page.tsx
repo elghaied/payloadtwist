@@ -193,7 +193,7 @@ function EditorContent() {
   }, [])
 
   return (
-    <div ref={containerRef} data-editor-theme={editorDark ? 'dark' : 'light'} className="flex h-screen bg-[var(--pt-bg)] text-[var(--pt-text)] overflow-hidden">
+    <div id="main-content" ref={containerRef} data-editor-theme={editorDark ? 'dark' : 'light'} className="flex h-screen bg-[var(--pt-bg)] text-[var(--pt-text)] overflow-hidden">
         {/* ── Left panel ── */}
         <div style={{ width: panelWidth, minWidth: 260, maxWidth: '50%' }} className="flex-shrink-0">
           <div className="flex flex-col h-full overflow-hidden bg-[var(--pt-surface)] border-r border-[var(--pt-border)]">

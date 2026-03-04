@@ -33,7 +33,7 @@ export default async function PresetDetailPage({ params }: { params: Promise<{ i
   return (
     <div className="landing min-h-screen">
       <AppNavbar />
-      <div className="mx-auto max-w-2xl px-6 pt-24 pb-16">
+      <div id="main-content" className="mx-auto max-w-2xl px-6 pt-24 pb-16">
         <PresetDetailClient preset={preset} userRating={userRating} />
       </div>
     </div>

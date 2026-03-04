@@ -19,7 +19,7 @@ export default async function PresetsGalleryPage() {
   return (
     <div className="landing min-h-screen">
       <AppNavbar />
-      <div className="mx-auto max-w-4xl px-6 pt-24 pb-16">
+      <div id="main-content" className="mx-auto max-w-4xl px-6 pt-24 pb-16">
         <div className="mb-8">
           <h1
             className="text-2xl font-bold text-[var(--lp-text)]"

@@ -20,7 +20,7 @@ export default async function DashboardPage() {
   return (
     <div className="landing min-h-screen">
       <AppNavbar />
-      <div className="mx-auto max-w-4xl px-6 pt-24 pb-16">
+      <div id="main-content" className="mx-auto max-w-4xl px-6 pt-24 pb-16">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1

@@ -28,6 +28,7 @@ function AnimatedLogo({ size = 180 }: { size?: number }) {
       height={size}
       viewBox="0 0 200 200"
       fill="none"
+      aria-hidden="true"
       style={{ filter: 'drop-shadow(0 0 60px rgba(168, 85, 247, 0.2))' }}
     >
       <defs>
@@ -272,7 +273,7 @@ export default function LandingPage() {
             >
               <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 opacity-90 transition-opacity group-hover:opacity-100" />
               <span className="relative z-10">Open the Editor</span>
-              <svg className="relative z-10 w-4 h-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg className="relative z-10 w-4 h-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <line x1="5" y1="12" x2="19" y2="12" />
                 <polyline points="12 5 19 12 12 19" />
               </svg>
@@ -346,7 +347,7 @@ export default function LandingPage() {
                 <div className="px-4 py-2.5 border-b border-white/[0.06] flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {/* DNA strand logo mark */}
-                    <svg width="18" height="18" viewBox="0 0 200 200" fill="none">
+                    <svg width="18" height="18" viewBox="0 0 200 200" fill="none" aria-hidden="true">
                       <defs>
                         <linearGradient id="mock-s1" x1="0%" y1="0%" x2="100%" y2="100%">
                           <stop offset="0%" stopColor="#a855f7" />
