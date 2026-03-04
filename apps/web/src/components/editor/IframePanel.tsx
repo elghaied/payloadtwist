@@ -480,6 +480,10 @@ export function IframePanel({ config }: IframePanelProps) {
             <p className="text-[10px] text-[var(--pt-text-faint)]">
               The provider loads a small script that receives theme changes via postMessage. No CORS configuration needed.
             </p>
+            <p className="text-[10px] text-[var(--pt-text-faint)]">
+              <strong className="text-[var(--pt-text-muted)]">Tip:</strong> Log into your Payload admin in a separate tab first.
+              Browsers block login cookies inside cross-origin iframes.
+            </p>
           </div>
         </div>
       )}
