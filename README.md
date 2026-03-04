@@ -6,7 +6,8 @@
 
 <p align="center">
   A visual CSS theme editor for the <a href="https://payloadcms.com">Payload CMS</a> admin panel.<br/>
-  Tweak colors, typography, spacing, and components with real-time preview — then export clean CSS.
+  Tweak colors, typography, spacing, and components with real-time preview — then export clean CSS.<br/><br/>
+  Inspired by <a href="https://tweakcn.com">tweakcn</a> — the shadcn/ui theme editor.
 </p>
 
 <p align="center">
@@ -32,7 +33,7 @@
 
 ```bash
 # Clone and install
-git clone https://github.com/your-org/payloadtwist.git
+git clone https://github.com/elghaied/payloadtwist.git
 cd payloadtwist
 pnpm install
 
@@ -77,10 +78,24 @@ pnpm lint           # Lint all packages
 pnpm typecheck      # Typecheck all packages
 ```
 
+### Scripts
+
+These run against the web app. Use `pnpm --filter @payloadtwist/web <script>` or run from `apps/web/`.
+
+| Script | Description |
+|--------|-------------|
+| `extract-payload-theme` | Regenerate `payload-theme-schema.json` from the installed `@payloadcms/ui` package. Run this after upgrading Payload. Also runs `analyze-scale-impact` automatically. |
+| `analyze-scale-impact` | Analyze which Payload components each `--color-base-*` variable affects. Updates the scale impact data used by the editor's color scale impact map. |
+| `fetch-google-fonts` | Refresh the local Google Fonts catalog used by the font picker. |
+| `db:generate` | Generate Drizzle migration files from schema changes. |
+| `db:migrate` | Run pending Drizzle migrations against the auth database. |
+| `db:push` | Push schema changes directly to the auth database (dev only). |
+| `db:studio` | Open Drizzle Studio to browse the auth database. |
+
 ### Docker
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 Spins up the app and a PostgreSQL database for auth.
