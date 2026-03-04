@@ -12,9 +12,5 @@ export default function PreviewLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  return (
-    <html lang="en" data-theme="light" suppressHydrationWarning>
-      <body>{children}</body>
-    </html>
-  )
+  return <>{children}</>
 }
