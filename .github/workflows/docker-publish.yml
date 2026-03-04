@@ -44,6 +44,7 @@ jobs:
           push: true
           build-args: |
             NEXT_PUBLIC_APP_URL=https://payloadtwist.com
+            NEXT_PUBLIC_TURNSTILE_SITE_KEY=0x4AAAAAACmVVnUHUAwQYEhc
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
