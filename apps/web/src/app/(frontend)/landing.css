@@ -191,6 +191,11 @@
   border-radius: 3px;
 }
 
+/* ── Slide-up (uses lp-slide-up keyframes from globals.css) ── */
+.landing .anim-slide-up {
+  animation: lp-slide-up 0.3s ease-out forwards;
+}
+
 /* ── Step number circle ── */
 .landing .step-num {
   width: 40px;

@@ -130,6 +130,12 @@
     --pt-code-btn: #e2e2e6;
 }
 
+/* ── Cookie banner slide-up ── */
+@keyframes lp-slide-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

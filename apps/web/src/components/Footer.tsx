@@ -4,11 +4,13 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LogoMark } from '@/components/Logo'
 import { GShellBrand } from '@/components/GShellBrand'
+import { useConsent } from '@/providers/consent-provider'
 
 const HIDDEN_ROUTES = ['/editor']
 
 export function Footer() {
   const pathname = usePathname()
+  const { openBanner } = useConsent()
 
   if (HIDDEN_ROUTES.some((route) => pathname.startsWith(route))) {
     return null
@@ -29,6 +31,13 @@ export function Footer() {
           <Link href="/terms" className="hover:text-foreground transition-colors">
             Terms
           </Link>
+          <span className="text-muted-foreground/40">·</span>
+          <button
+            onClick={openBanner}
+            className="hover:text-foreground transition-colors cursor-pointer"
+          >
+            Cookies
+          </button>
           <span className="text-muted-foreground/40">·</span>
           <GShellBrand showPrefix prefixText="Built by" size="sm" />
           <span className="text-muted-foreground/40">·</span>
