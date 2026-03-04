@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LogoMark } from '@/components/Logo'
 import { GShellBrand } from '@/components/GShellBrand'
@@ -20,10 +21,18 @@ export function Footer() {
           <LogoMark size={16} />
           <span>payloadtwist — open source</span>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 text-xs text-muted-foreground/70">
+          <Link href="/privacy" className="hover:text-foreground transition-colors">
+            Privacy
+          </Link>
+          <span className="text-muted-foreground/40">·</span>
+          <Link href="/terms" className="hover:text-foreground transition-colors">
+            Terms
+          </Link>
+          <span className="text-muted-foreground/40">·</span>
           <GShellBrand showPrefix prefixText="Built by" size="sm" />
           <span className="text-muted-foreground/40">·</span>
-          <span className="text-xs text-muted-foreground/70">MIT License</span>
+          <span>MIT License</span>
         </div>
       </div>
     </footer>
