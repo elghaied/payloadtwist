@@ -49,25 +49,41 @@ export function LoginForm({ callbackUrl = '/dashboard' }: { callbackUrl?: string
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="w-full rounded-lg border border-[var(--lp-border)] bg-[var(--lp-surface)] px-4 py-2.5 text-sm text-[var(--lp-text)] placeholder:text-[var(--lp-text-faint)] focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500/50 transition-colors"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="w-full rounded-lg border border-[var(--lp-border)] bg-[var(--lp-surface)] px-4 py-2.5 text-sm text-[var(--lp-text)] placeholder:text-[var(--lp-text-faint)] focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500/50 transition-colors"
-        />
+        <div>
+          <label htmlFor="login-email" className="block text-xs text-[var(--lp-text-muted)] mb-1.5">
+            Email
+          </label>
+          <input
+            id="login-email"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            autoComplete="email"
+            aria-describedby={error ? 'login-error' : undefined}
+            className="w-full rounded-lg border border-[var(--lp-input-border)] bg-[var(--lp-input-bg)] px-4 py-2.5 text-sm text-[var(--lp-text)] placeholder:text-[var(--lp-text-faint)] focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500/50 transition-colors"
+          />
+        </div>
+        <div>
+          <label htmlFor="login-password" className="block text-xs text-[var(--lp-text-muted)] mb-1.5">
+            Password
+          </label>
+          <input
+            id="login-password"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            autoComplete="current-password"
+            aria-describedby={error ? 'login-error' : undefined}
+            className="w-full rounded-lg border border-[var(--lp-input-border)] bg-[var(--lp-input-bg)] px-4 py-2.5 text-sm text-[var(--lp-text)] placeholder:text-[var(--lp-text-faint)] focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500/50 transition-colors"
+          />
+        </div>
 
         {error && (
-          <p className="text-xs text-red-500">{error}</p>
+          <p id="login-error" role="alert" className="text-xs text-red-500">{error}</p>
         )}
 
         <button
