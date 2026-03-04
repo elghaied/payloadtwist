@@ -21,9 +21,7 @@ COPY --from=pruner /app/out/full/ .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Payload needs these at build time — provide dummy values
-ENV DATABASE_URL=file:./payloadtwist.db
-ENV PAYLOAD_SECRET=build-time-secret-placeholder
+# Auth DB needs a dummy value at build time
 ENV AUTH_DATABASE_URL=postgresql://localhost:5432/placeholder
 ENV BETTER_AUTH_SECRET=build-time-secret-placeholder-minimum-32chars
 
@@ -46,14 +44,6 @@ RUN mkdir .next
 RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./.next/static
-
-# Native modules (libsql) aren't traced by Next.js standalone output
-COPY --from=deps /app/node_modules ./node_modules
-
-# Writable directory for SQLite database
-RUN mkdir -p /app/data && chown nextjs:nodejs /app/data
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/payloadtwist.db ./data/payloadtwist.db
-ENV DATABASE_URL=file:./data/payloadtwist.db
 
 # Drizzle migrations for auth DB (PostgreSQL)
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/drizzle ./drizzle

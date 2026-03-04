@@ -9,8 +9,6 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      - DATABASE_URL=file:./data/payloadtwist.db
-      - PAYLOAD_SECRET=${PAYLOAD_SECRET}
       - AUTH_DATABASE_URL=postgresql://postgres:postgres@postgres:5432/payloadtwist_auth
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
       - BETTER_AUTH_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
@@ -19,8 +17,6 @@ services:
       - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET:-}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-}
-    volumes:
-      - sqlite_data:/app/data
 
   postgres:
     image: postgres:16-alpine
@@ -40,4 +36,3 @@ services:
 
 volumes:
   pgdata:
-  sqlite_data:
