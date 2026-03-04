@@ -1,0 +1,13 @@
+/*
+ * @payloadtwist/ui-sandbox supplementary styles.
+ *
+ * IMPORTANT: Consumers must also import Payload's CSS in their layout:
+ *   import '@payloadcms/ui/css'
+ *
+ * This file only adds styles specific to the sandbox shell.
+ */
+
+/* Ensure render-fields spacing when used outside Payload's admin */
+.payload-ui-sandbox .render-fields {
+  --spacing-field: 24px;
+}
