@@ -1,7 +1,7 @@
 /* Small static logo for nav/footer */
 export function LogoMark({ size = 32 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 200 200" fill="none">
+    <svg width={size} height={size} viewBox="0 0 200 200" fill="none" aria-hidden="true">
       <defs>
         <linearGradient id={`sm-s1-${size}`} x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#a855f7" />

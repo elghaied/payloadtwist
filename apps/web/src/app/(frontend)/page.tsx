@@ -383,10 +383,10 @@ export default function LandingPage() {
                   {/* Sun/Moon editor theme toggle */}
                   <div className="flex items-center bg-white/[0.04] rounded-full p-0.5">
                     <div className="p-1 rounded-full text-[#71717a]">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2" /></svg>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="12" cy="12" r="5" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2" /></svg>
                     </div>
                     <div className="p-1 rounded-full bg-purple-600 text-white">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
                     </div>
                   </div>
                 </div>
@@ -395,21 +395,21 @@ export default function LandingPage() {
                 <div className="px-3 py-1.5 border-b border-white/[0.06] flex items-center gap-1.5">
                   {/* Gradient export pill */}
                   <div className="flex items-center gap-1 bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 text-white rounded-full px-2.5 py-1 text-[10px] font-medium">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" /></svg>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" /></svg>
                     Export
                     <span className="text-[8px] bg-white/20 px-1 rounded-full">12</span>
                   </div>
                   {/* Reset button */}
                   <div className="w-5 h-5 rounded flex items-center justify-center text-[#71717a] hover:text-red-400">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 102.13-9.36L1 10" /></svg>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 102.13-9.36L1 10" /></svg>
                   </div>
                   <div className="w-px h-3.5 bg-white/[0.06]" />
                   <div className="flex gap-0.5">
                     <div className="w-5 h-5 rounded flex items-center justify-center text-[#71717a]">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="14 2 8 8 14 14" /></svg>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><polyline points="14 2 8 8 14 14" /></svg>
                     </div>
                     <div className="w-5 h-5 rounded flex items-center justify-center text-[#71717a]">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="10 2 16 8 10 14" /></svg>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><polyline points="10 2 16 8 10 14" /></svg>
                     </div>
                   </div>
                 </div>
@@ -464,7 +464,7 @@ export default function LandingPage() {
                     <span className="text-[9px] uppercase tracking-wider text-[#71717a] font-medium">Typography</span>
                     <div className="mt-2 rounded border border-white/[0.08] bg-white/[0.04] px-2.5 py-1.5 text-[10px] text-[#e4e4e7] flex items-center justify-between">
                       <span>DM Sans</span>
-                      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2"><polyline points="6 9 12 15 18 9" /></svg>
+                      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2" aria-hidden="true"><polyline points="6 9 12 15 18 9" /></svg>
                     </div>
                   </div>
 
@@ -483,7 +483,7 @@ export default function LandingPage() {
 
               {/* ── Resize handle ── */}
               <div className="w-[5px] shrink-0 bg-white/[0.04] flex items-center justify-center">
-                <svg width="8" height="12" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2" opacity="0.5"><line x1="9" y1="4" x2="9" y2="20" /><line x1="15" y1="4" x2="15" y2="20" /></svg>
+                <svg width="8" height="12" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2" opacity="0.5" aria-hidden="true"><line x1="9" y1="4" x2="9" y2="20" /><line x1="15" y1="4" x2="15" y2="20" /></svg>
               </div>
 
               {/* ── Iframe preview (right) ── */}
@@ -511,14 +511,14 @@ export default function LandingPage() {
                   <span className="text-[10px] font-mono text-[#71717a]">/admin</span>
                   <div className="flex items-center gap-1">
                     <div className="w-5 h-5 rounded flex items-center justify-center bg-purple-600">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><circle cx="12" cy="12" r="5" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2" /></svg>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" aria-hidden="true"><circle cx="12" cy="12" r="5" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2" /></svg>
                     </div>
                     <div className="w-5 h-5 rounded flex items-center justify-center text-[#71717a]">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
                     </div>
                     {/* Reload button */}
                     <div className="w-5 h-5 rounded flex items-center justify-center text-[#71717a]">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 102.13-9.36L1 10" /></svg>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 102.13-9.36L1 10" /></svg>
                     </div>
                   </div>
                 </div>
@@ -674,7 +674,7 @@ export default function LandingPage() {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 opacity-90 transition-opacity group-hover:opacity-100" />
             <span className="relative z-10">Open the Editor</span>
-            <svg className="relative z-10 w-4 h-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="relative z-10 w-4 h-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <line x1="5" y1="12" x2="19" y2="12" />
               <polyline points="12 5 19 12 12 19" />
             </svg>
