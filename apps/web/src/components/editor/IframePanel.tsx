@@ -251,7 +251,13 @@ export function IframePanel({ config }: IframePanelProps) {
       e.preventDefault()
       const url = customInput.trim()
       if (!url) return
-      setCustomUrl(url)
+      try {
+        const parsed = new URL(url)
+        if (!['http:', 'https:'].includes(parsed.protocol)) return
+        setCustomUrl(url)
+      } catch {
+        // Invalid URL — ignore
+      }
     },
     [customInput],
   )
