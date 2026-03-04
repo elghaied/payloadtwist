@@ -28,11 +28,14 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
-    autoLogin: {
-      email: 'dev@payloadcms.com',
-      password: 'test',
-      prefillOnly: false,
-    },
+    autoLogin:
+      process.env.NODE_ENV === 'development'
+        ? {
+            email: 'dev@payloadcms.com',
+            password: 'test',
+            prefillOnly: false,
+          }
+        : false,
     components: {
       views: {
         showcase: {
