@@ -21,12 +21,21 @@ export const metadata: Metadata = {
     description:
       'Design your Payload admin panel visually. Tweak colors, typography, spacing and components with real-time preview, then export clean CSS.',
     url: siteUrl,
+    images: [
+      {
+        url: '/og.png',
+        width: 1200,
+        height: 630,
+        alt: 'payloadtwist — Visual Theme Editor for Payload CMS',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'payloadtwist — Visual Theme Editor for Payload CMS',
     description:
       'Design your Payload admin panel visually. Tweak colors, typography, spacing and components with real-time preview, then export clean CSS.',
+    images: ['/og.png'],
   },
   robots: {
     index: true,
