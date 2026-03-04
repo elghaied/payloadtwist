@@ -8,6 +8,11 @@ import { auth } from '@/lib/auth'
 import { eq, and, desc, sql, ilike } from 'drizzle-orm'
 import type { PayloadThemeConfig } from '@/payload-theme/types'
 
+/** Escape Postgres LIKE/ILIKE special characters */
+function escapeLike(s: string): string {
+  return s.replace(/[\\%_]/g, '\\$&')
+}
+
 async function getSessionOrThrow() {
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session) throw new Error('Unauthorized')
@@ -144,7 +149,7 @@ export async function getMyPresets(opts?: { search?: string }) {
 
   const conditions = [eq(presets.userId, session.user.id)]
   if (opts?.search?.trim()) {
-    conditions.push(ilike(presets.name, `%${opts.search.trim()}%`))
+    conditions.push(ilike(presets.name, `%${escapeLike(opts.search.trim())}%`))
   }
 
   return db
@@ -160,7 +165,7 @@ export async function getPublicPresets(opts?: { limit?: number; offset?: number;
 
   const conditions = [eq(presets.isPublic, true)]
   if (opts?.search?.trim()) {
-    conditions.push(ilike(presets.name, `%${opts.search.trim()}%`))
+    conditions.push(ilike(presets.name, `%${escapeLike(opts.search.trim())}%`))
   }
 
   return db
