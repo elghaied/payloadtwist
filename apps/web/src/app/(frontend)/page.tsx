@@ -179,7 +179,27 @@ const workflow = [
 
 export default function LandingPage() {
   return (
-    <div className="landing">
+    <div id="main-content" className="landing">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebApplication',
+            name: 'payloadtwist',
+            url: 'https://payloadtwist.com',
+            description: 'A visual CSS theme editor for the Payload CMS admin panel.',
+            applicationCategory: 'DeveloperApplication',
+            operatingSystem: 'Web',
+            offers: {
+              '@type': 'Offer',
+              price: '0',
+              priceCurrency: 'USD',
+            },
+          }),
+        }}
+      />
+
       {/* ═══ Nav ═══ */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--lp-nav-border)] bg-[var(--lp-nav-bg)] backdrop-blur-xl">
         <div className="mx-auto max-w-6xl flex items-center justify-between px-6 py-4">
@@ -661,16 +681,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══ Footer ═══ */}
-      <footer className="border-t border-[var(--lp-border-subtle)] py-8 px-6">
-        <div className="mx-auto max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-[var(--lp-text-ghost)] text-xs">
-            <LogoMark size={16} />
-            <span>payloadtwist — open source</span>
-          </div>
-          <span className="text-xs text-[var(--lp-text-ghost)]">MIT License</span>
-        </div>
-      </footer>
+      {/* Footer is rendered by (frontend)/layout.tsx */}
     </div>
   )
 }
