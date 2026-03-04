@@ -54,10 +54,13 @@
 
       case 'payloadtwist:highlight': {
         var blockName = (data.payload || {}).blockName
-        if (!blockName) break
+        if (!blockName || typeof blockName !== 'string') break
+        // Only allow valid CSS class characters
+        var safe = blockName.replace(/[^a-zA-Z0-9_-]/g, '')
+        if (!safe) break
         var style = getOrCreateStyle(STYLE_IDS.highlight)
         style.textContent =
-          '.' + blockName + ' { outline: 2px solid #3b82f6 !important; outline-offset: 2px; }'
+          '.' + safe + ' { outline: 2px solid #3b82f6 !important; outline-offset: 2px; }'
         setTimeout(function () {
           style.textContent = ''
         }, 2000)
