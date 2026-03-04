@@ -1,8 +1,18 @@
 node_modules
 .next
 .git
+.github
 .turbo
 *.db-journal
+*.md
+
+# Env files — prevent secret leakage into build context
 .env
 .env.*
 !.env.example
+apps/web/.env
+apps/web/.env.*
+
+# Unnecessary for build
+docker-compose.yml
+docs/
