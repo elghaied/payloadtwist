@@ -3,6 +3,9 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+      secrets:
+        - auth_database_url
+        - better_auth_secret
     ports:
       - '3000:3000'
     restart: unless-stopped
@@ -41,3 +44,9 @@ services:
 
 volumes:
   pgdata:
+
+secrets:
+  auth_database_url:
+    environment: AUTH_DATABASE_URL_BUILD
+  better_auth_secret:
+    environment: BETTER_AUTH_SECRET_BUILD

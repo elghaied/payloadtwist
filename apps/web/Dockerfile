@@ -21,11 +21,11 @@ COPY --from=pruner /app/out/full/ .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Auth DB needs a dummy value at build time
-ENV AUTH_DATABASE_URL=postgresql://localhost:5432/placeholder
-ENV BETTER_AUTH_SECRET=build-time-secret-placeholder-minimum-32chars
-
-RUN corepack enable pnpm && pnpm run build --filter=@payloadtwist/web
+RUN --mount=type=secret,id=AUTH_DATABASE_URL \
+    --mount=type=secret,id=BETTER_AUTH_SECRET \
+    export AUTH_DATABASE_URL=$(cat /run/secrets/AUTH_DATABASE_URL) && \
+    export BETTER_AUTH_SECRET=$(cat /run/secrets/BETTER_AUTH_SECRET) && \
+    corepack enable pnpm && pnpm run build --filter=@payloadtwist/web
 
 # --- Production ---
 FROM base AS runner
