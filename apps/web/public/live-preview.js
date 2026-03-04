@@ -65,7 +65,7 @@
       }
 
       case 'payloadtwist:ping': {
-        event.source.postMessage({ type: 'payloadtwist:pong' }, '*')
+        event.source.postMessage({ type: 'payloadtwist:pong' }, event.origin)
         break
       }
     }

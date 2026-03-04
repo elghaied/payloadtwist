@@ -17,12 +17,20 @@ export class CrossOriginBridge {
   private listener: ((e: MessageEvent) => void) | null = null
   private pendingCSS: { varsCSS: string; componentCSS: string; bemCSS: string } | null = null
   private pendingTheme: 'light' | 'dark' | null = null
+  private targetOrigin: string = '*'
 
   connect(iframe: HTMLIFrameElement, onStatus: (status: ConnectionStatus) => void): void {
     this.disconnect()
     this.iframe = iframe
     this.onStatus = onStatus
     this.setStatus('connecting')
+
+    // Extract origin from iframe src for scoped postMessage
+    try {
+      this.targetOrigin = new URL(iframe.src).origin
+    } catch {
+      this.targetOrigin = '*'
+    }
 
     this.listener = (e: MessageEvent) => {
       if (e.source !== iframe.contentWindow) return
@@ -42,7 +50,7 @@ export class CrossOriginBridge {
         return
       }
       try {
-        iframe.contentWindow?.postMessage({ type: 'payloadtwist:ping' }, '*')
+        iframe.contentWindow?.postMessage({ type: 'payloadtwist:ping' }, this.targetOrigin)
       } catch {
         // iframe might not be ready yet
       }
@@ -70,7 +78,7 @@ export class CrossOriginBridge {
     if (this.status !== 'connected') return
     this.iframe?.contentWindow?.postMessage(
       { type: 'payloadtwist:highlight', payload: { blockName } },
-      '*',
+      this.targetOrigin,
     )
   }
 
@@ -119,14 +127,14 @@ export class CrossOriginBridge {
         type: 'payloadtwist:inject',
         payload: { varsCSS, componentCSS, bemCSS },
       },
-      '*',
+      this.targetOrigin,
     )
   }
 
   private postTheme(theme: 'light' | 'dark'): void {
     this.iframe?.contentWindow?.postMessage(
       { type: 'payloadtwist:theme', payload: { theme } },
-      '*',
+      this.targetOrigin,
     )
   }
 

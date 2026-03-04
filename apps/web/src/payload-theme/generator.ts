@@ -108,6 +108,7 @@ export function injectIntoIframe(config: PayloadThemeConfig): void {
   }
 
   // Cross-origin: use postMessage (requires live-preview.js on the target)
+  // '*' is intentional: cross-origin target URL is user-provided, origin unknown
   iframe.contentWindow?.postMessage(
     {
       type: 'payloadtwist:inject',
