@@ -17,6 +17,18 @@ function parsePx(value: string): number {
 
 const mono = "'JetBrains Mono', monospace"
 
+const FONT_VAR_LABELS: Record<string, string> = {
+  '--font-body': 'Body Font',
+  '--font-mono': 'Monospace Font',
+  '--font-serif': 'Serif Font',
+}
+
+const FONT_VAR_DEFAULT_CATEGORY: Record<string, 'all' | 'sans-serif' | 'serif' | 'monospace'> = {
+  '--font-body': 'sans-serif',
+  '--font-mono': 'monospace',
+  '--font-serif': 'serif',
+}
+
 export function TypographySection({ config, setVariable }: TypographySectionProps) {
   const vars = getVariablesByCategory('typography').filter((v) => v.overridable)
   const fontVars = vars.filter((v) => v.resolvedType === 'font')
@@ -32,7 +44,8 @@ export function TypographySection({ config, setVariable }: TypographySectionProp
             key={v.var}
             value={value}
             onChange={(val) => setVariable(v.var, val, 'light')}
-            varName={v.var}
+            label={FONT_VAR_LABELS[v.var] ?? v.var}
+            defaultCategory={FONT_VAR_DEFAULT_CATEGORY[v.var] ?? 'all'}
           />
         )
       })}
