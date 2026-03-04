@@ -20,7 +20,11 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm lint
-      - run: pnpm build
+      - name: Build
+        env:
+          AUTH_DATABASE_URL: postgresql://localhost:5432/placeholder
+          BETTER_AUTH_SECRET: ci-build-secret-placeholder-minimum-32chars
+        run: pnpm build
 
   test:
     runs-on: ubuntu-latest
