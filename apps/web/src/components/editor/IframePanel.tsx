@@ -99,10 +99,32 @@ function ConnectionBadge({ status }: { status: ConnectionStatus }) {
   )
 }
 
+/** Reads the effective Payload theme, matching Payload's own ThemeProvider logic. */
+function getPayloadTheme(): 'light' | 'dark' {
+  if (typeof window === 'undefined') return 'light'
+  const cookie = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('payload-theme='))
+    ?.split('=')[1]
+  if (cookie === 'light') return 'light'
+  if (cookie === 'dark') return 'dark'
+  // No cookie (auto mode) — use system preference, same as Payload
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
+
+/** Sets the payload-theme cookie so Payload's ThemeProvider stays in sync. */
+function setPayloadThemeCookie(theme: 'light' | 'dark'): void {
+  const d = new Date()
+  d.setTime(d.getTime() + 365 * 24 * 60 * 60 * 1000)
+  document.cookie = `payload-theme=${theme};expires=${d.toUTCString()};path=/;SameSite=Lax`
+}
+
 export function IframePanel({ config }: IframePanelProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const bridgeRef = useRef<CrossOriginBridge | null>(null)
-  const [isDark, setIsDark] = useState(false)
+  const [isDark, setIsDark] = useState(() =>
+    typeof window !== 'undefined' ? getPayloadTheme() === 'dark' : false,
+  )
   const [activeTab, setActiveTab] = useState<PreviewTab>('admin')
   const [customUrl, setCustomUrl] = useState('')
   const [customInput, setCustomInput] = useState('')
@@ -121,10 +143,13 @@ export function IframePanel({ config }: IframePanelProps) {
     if (isCrossOrigin) return
     const iframe = iframeRef.current
     if (!iframe) return
-    const onLoad = () => injectIntoIframe(config)
+    const onLoad = () => {
+      setIframeTheme(isDark ? 'dark' : 'light')
+      injectIntoIframe(config)
+    }
     iframe.addEventListener('load', onLoad)
     return () => iframe.removeEventListener('load', onLoad)
-  }, [config, isCrossOrigin])
+  }, [config, isDark, isCrossOrigin])
 
   // ─── Cross-origin bridge lifecycle ─────────────────────────────────────────
   useEffect(() => {
@@ -189,11 +214,13 @@ export function IframePanel({ config }: IframePanelProps) {
 
   const handleSetLight = useCallback(() => {
     setIsDark(false)
+    setPayloadThemeCookie('light')
     applyThemeMode(false)
   }, [applyThemeMode])
 
   const handleSetDark = useCallback(() => {
     setIsDark(true)
+    setPayloadThemeCookie('dark')
     applyThemeMode(true)
   }, [applyThemeMode])
 
