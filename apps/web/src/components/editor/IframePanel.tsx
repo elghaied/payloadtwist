@@ -58,6 +58,10 @@ admin: {
   components: {
     providers: ['/components/LivePreviewProvider'],
   },
+  // Auto-login so the preview iframe doesn't get stuck on the login page
+  autoLogin: process.env.NODE_ENV === 'development'
+    ? { email: 'dev@example.com', password: 'your-password' }
+    : false,
 }`
 
 const IMPORTMAP_SNIPPET = `pnpm payload generate:importmap`
@@ -481,8 +485,9 @@ export function IframePanel({ config }: IframePanelProps) {
               The provider loads a small script that receives theme changes via postMessage. No CORS configuration needed.
             </p>
             <p className="text-[10px] text-[var(--pt-text-faint)]">
-              <strong className="text-[var(--pt-text-muted)]">Tip:</strong> Log into your Payload admin in a separate tab first.
-              Browsers block login cookies inside cross-origin iframes.
+              <strong className="text-[var(--pt-text-muted)]">Note:</strong> Browsers block login cookies inside cross-origin iframes,
+              so you can&apos;t log in from within the preview. Use <code className="text-[10px] bg-[var(--pt-surface-hover)] px-1 py-0.5 rounded" style={{ fontFamily: "'JetBrains Mono', monospace" }}>autoLogin</code> in
+              step 2 to skip the login page automatically during development.
             </p>
           </div>
         </div>
