@@ -1,4 +1,22 @@
 import type { ReactNode } from 'react'
+import type { Metadata, Viewport } from 'next'
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0a0a0f' },
+  ],
+  width: 'device-width',
+  initialScale: 1,
+}
+
+export const metadata: Metadata = {
+  title: {
+    default: 'payloadtwist',
+    template: '%s | payloadtwist',
+  },
+  description: 'Visual theme editor for Payload CMS.',
+}
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (

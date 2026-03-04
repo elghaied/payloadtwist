@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  poweredByHeader: false,
   transpilePackages: ['@payloadcms/ui', '@payloadcms/translations'],
   async headers() {
     return [
@@ -25,6 +26,7 @@ const nextConfig = {
         source: '/preview/:path*',
         headers: [
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
         ],
       },
     ]
