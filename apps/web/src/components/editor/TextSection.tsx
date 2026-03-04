@@ -71,8 +71,13 @@ export function TextSection({ config, setVariable, setComponentOverride }: TextS
   const headingDarkColor = headingDarkOverride ?? bodyDarkColor
   const hasHeadingOverride = !!(headingLightOverride || headingDarkOverride)
 
-  // Size values
-  const bodyFontSize = parseNumber(config.light['--base-body-size'] ?? '13')
+  // Size values — Payload compiles html { font-size: 13px } from SCSS, so
+  // changing --base-body-size alone won't affect rendered text. We must also
+  // override html { font-size } via component override to actually resize text.
+  const bodyFontSize = parseNumber(
+    config.componentOverrides?.['html||font-size']?.replace('px', '') ??
+    config.light['--base-body-size'] ?? '13'
+  )
   const basePx = parseNumber(config.light['--base-px'] ?? '20')
 
   return (
@@ -199,7 +204,13 @@ export function TextSection({ config, setVariable, setComponentOverride }: TextS
           <label className="text-[11px] text-[var(--pt-text-label)]">Body Font Size</label>
           <ScrubberInput
             value={bodyFontSize}
-            onChange={(n) => setVariable('--base-body-size', String(n), 'light')}
+            onChange={(n) => {
+              // Must set BOTH: the CSS var (for --base calc) AND html font-size
+              // (for actual rendered size). Payload compiles html { font-size: 13px }
+              // from SCSS, so the CSS var alone doesn't change visible text.
+              setVariable('--base-body-size', String(n), 'light')
+              setComponentOverride('html', 'font-size', `${n}px`)
+            }}
             min={10}
             max={20}
             step={1}
