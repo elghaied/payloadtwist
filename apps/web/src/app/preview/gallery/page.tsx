@@ -79,7 +79,7 @@ export default function GalleryPage() {
               <Banner type="success">This is a success banner</Banner>
             </ErrorBoundary>
             <ErrorBoundary name="Banner (warning)">
-              <Banner type="warning">This is a warning banner</Banner>
+              <Banner type="default">This is a warning banner</Banner>
             </ErrorBoundary>
             <ErrorBoundary name="Banner (error)">
               <Banner type="error">This is an error banner</Banner>
@@ -179,7 +179,7 @@ export default function GalleryPage() {
                   { label: 'Option 3', value: 'option-3' },
                 ]}
                 value={select}
-                onChange={(val) => setSelect(val?.value)}
+                onChange={(val) => setSelect(!val || Array.isArray(val) ? '' : String(val.value))}
                 isClearable
               />
             </ErrorBoundary>

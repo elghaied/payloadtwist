@@ -111,7 +111,7 @@ export default function AdminMockPage() {
               { label: 'Archived', value: 'archived' },
             ]}
             value={status}
-            onChange={(val) => setStatus(val?.value)}
+            onChange={(val) => setStatus(!val || Array.isArray(val) ? '' : String(val.value))}
           />
         </ErrorBoundary>
 
@@ -128,7 +128,7 @@ export default function AdminMockPage() {
               { label: 'Case Studies', value: 'case-studies' },
             ]}
             value={category}
-            onChange={(val) => setCategory(val?.value)}
+            onChange={(val) => setCategory(!val || Array.isArray(val) ? '' : String(val.value))}
             isClearable
           />
         </ErrorBoundary>
