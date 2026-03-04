@@ -47,6 +47,7 @@ export function UserMenu() {
       <button
         onClick={() => setOpen(!open)}
         className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white text-xs font-bold hover:opacity-90 transition-opacity overflow-hidden"
+        aria-label="User menu"
       >
         {session.user.image ? (
           <img src={session.user.image} alt="" className="w-full h-full object-cover" />
@@ -143,6 +144,7 @@ export function EditorUserMenu() {
       <button
         onClick={() => setOpen(!open)}
         className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white text-[9px] font-bold hover:opacity-90 transition-opacity overflow-hidden"
+        aria-label="User menu"
       >
         {session.user.image ? (
           <img src={session.user.image} alt="" className="w-full h-full object-cover" />
