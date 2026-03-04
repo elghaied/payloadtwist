@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0f0f1a"/>
+      <stop offset="100%" stop-color="#0a0a0f"/>
+    </linearGradient>
+    <linearGradient id="g" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#9333ea"/>
+      <stop offset="50%" stop-color="#db2777"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="7" fill="url(#bg)"/>
+  <!-- P: vertical stroke + bowl -->
+  <rect x="6" y="7" width="3" height="18" rx="1" fill="url(#g)"/>
+  <rect x="6" y="7" width="8.5" height="3" rx="1" fill="url(#g)"/>
+  <rect x="6" y="14.5" width="8.5" height="3" rx="1" fill="url(#g)"/>
+  <rect x="12" y="7" width="3" height="10.5" rx="1" fill="url(#g)"/>
+  <!-- T: top bar + vertical stroke -->
+  <rect x="17" y="7" width="9.5" height="3" rx="1" fill="url(#g)"/>
+  <rect x="20.25" y="7" width="3" height="18" rx="1" fill="url(#g)"/>
+</svg>
