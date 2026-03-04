@@ -333,6 +333,7 @@ function EditorContent() {
                     setVariable={setVariable}
                     setBaseScale={setBaseScale}
                     setBaseRadius={setBaseRadius}
+                    setComponentOverride={setComponentOverride}
                     importTheme={importTheme}
                     resetTheme={resetTheme}
                   />

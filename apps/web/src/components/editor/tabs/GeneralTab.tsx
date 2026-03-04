@@ -6,7 +6,7 @@ import { PaletteSelector } from '../PaletteSelector'
 import { ScaleEditor } from '../ScaleEditor'
 import { ThemeColorsSection } from '../ThemeColorsSection'
 import { StatusColorsSection } from '../StatusColorsSection'
-import { TypographySection } from '../TypographySection'
+import { TextSection } from '../TextSection'
 import { LayoutSection } from '../LayoutSection'
 import type { PayloadThemeConfig } from '@/payload-theme/types'
 
@@ -15,6 +15,7 @@ interface GeneralTabProps {
   setVariable: (varName: string, value: string, mode: 'light' | 'dark') => void
   setBaseScale: (vars: Record<string, string>) => void
   setBaseRadius: (m: number) => void
+  setComponentOverride: (selector: string, property: string, value: string) => void
   importTheme: (config: PayloadThemeConfig) => void
   resetTheme: () => void
 }
@@ -24,6 +25,7 @@ export function GeneralTab({
   setVariable,
   setBaseScale,
   setBaseRadius,
+  setComponentOverride,
   importTheme,
   resetTheme,
 }: GeneralTabProps) {
@@ -31,7 +33,7 @@ export function GeneralTab({
     colors: true,
     theme: true,
     status: true,
-    typography: true,
+    text: true,
     layout: true,
   })
 
@@ -70,11 +72,15 @@ export function GeneralTab({
         </div>
       )}
 
-      {/* Typography */}
-      <SectionHeader label="Typography" isOpen={openSections.typography} onToggle={() => toggle('typography')} />
-      {openSections.typography && (
+      {/* Text */}
+      <SectionHeader label="Text" isOpen={openSections.text} onToggle={() => toggle('text')} />
+      {openSections.text && (
         <div className="pl-1 pb-4">
-          <TypographySection config={config} setVariable={setVariable} />
+          <TextSection
+            config={config}
+            setVariable={setVariable}
+            setComponentOverride={setComponentOverride}
+          />
         </div>
       )}
 
