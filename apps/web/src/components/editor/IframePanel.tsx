@@ -6,11 +6,12 @@ import { CrossOriginBridge, type ConnectionStatus } from '@/payload-theme/cross-
 import type { PayloadThemeConfig } from '@/payload-theme/types'
 import { Sun, Moon, RotateCcw, ExternalLink, Copy, Check } from 'lucide-react'
 
-type PreviewTab = 'admin' | 'gallery' | 'custom'
+type PreviewTab = 'admin' | 'gallery' | 'palette' | 'custom'
 
 const PREVIEW_TABS: { key: PreviewTab; label: string }[] = [
   { key: 'admin', label: 'Admin' },
   { key: 'gallery', label: 'Gallery' },
+  { key: 'palette', label: 'Palette' },
   { key: 'custom', label: 'Custom' },
 ]
 
@@ -20,6 +21,8 @@ function getTabUrl(tab: PreviewTab, customUrl: string): string {
       return '/preview/admin'
     case 'gallery':
       return '/preview/gallery'
+    case 'palette':
+      return '/preview/palette'
     case 'custom':
       return customUrl || '/preview/admin'
   }
