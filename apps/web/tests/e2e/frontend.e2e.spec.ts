@@ -1,20 +1,29 @@
-import { test, expect, Page } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 
-test.describe('Frontend', () => {
-  let page: Page
-
-  test.beforeAll(async ({ browser }, testInfo) => {
-    const context = await browser.newContext()
-    page = await context.newPage()
+test.describe('Landing page', () => {
+  test('renders with correct title', async ({ page }) => {
+    await page.goto('/')
+    await expect(page).toHaveTitle(/payloadtwist/)
   })
 
-  test('can go on homepage', async ({ page }) => {
-    await page.goto('http://localhost:3000')
+  test('has navigation links', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByRole('link', { name: /editor/i })).toBeVisible()
+    await expect(page.getByRole('link', { name: /gallery/i })).toBeVisible()
+  })
+})
 
-    await expect(page).toHaveTitle(/.+/)
+test.describe('Editor page', () => {
+  test('loads without error', async ({ page }) => {
+    await page.goto('/editor')
+    await expect(page).toHaveTitle(/editor/i)
+  })
+})
 
-    const heading = page.locator('h1').first()
-
-    await expect(heading).toHaveText('Welcome to your new project.')
+test.describe('404 page', () => {
+  test('shows custom not-found page', async ({ page }) => {
+    const response = await page.goto('/nonexistent-page-abc123')
+    expect(response?.status()).toBe(404)
+    await expect(page.getByText('Page not found')).toBeVisible()
   })
 })
