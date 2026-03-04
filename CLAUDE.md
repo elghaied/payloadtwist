@@ -24,6 +24,10 @@ payloadtwist/                        ← Workspace root
 │       │   │   │   ├── presets/     ← Browse/view presets
 │       │   │   │   ├── login/       ← Better Auth login
 │       │   │   │   └── register/    ← Better Auth registration
+│       │   │   ├── preview/         ← Sandbox preview routes (iframe targets)
+│       │   │   │   ├── layout.tsx   ← Loads @payloadcms/ui/css
+│       │   │   │   ├── admin/       ← Full admin panel mock
+│       │   │   │   └── gallery/     ← Component gallery
 │       │   │   └── (payload)/       ← Payload CMS — DO NOT TOUCH
 │       │   │       ├── admin/       ← Admin panel at /admin
 │       │   │       ├── cms-api/     ← Payload API routes (at /cms-api)
@@ -140,20 +144,39 @@ Only vars that need explicit `[data-theme="dark"]` overrides.
 
 ## Live preview — how it works
 
-Payload admin runs in an iframe:
+### Sandbox Preview (default)
+
+The editor uses sandbox routes rendered in a same-origin iframe:
 ```html
-<iframe id="payload-preview" src="/admin" />
+<iframe id="payload-preview" src="/preview/admin" />
 ```
 
-The store injects `<style id="tweakpayload-vars">` into the iframe's
-`<head>` on every state change. Same-origin, no CORS issues.
+Two preview modes:
+- **Admin** (`/preview/admin`) — Full admin panel mock using `@payloadtwist/ui-sandbox`
+  AdminPreview component with realistic fields (text, select, checkbox, etc.)
+- **Gallery** (`/preview/gallery`) — Component gallery showing all field types,
+  buttons, pills, banners, elevation swatches, and status colors
 
-Component overrides inject into `<style id="tweakpayload-components">`.
-BEM raw CSS injects into `<style id="tweakpayload-bem">`.
+Preview routes load `@payloadcms/ui/css` for authentic Payload styling.
+No real Payload CMS instance needed — all components are rendered via
+mock providers from `@payloadtwist/ui-sandbox`.
+
+### Custom Preview (user's own Payload)
+
+Users can connect their own Payload CMS instance via the Custom tab.
+Requires adding `live-preview.js` script to their Payload project.
+Uses `CrossOriginBridge` + `postMessage` protocol for CSS injection.
+
+### CSS Injection
+
+Same mechanism for both modes. The store injects `<style>` tags into the
+iframe's `<head>` on every state change:
+- `id="tweakpayload-vars"` — CSS variables + BEM CSS
+- `id="tweakpayload-components"` — Component override CSS (!important)
 
 All injection goes through `injectIntoIframe()` in generator.ts.
 NEVER inject into the parent document's `:root`.
-Must also be called on iframe `load` event (Payload navigates internally).
+Must also be called on iframe `load` event.
 
 Dark mode toggle:
 ```ts
