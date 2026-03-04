@@ -3,7 +3,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "env": ["AUTH_DATABASE_URL", "BETTER_AUTH_SECRET"],
+      "env": ["AUTH_DATABASE_URL", "BETTER_AUTH_SECRET", "NEXT_PUBLIC_APP_URL"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "dev": {

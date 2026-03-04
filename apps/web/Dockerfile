@@ -21,6 +21,9 @@ COPY --from=pruner /app/out/full/ .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
+ARG NEXT_PUBLIC_APP_URL=http://localhost:3000
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+
 RUN --mount=type=secret,id=AUTH_DATABASE_URL \
     --mount=type=secret,id=BETTER_AUTH_SECRET \
     export AUTH_DATABASE_URL=$(cat /run/secrets/AUTH_DATABASE_URL) && \
