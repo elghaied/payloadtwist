@@ -4,15 +4,18 @@
 
 A visual CSS theme editor for the Payload CMS admin panel.
 The user tweaks CSS variables and component styles in the editor UI.
-The Payload admin dashboard (running at /admin in the same Next.js app)
+A sandboxed preview (using `@payloadcms/ui` components with mock providers)
 reflects changes in real time via iframe CSS injection.
 Output is a custom.scss snippet the user copies into their Payload project.
+
+Note: Payload CMS runtime (admin panel, database, collections) has been removed.
+Only `@payloadcms/ui` and `@payloadcms/translations` remain for component rendering.
 
 ## Project structure (Turborepo monorepo)
 ```
 payloadtwist/                        ← Workspace root
 ├── apps/
-│   └── web/                         ← Main Next.js + Payload app
+│   └── web/                         ← Main Next.js app
 │       ├── src/
 │       │   ├── app/
 │       │   │   ├── (frontend)/      ← Editor/landing/auth UI
@@ -24,24 +27,17 @@ payloadtwist/                        ← Workspace root
 │       │   │   │   ├── presets/     ← Browse/view presets
 │       │   │   │   ├── login/       ← Better Auth login
 │       │   │   │   └── register/    ← Better Auth registration
-│       │   │   ├── preview/         ← Sandbox preview routes (iframe targets)
-│       │   │   │   ├── layout.tsx   ← Loads @payloadcms/ui/css
-│       │   │   │   ├── admin/       ← Full admin panel mock
-│       │   │   │   └── gallery/     ← Component gallery
-│       │   │   └── (payload)/       ← Payload CMS — DO NOT TOUCH
-│       │   │       ├── admin/       ← Admin panel at /admin
-│       │   │       ├── cms-api/     ← Payload API routes (at /cms-api)
-│       │   │       └── custom.scss  ← Payload's CSS entry point
+│       │   │   └── preview/         ← Sandbox preview routes (iframe targets)
+│       │   │       ├── layout.tsx   ← Loads @payloadcms/ui/css
+│       │   │       ├── admin/       ← Full admin panel mock
+│       │   │       └── gallery/     ← Component gallery
 │       │   ├── components/          ← All UI components
 │       │   │   ├── editor/          ← Editor UI components
 │       │   │   └── ui/              ← Shared UI (radix, resizable)
 │       │   ├── lib/                 ← Auth, actions, utils
 │       │   ├── payload-theme/       ← ALL theming logic — source of truth
-│       │   ├── store/               ← Zustand store
-│       │   ├── collections/         ← Payload collections
-│       │   ├── seed/                ← Seed data for Payload
-│       │   └── payload.config.ts    ← Payload configuration
-│       ├── tests/                   ← Integration + e2e tests
+│       │   └── store/               ← Zustand store
+│       ├── tests/                   ← E2E tests
 │       ├── drizzle/                 ← Auth DB migrations
 │       ├── public/
 │       ├── next.config.mjs
@@ -79,7 +75,6 @@ pnpm typecheck                              # Typecheck all packages (turbo)
 # App-specific (filter to web app)
 pnpm --filter @payloadtwist/web dev         # Start only the web app
 pnpm --filter @payloadtwist/web build       # Build only the web app
-pnpm --filter @payloadtwist/web seed        # Seed Payload with sample data
 pnpm --filter @payloadtwist/web devsafe     # rm -rf .next && dev (clears cache)
 pnpm --filter @payloadtwist/web extract-payload-theme  # Regen schema
 ```
@@ -92,20 +87,22 @@ Uses Better Auth (not Payload's built-in auth) for user accounts:
 - `apps/web/src/middleware.ts` — route protection
 - `apps/web/src/lib/actions/presets.ts` — server actions for preset CRUD
 
-## Databases
+## Database
 
-Two databases — Payload and auth are separate:
-- **Payload CMS**: SQLite via `@payloadcms/db-sqlite` (`file:./data/payloadtwist.db`)
 - **Better Auth**: PostgreSQL via drizzle-orm (`AUTH_DATABASE_URL`)
 
 ## Infrastructure
 
 - Turborepo monorepo with pnpm workspaces
 - `apps/web/Dockerfile` — uses `turbo prune` for efficient Docker builds, standalone Next.js output
-- `docker-compose.yml` — app + postgres (auth DB), SQLite volume for Payload
-- `apps/web/next.config.mjs` — `output: 'standalone'`, `serverExternalPackages: ['libsql']`, wrapped by `withPayload()`
-- libsql native binaries require special handling: `pnpm.onlyBuiltDependencies` at workspace root
+- `docker-compose.yml` — app + postgres (auth DB)
+- `apps/web/next.config.mjs` — `output: 'standalone'`, `transpilePackages` for `@payloadcms/ui`
 - `.env` files live in `apps/web/` (Next.js loads from app working directory)
+
+### Payload packages retained (UI only, no CMS runtime)
+- `payload` — kept as peer dependency of `@payloadcms/ui`
+- `@payloadcms/ui` — UI components used in preview routes and ui-sandbox
+- `@payloadcms/translations` — i18n strings for PayloadUIShell mock providers
 
 ## Payload CSS variable system — READ THIS FIRST
 
@@ -337,8 +334,8 @@ Locale, and DocumentInfo providers that are impractical to mock. Instead:
   with the installed `@payloadcms/ui` version (currently 3.78.0).
 - When sandbox rendering breaks, **fix the package** (mock data, providers,
   FieldPreview internals) — never by removing the package's wrapper components.
-- The `/sandbox` test route (at `apps/web/src/app/sandbox/`) imports
-  `@payloadcms/ui/css` in its own layout to isolate Payload styles.
+- Preview routes at `/preview/admin` and `/preview/gallery` load
+  `@payloadcms/ui/css` in their layout to provide Payload styles.
 
 ### Consumer usage pattern
 ```tsx
@@ -378,7 +375,6 @@ import { TextInput, SelectInput, CheckboxInput } from '@payloadcms/ui'
 - Never use `.dark` selector — Payload uses `[data-theme="dark"]`
 - Never override `--theme-elevation-*` — breaks dark mode inversion
 - Never import Payload CSS into editor routes
-- Never touch `apps/web/src/app/(payload)/` — Payload manages these
 - Never change `id="payload-preview"` on the iframe
 - Never bypass FieldPreview by using raw Input components with manual useState
 - Never use Payload's Form component in ui-sandbox (it needs Auth/Locale/DocumentInfo providers)
@@ -386,12 +382,11 @@ import { TextInput, SelectInput, CheckboxInput } from '@payloadcms/ui'
 ## Current status
 
 Working:
-- Payload embedded at /admin with SQLite, auto-login
 - Public landing page at /
 - Better Auth login/register flows
 - User dashboard with preset management
 - Presets browsing with per-preset pages
-- Extraction script with full schema:
+- Extraction script with full schema (reads from `@payloadcms/ui` node_modules):
   - base-scale (--color-base-* vars, overridable)
   - elevation (--theme-elevation-*, overridable: false, hidden)
   - 149 component SCSS files extracted (elements, fields, views, widgets)
@@ -407,9 +402,14 @@ Working:
   - Scrubber inputs for numeric values
   - Single roundness control deriving s/m/l radius
   - BEM legacy raw CSS editor
+- Preview routes at /preview/admin and /preview/gallery (mock Payload UI)
 - Docker build with standalone output
 - UI sandbox package (`@payloadtwist/ui-sandbox`) with FieldPreview, PayloadUIShell
-- Sandbox test route at /sandbox exercising ui-sandbox components
+
+Removed:
+- Payload CMS admin panel (/admin) — no longer embedded
+- Payload SQLite database and collections
+- Payload config, seed data, custom admin components
 
 Not started:
 - Deployment to production
