@@ -77,11 +77,6 @@ function buildVariableMap(): Record<string, PayloadCSSVariable> {
     ...other.filter((v) => !isGarbageValue(v)),
   ]
 
-  const garbageCount = other.filter(isGarbageValue).length
-  if (garbageCount > 0 && typeof window === 'undefined') {
-    console.log(`[payload-theme] Filtered ${garbageCount} garbage values from "other" category`)
-  }
-
   const map: Record<string, PayloadCSSVariable> = {}
   for (const v of allVars) {
     const patch = VALUE_PATCHES[v.var]
