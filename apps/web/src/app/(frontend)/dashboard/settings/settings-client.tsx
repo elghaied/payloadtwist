@@ -86,7 +86,7 @@ export function SettingsClient({
     }
   }
 
-  const inputClasses = 'w-full rounded-lg border border-[var(--lp-border)] bg-[var(--lp-surface)] px-4 py-2.5 text-sm text-[var(--lp-text)] placeholder:text-[var(--lp-text-faint)] focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500/50 transition-colors'
+  const inputClasses = 'w-full rounded-lg border border-[var(--lp-input-border)] bg-[var(--lp-input-bg)] px-4 py-2.5 text-sm text-[var(--lp-text)] placeholder:text-[var(--lp-text-faint)] focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500/50 transition-colors'
   const buttonClasses = 'rounded-lg bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 hover:from-purple-500 hover:via-pink-500 hover:to-cyan-500 text-white px-5 py-2.5 text-sm font-medium transition-all disabled:opacity-50'
 
   return (
@@ -96,22 +96,26 @@ export function SettingsClient({
         <h2 className="text-lg font-semibold text-[var(--lp-text)] mb-4">Profile</h2>
         <form onSubmit={handleUpdateProfile} className="flex flex-col gap-4">
           <div>
-            <label className="block text-xs text-[var(--lp-text-muted)] mb-1.5">Display Name</label>
+            <label htmlFor="settings-name" className="block text-xs text-[var(--lp-text-muted)] mb-1.5">Display Name</label>
             <input
+              id="settings-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className={inputClasses}
               required
+              autoComplete="name"
             />
           </div>
           <div>
-            <label className="block text-xs text-[var(--lp-text-muted)] mb-1.5">Email</label>
+            <label htmlFor="settings-email" className="block text-xs text-[var(--lp-text-muted)] mb-1.5">Email</label>
             <input
+              id="settings-email"
               type="email"
               value={userEmail}
               disabled
               className={`${inputClasses} opacity-50 cursor-not-allowed`}
+              autoComplete="email"
             />
           </div>
           <div className="flex items-center gap-3">
@@ -130,39 +134,47 @@ export function SettingsClient({
         <h2 className="text-lg font-semibold text-[var(--lp-text)] mb-4">Change Password</h2>
         <form onSubmit={handleChangePassword} className="flex flex-col gap-4">
           <div>
-            <label className="block text-xs text-[var(--lp-text-muted)] mb-1.5">Current Password</label>
+            <label htmlFor="settings-current-password" className="block text-xs text-[var(--lp-text-muted)] mb-1.5">Current Password</label>
             <input
+              id="settings-current-password"
               type="password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
               className={inputClasses}
               required
+              autoComplete="current-password"
             />
           </div>
           <div>
-            <label className="block text-xs text-[var(--lp-text-muted)] mb-1.5">New Password</label>
+            <label htmlFor="settings-new-password" className="block text-xs text-[var(--lp-text-muted)] mb-1.5">New Password</label>
             <input
+              id="settings-new-password"
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               className={inputClasses}
               required
               minLength={8}
+              autoComplete="new-password"
+              aria-describedby={passwordError ? 'settings-pw-error' : undefined}
             />
           </div>
           <div>
-            <label className="block text-xs text-[var(--lp-text-muted)] mb-1.5">Confirm New Password</label>
+            <label htmlFor="settings-confirm-password" className="block text-xs text-[var(--lp-text-muted)] mb-1.5">Confirm New Password</label>
             <input
+              id="settings-confirm-password"
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               className={inputClasses}
               required
               minLength={8}
+              autoComplete="new-password"
+              aria-describedby={passwordError ? 'settings-pw-error' : undefined}
             />
           </div>
           {passwordError && (
-            <p className="text-xs text-red-500">{passwordError}</p>
+            <p id="settings-pw-error" role="alert" className="text-xs text-red-500">{passwordError}</p>
           )}
           <div className="flex items-center gap-3">
             <button type="submit" disabled={passwordSaving} className={buttonClasses}>
