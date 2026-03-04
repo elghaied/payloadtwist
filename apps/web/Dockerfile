@@ -49,7 +49,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
 
 # Drizzle migrations for auth DB (PostgreSQL)
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/drizzle ./drizzle
+# process.cwd() in standalone mode is /app/apps/web/
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/drizzle ./apps/web/drizzle
 
 USER nextjs
 
