@@ -32,7 +32,8 @@ apps/web/src/
 │   ├── schema.ts            TOKENS, DEFAULT_RAMPS, resolveAll/resolveToken
 │   ├── theme.ts             ThemeConfig, reducers, parseTheme, isSafeValue
 │   ├── ramps.ts             seeds → ramp families
-│   ├── controls.ts          roundness, density, type scale, fonts → tokens
+│   ├── controls.ts          roundness, density, type scale, fonts, surfaces, shadows, borders → tokens
+│   ├── components.ts        component layer: typed props on v4 BEM classes (sidebar, buttons, cards…)
 │   ├── css.ts               buildThemeCss, buildThemePackage, darkDeclarations
 │   ├── presets.ts           built-in presets (expressed via the reducers)
 │   ├── preview-protocol.ts  editor ⇄ preview postMessage types
@@ -64,8 +65,23 @@ inside `@layer payload-default`, so **unlayered rules win without `!important`**
 - An unlayered `html` override also wins in dark mode, so for any token Payload gives a separate
   dark value, `darkDeclarations()` restates Payload's dark value unless the user set one.
 - Only values that differ from Payload's defaults are emitted. Google Fonts via `@import`.
-- `ThemeConfig` = `{ version: 4, seeds, controls, ramps, light, dark, customCss }`. Output is built
-  only from ramps/light/dark/customCss; seeds/controls remember how the editor produced them.
+- `ThemeConfig` = `{ version: 4, seeds, controls, ramps, light, dark, components, customCss }`. Output is
+  built from ramps/light/dark/components/customCss; seeds/controls remember how the editor produced them.
+- Derived values re-apply when seeds change: surface tint/depth (from the neutral or brand seed),
+  glow shadows (brand), and white-or-near-black labels on brand/accent (WCAG).
+
+### Component layer (components.ts)
+
+Tokens can't express a branded sidebar, card shadows or uppercase headers, so `components` holds
+typed properties per component, emitted after the token blocks on Payload's BEM classes
+(`.nav`, `.nav__link--selected` + its `::before`, `.app-header`, `.btn--style-primary`, `.card`,
+`.widget-card`, `.table thead th`, `.form-input`, `.rs__control`, `.pill`, …).
+- Colors are per mode (light-only colors are scoped to `:not([data-theme='dark'])`), everything else
+  is shared. `text` also re-declares text/icon tokens locally so nested labels follow.
+- `sidebar.scheme: 'dark'` re-declares Payload's dark color tokens inside `.nav` so every nested
+  control (user menu, tabs, toggles) turns dark on a dark sidebar in light mode.
+- Verify selectors in the real admin (`/preview`, `/preview/gallery`) when Payload updates.
+- Presets (presets.ts) are built only through reducers; tests hold every preset to WCAG AA.
 
 ## Preview
 

@@ -2,7 +2,7 @@
 // table headers…) as a small, typed set of properties on Payload v4's stable BEM classes.
 // Payload's own CSS is layered, so these unlayered rules win without !important.
 
-export type PropKind = 'color' | 'shadow' | 'radius' | 'weight' | 'case' | 'tracking'
+export type PropKind = 'color' | 'shadow' | 'radius' | 'weight' | 'case' | 'tracking' | 'scheme'
 
 export interface PropDef {
   label: string
@@ -16,8 +16,13 @@ export interface PropDef {
 export const PROPS = {
   bg: { label: 'Background', kind: 'color', decl: 'background: $' },
   bgHover: { label: 'Hover background', kind: 'color', decl: 'background: $', state: ':hover' },
-  text: { label: 'Text', kind: 'color', decl: 'color: $' },
-  textHover: { label: 'Hover text', kind: 'color', decl: 'color: $', state: ':hover' },
+  // Text also re-declares Payload's text/icon tokens locally, so nested labels and icons follow
+  text: {
+    label: 'Text',
+    kind: 'color',
+    decl: 'color: $; --color-text: $; --color-text-secondary: $; --color-icon: $; --color-icon-secondary: $',
+  },
+  textHover: { label: 'Hover text', kind: 'color', decl: 'color: $; --color-text: $; --color-icon: $', state: ':hover' },
   border: { label: 'Border', kind: 'color', decl: 'border-color: $' },
   outline: { label: 'Outline', kind: 'color', decl: 'box-shadow: inset 0 0 0 var(--stroke-width-small) $' },
   divider: { label: 'Divider', kind: 'color', decl: 'border-bottom: var(--stroke-width-small) solid $' },
@@ -27,6 +32,9 @@ export const PROPS = {
   weight: { label: 'Weight', kind: 'weight', decl: 'font-weight: $' },
   case: { label: 'Case', kind: 'case', decl: 'text-transform: $' },
   tracking: { label: 'Letter spacing', kind: 'tracking', decl: 'letter-spacing: $' },
+  // Re-declares Payload's dark-mode color tokens inside the component, so every nested control
+  // (menus, tabs, toggles, links) switches to its dark styling — e.g. a navy sidebar in light mode
+  scheme: { label: 'Dark contents', kind: 'scheme', decl: '' },
 } as const satisfies Record<string, PropDef>
 
 export type PropKey = keyof typeof PROPS
@@ -41,13 +49,14 @@ export interface ComponentDef {
 }
 
 export const COMPONENTS: ComponentDef[] = [
-  { id: 'sidebar', label: 'Sidebar', group: 'Navigation', selectors: ['.nav'], props: ['bg', 'text', 'border', 'shadow'] },
+  { id: 'sidebar', label: 'Sidebar', group: 'Navigation', selectors: ['.nav'], props: ['bg', 'scheme', 'border', 'shadow'] },
   { id: 'sidebarLink', label: 'Sidebar link', group: 'Navigation', selectors: ['.nav__link'], props: ['text', 'bgHover', 'textHover', 'radius', 'weight'] },
   {
     id: 'sidebarLinkActive',
     label: 'Active sidebar link',
     group: 'Navigation',
-    selectors: ['.nav__link--selected', '.nav__link--selected:hover'],
+    // Payload paints the selected highlight on ::before
+    selectors: ['.nav__link--selected', '.nav__link--selected:hover', '.nav__link--selected::before'],
     props: ['bg', 'text', 'accent', 'weight'],
   },
   { id: 'sidebarGroup', label: 'Sidebar group label', group: 'Navigation', selectors: ['.nav-group__label'], props: ['text', 'weight', 'case', 'tracking'] },
@@ -91,12 +100,16 @@ export const isColorProp = (p: PropKey) => PROPS[p].kind === 'color'
 // ─── Value validation ───────────────────────────────────────────────────────
 
 const VALID: Record<PropKind, (v: string) => boolean> = {
-  color: (v) => /^(#[0-9a-f]{3,8}|rgba?\([\d.,\s%/]+\)|hsla?\([\d.,\s%/deg]+\)|transparent|currentcolor|var\(--[a-z0-9-]+\))$/i.test(v),
+  color: (v) =>
+    /^(#[0-9a-f]{3,8}|rgba?\([\d.,\s%/]+\)|hsla?\([\d.,\s%/deg]+\)|transparent|currentcolor|var\(--[a-z0-9-]+\))$/i.test(v) ||
+    // gradients built only from colors, tokens, angles and stops
+    /^linear-gradient\((\d+deg|to [a-z ]+)?[\s,#0-9a-z().%-]*\)$/i.test(v),
   shadow: (v) => v === 'none' || /^[\w\s.,()%#/-]+$/.test(v),
   radius: (v) => /^(\d+(\.\d+)?(px|rem|em|%)|0|var\(--[a-z0-9-]+\))$/.test(v),
   weight: (v) => /^[1-9]00$/.test(v),
   case: (v) => ['none', 'uppercase', 'lowercase', 'capitalize'].includes(v),
   tracking: (v) => /^-?\d+(\.\d+)?(em|px)$|^0$|^normal$/.test(v),
+  scheme: (v) => v === 'dark',
 }
 
 export function isValidComponentValue(prop: PropKey, value: string): boolean {
@@ -115,11 +128,22 @@ function rule(selectors: string[], decls: string[]): string {
  * CSS for the component layer. Shared values apply in both modes; colors set for light only are
  * scoped to light mode so they never leak into dark.
  */
-export function buildComponentCss(styles: ComponentStyles, scope = 'html'): string {
+export function buildComponentCss(styles: ComponentStyles, scope = 'html', darkTokens: Record<string, string> = {}): string {
   const out: string[] = []
   for (const def of COMPONENTS) {
     const s = styles[def.id]
     if (!s) continue
+    if (s.light?.scheme === 'dark') {
+      // Dark token values inside the component; its own background becomes --color-bg so
+      // nested surfaces (the sidebar header, toggles) blend into it
+      const bg = s.light.bg && !s.light.bg.startsWith('linear-gradient') ? s.light.bg : undefined
+      const decls = Object.entries(darkTokens).map(([v, value]) => `${v}: ${v === '--color-bg' && bg ? bg : value}`)
+      out.push(rule(def.selectors.map((sel) => `${scope} ${sel}`), [...decls, 'color: var(--color-text)']))
+    }
+    // The sidebar header paints its own background; let a custom sidebar show through it
+    if (def.id === 'sidebar' && (s.light?.bg || s.dark?.bg)) {
+      out.push(rule([`${scope} .nav__header`], ['background: transparent']))
+    }
     // group declarations by (mode, state)
     const buckets = new Map<string, string[]>()
     const add = (mode: 'shared' | 'light' | 'dark', state: string, decl: string) => {
@@ -127,11 +151,12 @@ export function buildComponentCss(styles: ComponentStyles, scope = 'html'): stri
       buckets.set(key, [...(buckets.get(key) ?? []), decl])
     }
     for (const prop of def.props) {
+      if (prop === 'scheme') continue
       const d = PROPS[prop] as PropDef
       const light = s.light?.[prop]
       const dark = s.dark?.[prop]
-      if (light !== undefined) add(isColorProp(prop) ? 'light' : 'shared', d.state ?? '', d.decl.replace('$', light))
-      if (dark !== undefined && isColorProp(prop)) add('dark', d.state ?? '', d.decl.replace('$', dark))
+      if (light !== undefined) add(isColorProp(prop) ? 'light' : 'shared', d.state ?? '', d.decl.replaceAll('$', light))
+      if (dark !== undefined && isColorProp(prop)) add('dark', d.state ?? '', d.decl.replaceAll('$', dark))
     }
     for (const [key, decls] of buckets) {
       const [mode, state] = key.split('|')

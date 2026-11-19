@@ -43,6 +43,16 @@ function lightDeclarations(theme: ThemeConfig): Record<string, string> {
   return out
 }
 
+/** Every color token's dark-mode value (theme overrides first) — for components with dark contents. */
+function darkColorTokens(theme: ThemeConfig): Record<string, string> {
+  const out: Record<string, string> = {}
+  for (const t of schema.tokens) {
+    if (t.type !== 'color' || !t.dark || t.var.startsWith('--ramp-')) continue
+    out[t.var] = theme.dark[t.var] ?? t.dark
+  }
+  return out
+}
+
 const GOOGLE_FAMILIES = new Set(GOOGLE_FONTS_CATALOG.map((f) => f.family))
 
 export function googleFontsUrl(theme: ThemeConfig): string | null {
@@ -76,7 +86,7 @@ export function buildThemeCss(theme: ThemeConfig, { scope = 'html', header = tru
     fonts ? `@import url('${fonts}');` : '',
     block(`${scope},\n${scope} [data-theme='light']`, lightDeclarations(theme)),
     block(`${scope}[data-theme='dark'],\n${scope} [data-theme='dark']`, darkDeclarations(theme)),
-    buildComponentCss(theme.components ?? {}, scope),
+    buildComponentCss(theme.components ?? {}, scope, darkColorTokens(theme)),
     theme.customCss.trim(),
   ]
   return parts.filter(Boolean).join('\n\n') + '\n'

@@ -108,7 +108,7 @@ function Editor() {
   }, [undo, redo])
 
   // Resizable editor panel
-  const [panelWidth, setPanelWidth] = useState(400)
+  const [panelWidth, setPanelWidth] = useState(430)
   const containerRef = useRef<HTMLDivElement>(null)
   const startDrag = (e: React.PointerEvent) => {
     e.preventDefault()
@@ -209,7 +209,7 @@ function Editor() {
               role="tab"
               aria-selected={tab === t.key}
               onClick={() => setTab(t.key)}
-              className={`text-[11px] px-2.5 py-1 rounded font-medium whitespace-nowrap transition-colors ${
+              className={`text-[11px] px-2 py-1 rounded font-medium whitespace-nowrap transition-colors ${
                 tab === t.key
                   ? 'bg-[var(--pt-accent)] text-white'
                   : 'text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] hover:bg-[var(--pt-surface-hover)]'

@@ -66,6 +66,14 @@ describe('generateSeedRamps', () => {
 })
 
 describe('theme updates', () => {
+  it('brand seed picks readable button labels and resets them', () => {
+    const light = setSeed(defaultTheme(), 'brand', '#83bf78') // light green: white fails
+    expect(light.light['--color-text-onbrand']).toBe('#111111')
+    const dark = setSeed(light, 'brand', '#1e3a8a') // navy: white wins
+    expect(dark.light['--color-text-onbrand']).toBeUndefined()
+    expect(setSeed(light, 'brand', null).light).toEqual({})
+  })
+
   it('setSeed(null) removes exactly the generated ramps', () => {
     let t = setSeed(defaultTheme(), 'brand', '#ff0000')
     t = setSeed(t, 'danger', '#00ff00')
@@ -110,6 +118,11 @@ describe('parseTheme (trust boundary)', () => {
     expect(() => parseTheme({ version: 4, light: { '--made-up': '#fff' } })).toThrow()
     expect(() => parseTheme({ version: 4, light: { '--ramp-blue-500': '#fff' } })).toThrow()
     expect(() => parseTheme({ version: 4, ramps: { '--color-bg': '#fff' } })).toThrow()
+    // prototype keys from JSON.parse are own properties: they must be rejected, not looked up
+    expect(() => parseTheme(JSON.parse('{"version":4,"light":{"__proto__":"#fff"}}'))).toThrow()
+    expect(() => parseTheme(JSON.parse('{"version":4,"components":{"__proto__":{"light":{"bg":"#fff"}}}}'))).toThrow(/unknown component/)
+    expect(() => parseTheme(JSON.parse('{"version":4,"components":{"sidebar":{"light":{"constructor":"#fff"}}}}'))).toThrow()
+    expect(() => parseTheme(JSON.parse('{"version":4,"controls":{"fonts":{"toString":"Inter"}}}'))).toThrow()
   })
 })
 

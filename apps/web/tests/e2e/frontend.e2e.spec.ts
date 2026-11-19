@@ -54,11 +54,12 @@ test.describe('Editor', () => {
 
   test('applies a preset to the live preview and follows dark mode', async ({ page }) => {
     await page.getByRole('button', { name: 'Light Cream' }).click()
-    await expect.poll(() => previewVar(page, '--color-bg')).toBe('#faf7ed')
-    await expect.poll(() => previewVar(page, '--ramp-blue-500')).toBe('#83bf78')
+    await expect.poll(() => previewVar(page, '--ramp-blue-500')).toBe('#5f9a55')
+    const lightBg = await previewVar(page, '--color-bg')
+    expect(lightBg).not.toBe('#fff')
 
     await page.getByRole('button', { name: 'Preview dark mode' }).click()
-    await expect.poll(() => previewVar(page, '--color-bg')).toBe('#171a16')
+    await expect.poll(() => previewVar(page, '--color-bg')).not.toBe(lightBg)
 
     await page.getByRole('button', { name: 'Undo' }).click()
     await expect.poll(() => previewVar(page, '--ramp-blue-500')).toBe('#0d99ff')

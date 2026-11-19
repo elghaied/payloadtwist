@@ -41,7 +41,8 @@ describe('shadows and borders', () => {
       expect(t.light[v]).toContain('rgba(255, 0, 0')
       expect(t.dark[v]).toBeDefined()
     }
-    expect(setShadows(t, 'default').light).toEqual({})
+    const reset = setShadows(t, 'default')
+    for (const v of SHADOW_VARS) expect(reset.light[v] ?? reset.dark[v]).toBeUndefined()
   })
 
   it('border presets round-trip through parseTheme and CSS', () => {

@@ -91,6 +91,17 @@ function PropRow({ def, prop, theme, fallback }: { def: ComponentDef; prop: Prop
     control = <ScrubberInput value={pxOf(light) ?? 0} min={0} max={32} step={1} unit="px" onChange={(n) => set(def.id, prop, `${n}px`, 'light')} />
   } else if (p.kind === 'weight') {
     control = <Choice options={WEIGHTS.map((w) => ({ label: w, value: w }))} value={light} onChange={(v) => set(def.id, prop, v, 'light')} />
+  } else if (p.kind === 'scheme') {
+    control = (
+      <Choice
+        options={[
+          { label: 'Auto', value: '' },
+          { label: 'Dark', value: 'dark' },
+        ]}
+        value={light ?? ''}
+        onChange={(v) => set(def.id, prop, v || null, 'light')}
+      />
+    )
   } else if (p.kind === 'case') {
     control = <Choice options={CASES} value={light} onChange={(v) => set(def.id, prop, v, 'light')} />
   } else {

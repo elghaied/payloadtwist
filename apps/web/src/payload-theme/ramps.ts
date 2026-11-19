@@ -1,4 +1,4 @@
-import { clamp, hexToHsl, hslToHex, isHex, normalizeHex } from './color'
+import { clamp, contrastRatio, hexToHsl, hslToHex, isHex, normalizeHex } from './color'
 import { DEFAULT_RAMPS, rampVar } from './schema'
 
 // Seeds are the editor's primary lever: one color per role regenerates the Payload ramp
@@ -110,4 +110,25 @@ export function generateSeedRamps(key: SeedKey, seedHex: string): Record<string,
 export function seedRampVars(key: SeedKey): string[] {
   const { family, related } = SEEDS[key]
   return [family, ...related].flatMap((f) => steps(f).map((s) => rampVar(f, s)))
+}
+
+// ─── Text on brand / accent ─────────────────────────────────────────────────
+//
+// Payload paints labels on brand and component colors white. That fails WCAG on light or
+// mid-tone seeds (even Payload's own #0d99ff is 3:1), so a seed also picks white or near-black
+// labels — whichever contrasts more.
+
+const DARK_LABEL = '#111111'
+
+export const ON_COLOR_VARS: Partial<Record<SeedKey, string[]>> = {
+  brand: ['--color-text-onbrand', '--color-icon-onbrand', '--color-text-onbrand-secondary', '--color-icon-onbrand-secondary'],
+  accent: ['--color-text-oncomponent', '--color-icon-oncomponent'],
+}
+
+export function onColorTokens(key: SeedKey, seedHex: string): Record<string, string> {
+  const vars = ON_COLOR_VARS[key]
+  if (!vars) return {}
+  const hex = normalizeHex(seedHex)
+  if (contrastRatio('#ffffff', hex) >= contrastRatio(DARK_LABEL, hex)) return {}
+  return Object.fromEntries(vars.map((v) => [v, v.endsWith('-secondary') ? 'rgba(17, 17, 17, 0.7)' : DARK_LABEL]))
 }

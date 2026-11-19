@@ -24,7 +24,7 @@ import {
   type SurfaceOptions,
 } from './controls'
 import { COMPONENT_BY_ID, isColorProp, isValidComponentValue, PROPS, type ComponentStyles, type PropKey } from './components'
-import { defaultSeed, generateSeedRamps, SEED_KEYS, seedRampVars, type SeedKey } from './ramps'
+import { defaultSeed, generateSeedRamps, ON_COLOR_VARS, onColorTokens, SEED_KEYS, seedRampVars, type SeedKey } from './ramps'
 import { TOKENS } from './schema'
 
 export type Mode = 'light' | 'dark'
@@ -72,7 +72,10 @@ export function setSeed(theme: ThemeConfig, key: SeedKey, hex: string | null): T
   const seeds = { ...theme.seeds }
   if (hex === null) delete seeds[key]
   else seeds[key] = normalizeHex(hex)
-  const next = { ...theme, seeds, ramps: hex === null ? ramps : { ...ramps, ...generateSeedRamps(key, hex) } }
+  // Labels on the seed color follow it (white or near-black, whichever reads better)
+  const onVars = ON_COLOR_VARS[key] ?? []
+  const light = { ...without(theme.light, onVars), ...(hex === null ? {} : onColorTokens(key, hex)) }
+  const next = { ...theme, seeds, light, ramps: hex === null ? ramps : { ...ramps, ...generateSeedRamps(key, hex) } }
   // Surfaces and glow shadows are derived from seeds: keep them in sync
   return applyShadows(applySurfaces(next))
 }
@@ -136,7 +139,7 @@ export function setRamp(theme: ThemeConfig, varName: string, value: string | nul
 
 /** Sets (or with `null` resets) a token override for one mode. */
 export function setToken(theme: ThemeConfig, varName: string, value: string | null, mode: Mode): ThemeConfig {
-  if (!TOKENS[varName]) throw new Error(`Unknown Payload token: ${varName}`)
+  if (!Object.hasOwn(TOKENS, varName)) throw new Error(`Unknown Payload token: ${varName}`)
   const map = without(theme[mode], [varName])
   return { ...theme, [mode]: value === null ? map : { ...map, [varName]: value } }
 }
@@ -187,7 +190,7 @@ export function isSafeValue(v: string): boolean {
 
 /** Sets (or with `null` resets) one component property. Non-color props are shared by both modes. */
 export function setComponentProp(theme: ThemeConfig, id: string, prop: PropKey, value: string | null, mode: Mode): ThemeConfig {
-  const def = COMPONENT_BY_ID[id]
+  const def = Object.hasOwn(COMPONENT_BY_ID, id) ? COMPONENT_BY_ID[id] : undefined
   if (!def || !def.props.includes(prop)) throw new Error(`Unknown component property: ${id}.${prop}`)
   if (value !== null && !isValidComponentValue(prop, value)) throw new Error(`Invalid value for ${id}.${prop}`)
   const m: Mode = isColorProp(prop) ? mode : 'light'
@@ -211,7 +214,7 @@ export function parseTheme(input: unknown): ThemeConfig {
     if (!m || typeof m !== 'object' || Array.isArray(m)) throw new Error(`${name} must be an object`)
     for (const [k, v] of Object.entries(m)) {
       // Only real Payload tokens (ramps only in `ramps`) — no arbitrary custom properties
-      if (!TOKENS[k] || (name === 'ramps') !== k.startsWith('--ramp-') || typeof v !== 'string') {
+      if (!Object.hasOwn(TOKENS, k) || (name === 'ramps') !== k.startsWith('--ramp-') || typeof v !== 'string') {
         throw new Error(`${name}: invalid entry ${k}`)
       }
       if (!isSafeValue(v)) throw new Error(`${name}: invalid value for ${k}`)
@@ -243,7 +246,7 @@ export function parseTheme(input: unknown): ThemeConfig {
   if (c.fonts !== undefined) {
     controls.fonts = {}
     for (const [role, family] of Object.entries(c.fonts)) {
-      if (!(role in FONT_VARS) || typeof family !== 'string' || !isSafeValue(family)) {
+      if (!Object.hasOwn(FONT_VARS, role) || typeof family !== 'string' || !isSafeValue(family)) {
         throw new Error(`controls.fonts: invalid entry ${role}`)
       }
       controls.fonts[role as FontRole] = family
@@ -270,14 +273,14 @@ export function parseTheme(input: unknown): ThemeConfig {
   const rawComponents = (t as { components?: unknown }).components ?? {}
   if (!rawComponents || typeof rawComponents !== 'object' || Array.isArray(rawComponents)) throw new Error('components must be an object')
   for (const [id, styles] of Object.entries(rawComponents as Record<string, unknown>)) {
+    if (!Object.hasOwn(COMPONENT_BY_ID, id) || !styles || typeof styles !== 'object') throw new Error(`components: unknown component ${id}`)
     const def = COMPONENT_BY_ID[id]
-    if (!def || !styles || typeof styles !== 'object') throw new Error(`components: unknown component ${id}`)
     for (const mode of ['light', 'dark'] as const) {
       const values = (styles as Record<string, unknown>)[mode]
       if (values === undefined) continue
       if (!values || typeof values !== 'object') throw new Error(`components.${id}.${mode} must be an object`)
       for (const [prop, value] of Object.entries(values)) {
-        if (!(prop in PROPS) || !def.props.includes(prop as PropKey) || typeof value !== 'string' || !isValidComponentValue(prop as PropKey, value)) {
+        if (!Object.hasOwn(PROPS, prop) || !def.props.includes(prop as PropKey) || typeof value !== 'string' || !isValidComponentValue(prop as PropKey, value)) {
           throw new Error(`components.${id}.${mode}: invalid ${prop}`)
         }
         if (mode === 'dark' && !isColorProp(prop as PropKey)) throw new Error(`components.${id}.dark: ${prop} is shared, set it in light`)
