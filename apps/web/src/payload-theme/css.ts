@@ -1,3 +1,4 @@
+import { buildComponentCss } from './components'
 import { primaryFamily } from './controls'
 import { GOOGLE_FONTS_CATALOG } from './google-fonts-catalog'
 import { schema, TOKENS } from './schema'
@@ -75,6 +76,7 @@ export function buildThemeCss(theme: ThemeConfig, { scope = 'html', header = tru
     fonts ? `@import url('${fonts}');` : '',
     block(`${scope},\n${scope} [data-theme='light']`, lightDeclarations(theme)),
     block(`${scope}[data-theme='dark'],\n${scope} [data-theme='dark']`, darkDeclarations(theme)),
+    buildComponentCss(theme.components ?? {}, scope),
     theme.customCss.trim(),
   ]
   return parts.filter(Boolean).join('\n\n') + '\n'

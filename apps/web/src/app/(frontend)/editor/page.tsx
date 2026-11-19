@@ -8,6 +8,7 @@ import { EditorUserMenu } from '@/components/auth/UserMenu'
 import { ExportDialog } from '@/components/editor/ExportDialog'
 import { PreviewPanel } from '@/components/editor/PreviewPanel'
 import { AdvancedSection } from '@/components/editor/sections/AdvancedSection'
+import { ComponentsSection } from '@/components/editor/sections/ComponentsSection'
 import { CssSection } from '@/components/editor/sections/CssSection'
 import { PaletteSection } from '@/components/editor/sections/PaletteSection'
 import { ShapeSection } from '@/components/editor/sections/ShapeSection'
@@ -25,6 +26,7 @@ const TABS = [
   { key: 'surfaces', label: 'Surfaces' },
   { key: 'shape', label: 'Shape' },
   { key: 'type', label: 'Type' },
+  { key: 'components', label: 'Components' },
   { key: 'advanced', label: 'Advanced' },
   { key: 'css', label: 'CSS' },
 ] as const
@@ -57,7 +59,11 @@ function Editor() {
   const searchParams = useSearchParams()
 
   const css = useMemo(() => buildThemeCss(theme), [theme])
-  const overrideCount = Object.keys(theme.ramps).length + Object.keys(theme.light).length + Object.keys(theme.dark).length
+  const overrideCount =
+    Object.keys(theme.ramps).length +
+    Object.keys(theme.light).length +
+    Object.keys(theme.dark).length +
+    Object.values(theme.components).reduce((n, c) => n + Object.keys(c.light ?? {}).length + Object.keys(c.dark ?? {}).length, 0)
 
   const showToast = useCallback((msg: string) => {
     setToast(msg)
@@ -219,6 +225,7 @@ function Editor() {
           {tab === 'surfaces' && <SurfacesSection theme={theme} />}
           {tab === 'shape' && <ShapeSection theme={theme} />}
           {tab === 'type' && <TypeSection theme={theme} />}
+          {tab === 'components' && <ComponentsSection theme={theme} />}
           {tab === 'advanced' && <AdvancedSection theme={theme} />}
           {tab === 'css' && <CssSection theme={theme} css={css} />}
         </div>

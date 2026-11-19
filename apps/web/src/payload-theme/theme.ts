@@ -23,6 +23,7 @@ import {
   type ShadowStyle,
   type SurfaceOptions,
 } from './controls'
+import { COMPONENT_BY_ID, isColorProp, isValidComponentValue, PROPS, type ComponentStyles, type PropKey } from './components'
 import { defaultSeed, generateSeedRamps, SEED_KEYS, seedRampVars, type SeedKey } from './ramps'
 import { TOKENS } from './schema'
 
@@ -50,11 +51,13 @@ export interface ThemeConfig {
   light: Record<string, string>
   /** Token overrides for `[data-theme='dark']` */
   dark: Record<string, string>
+  /** Component layer: typed properties on Payload's BEM classes (components.ts) */
+  components: ComponentStyles
   customCss: string
 }
 
 export function defaultTheme(): ThemeConfig {
-  return { version: 4, seeds: {}, controls: {}, ramps: {}, light: {}, dark: {}, customCss: '' }
+  return { version: 4, seeds: {}, controls: {}, ramps: {}, light: {}, dark: {}, components: {}, customCss: '' }
 }
 
 const without = (obj: Record<string, string>, keys: string[]) => {
@@ -182,6 +185,22 @@ export function isSafeValue(v: string): boolean {
   return v.length <= 500 && !/[;{}<>\\]|url\(|@import|expression\(|image-set\(|src\(/i.test(v)
 }
 
+/** Sets (or with `null` resets) one component property. Non-color props are shared by both modes. */
+export function setComponentProp(theme: ThemeConfig, id: string, prop: PropKey, value: string | null, mode: Mode): ThemeConfig {
+  const def = COMPONENT_BY_ID[id]
+  if (!def || !def.props.includes(prop)) throw new Error(`Unknown component property: ${id}.${prop}`)
+  if (value !== null && !isValidComponentValue(prop, value)) throw new Error(`Invalid value for ${id}.${prop}`)
+  const m: Mode = isColorProp(prop) ? mode : 'light'
+  const current = theme.components[id] ?? {}
+  const map = { ...current[m] }
+  if (value === null) delete map[prop]
+  else map[prop] = value
+  const next = { ...current, [m]: map }
+  const components = { ...theme.components, [id]: next }
+  if (!Object.keys(next.light ?? {}).length && !Object.keys(next.dark ?? {}).length) delete components[id]
+  return { ...theme, components }
+}
+
 /** Accepts unknown input (imports, presets from the DB) and returns a valid ThemeConfig or throws. */
 export function parseTheme(input: unknown): ThemeConfig {
   if (!input || typeof input !== 'object') throw new Error('Theme must be an object')
@@ -247,6 +266,26 @@ export function parseTheme(input: unknown): ThemeConfig {
     controls.borders = c.borders
   }
 
+  const components: ComponentStyles = {}
+  const rawComponents = (t as { components?: unknown }).components ?? {}
+  if (!rawComponents || typeof rawComponents !== 'object' || Array.isArray(rawComponents)) throw new Error('components must be an object')
+  for (const [id, styles] of Object.entries(rawComponents as Record<string, unknown>)) {
+    const def = COMPONENT_BY_ID[id]
+    if (!def || !styles || typeof styles !== 'object') throw new Error(`components: unknown component ${id}`)
+    for (const mode of ['light', 'dark'] as const) {
+      const values = (styles as Record<string, unknown>)[mode]
+      if (values === undefined) continue
+      if (!values || typeof values !== 'object') throw new Error(`components.${id}.${mode} must be an object`)
+      for (const [prop, value] of Object.entries(values)) {
+        if (!(prop in PROPS) || !def.props.includes(prop as PropKey) || typeof value !== 'string' || !isValidComponentValue(prop as PropKey, value)) {
+          throw new Error(`components.${id}.${mode}: invalid ${prop}`)
+        }
+        if (mode === 'dark' && !isColorProp(prop as PropKey)) throw new Error(`components.${id}.dark: ${prop} is shared, set it in light`)
+      }
+      ;(components[id] ??= {})[mode] = values as Partial<Record<PropKey, string>>
+    }
+  }
+
   const customCss = typeof t.customCss === 'string' ? t.customCss : ''
   if (/<\/style/i.test(customCss)) throw new Error('customCss must not contain </style>')
 
@@ -257,6 +296,7 @@ export function parseTheme(input: unknown): ThemeConfig {
     ramps: strMap(t.ramps, 'ramps'),
     light: strMap(t.light, 'light'),
     dark: strMap(t.dark, 'dark'),
+    components,
     customCss,
   }
 }

@@ -1,12 +1,14 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { BorderStyle, Density, FontRole, ShadowStyle, SurfaceOptions } from '@/payload-theme/controls'
+import type { PropKey } from '@/payload-theme/components'
 import type { SeedKey } from '@/payload-theme/ramps'
 import {
   defaultTheme,
   parseTheme,
   setDensity,
   setBorders,
+  setComponentProp,
   setFont,
   setRamp,
   setShadows,
@@ -44,6 +46,7 @@ interface EditorState {
   setSurfaces(opts: SurfaceOptions | null): void
   setShadows(style: ShadowStyle): void
   setBorders(style: BorderStyle): void
+  setComponentProp(id: string, prop: PropKey, value: string | null, mode: Mode): void
   setCustomCss(css: string): void
   /** Replace the whole theme (presets, imports, saved presets). Always its own undo step. */
   loadTheme(theme: unknown): void
@@ -90,6 +93,7 @@ export const useEditorStore = create<EditorState>()(
         setSurfaces: (opts) => commit((t) => setSurfaces(t, opts)),
         setShadows: (style) => commit((t) => setShadows(t, style)),
         setBorders: (style) => commit((t) => setBorders(t, style)),
+        setComponentProp: (id, prop, value, mode) => commit((t) => setComponentProp(t, id, prop, value, mode)),
         setCustomCss: (css) => commit((t) => ({ ...t, customCss: css })),
         loadTheme: (input) => commit(() => parseTheme(input), false),
         resetTheme: () => commit(() => defaultTheme(), false),
