@@ -86,13 +86,13 @@ export function setRoundness(theme: ThemeConfig, mediumPx: number | null): Theme
 }
 
 export function setDensity(theme: ThemeConfig, density: Density): ThemeConfig {
-  const controls = { ...theme.controls, density }
+  const controls: ThemeConfig['controls'] = { ...theme.controls, density }
   if (density === 'compact') delete controls.density
   return { ...theme, controls, light: { ...without(theme.light, DENSITY_VARS), ...densityTokens(density) } }
 }
 
 export function setTypeScale(theme: ThemeConfig, scale: number): ThemeConfig {
-  const controls = { ...theme.controls, typeScale: scale }
+  const controls: ThemeConfig['controls'] = { ...theme.controls, typeScale: scale }
   if (scale === 1) delete controls.typeScale
   return { ...theme, controls, light: { ...without(theme.light, TYPE_SCALE_VARS), ...typeScaleTokens(scale) } }
 }

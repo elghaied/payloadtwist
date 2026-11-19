@@ -1,17 +1,11 @@
-import os from 'os'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { APIError, buildConfig, createFolderField } from 'payload'
-import type {
-  CollectionBeforeOperationHook,
-  CollectionConfig,
-  Field,
-  GlobalConfig,
-} from 'payload'
+import type { CollectionBeforeOperationHook, CollectionConfig, Field, GlobalConfig } from 'payload'
 import { migrations } from './migrations'
-import { DEMO_USER, seed } from './seed'
+import { DEMO_USER, MEDIA_DIR, seed } from './seed'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -67,7 +61,7 @@ const Media = demo({
   slug: 'media',
   admin: { group: 'Content' },
   upload: {
-    staticDir: path.join(os.tmpdir(), 'payloadtwist-preview-media'),
+    staticDir: MEDIA_DIR,
     mimeTypes: ['image/*'],
     focalPoint: false,
     crop: false,
@@ -250,6 +244,33 @@ export default buildConfig({
     user: 'users',
     autoLogin: { email: DEMO_USER.email, password: DEMO_USER.password, prefillOnly: false },
     meta: { titleSuffix: ' — payloadtwist preview' },
+    components: {
+      providers: ['@/payload/components/PreviewBridge#PreviewBridge'],
+      views: {
+        gallery: {
+          Component: '@/payload/components/GalleryView#GalleryView',
+          path: '/gallery',
+          meta: { title: 'Component gallery' },
+        },
+      },
+    },
+    dashboard: {
+      defaultLayout: [
+        { widgetSlug: 'welcome', width: 'full' },
+        { widgetSlug: 'editorial', width: 'medium' },
+        { widgetSlug: 'activity', width: 'medium' },
+        { widgetSlug: 'collections', width: 'full' },
+      ],
+      widgets: [
+        {
+          slug: 'editorial',
+          label: 'Editorial overview',
+          Component: '@/payload/components/EditorialWidget#EditorialWidget',
+          minWidth: 'small',
+          maxWidth: 'full',
+        },
+      ],
+    },
   },
   routes: { admin: '/preview', api: '/preview-api' },
   collections: [Posts, Pages, Media, Categories, Folders, Users],

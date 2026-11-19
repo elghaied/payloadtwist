@@ -1,0 +1,159 @@
+/* Styles for the demo admin's custom widget and gallery. Only Payload's semantic tokens are
+   used, so everything here follows the theme being edited. */
+
+.pt-widget {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-3);
+  padding: var(--spacer-3);
+  border: var(--stroke-width-small) solid var(--color-border);
+  border-radius: var(--radius-large);
+  background: var(--color-bg);
+}
+
+.pt-widget__header,
+.pt-widget__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacer-2);
+}
+
+.pt-widget__actions {
+  justify-content: flex-start;
+}
+
+.pt-widget__header h2,
+.pt-gallery__title {
+  margin: 0;
+  font-size: var(--text-heading-medium-font-size);
+  line-height: var(--text-heading-medium-line-height);
+}
+
+.pt-widget__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacer-2);
+}
+
+.pt-widget__stats > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacer-1);
+  padding: var(--spacer-2-5);
+  border-radius: var(--radius-medium);
+  background: var(--color-bg-secondary);
+}
+
+.pt-widget__value {
+  font-size: var(--text-heading-xl-font-size);
+  line-height: var(--text-heading-xl-line-height);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.pt-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-6);
+  padding-block: var(--spacer-5);
+}
+
+.pt-gallery__header h1 {
+  margin: 0 0 var(--spacer-1);
+}
+
+.pt-gallery__header p {
+  color: var(--color-text-secondary);
+}
+
+.pt-gallery__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-3);
+  padding-top: var(--spacer-4);
+  border-top: var(--stroke-width-small) solid var(--color-border);
+}
+
+.pt-gallery__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacer-2);
+}
+
+.pt-gallery__stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-2);
+}
+
+.pt-gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: var(--spacer-3);
+  align-items: start;
+}
+
+.pt-gallery__tooltip-target {
+  position: relative;
+  display: inline-flex;
+}
+
+.pt-gallery__swatch-group h3 {
+  margin: 0 0 var(--spacer-2);
+  font-size: var(--text-body-large-font-size);
+}
+
+.pt-gallery__swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: var(--spacer-2);
+}
+
+.pt-swatch {
+  display: flex;
+  align-items: center;
+  gap: var(--spacer-2);
+  min-width: 0;
+}
+
+.pt-swatch__chip {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--spacer-5);
+  height: var(--spacer-5);
+  border: var(--stroke-width-small) solid var(--color-border);
+  border-radius: var(--radius-medium);
+  font-weight: 600;
+}
+
+.pt-swatch code,
+.pt-ramp code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-body-small-font-size);
+  color: var(--color-text-secondary);
+}
+
+.pt-ramp {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  align-items: center;
+  gap: var(--spacer-2);
+}
+
+.pt-ramp__steps {
+  display: flex;
+  overflow: hidden;
+  border: var(--stroke-width-small) solid var(--color-border);
+  border-radius: var(--radius-medium);
+}
+
+.pt-ramp__steps span {
+  flex: 1;
+  height: var(--spacer-5);
+}

@@ -1,6 +1,12 @@
 import { randomUUID } from 'crypto'
+import fs from 'fs'
+import os from 'os'
+import path from 'path'
 import type { Payload, PayloadRequest } from 'payload'
 import type { Post, User } from './payload-types'
+
+/** Upload dir for the in-memory demo; wiped on seed so files never pile up across restarts. */
+export const MEDIA_DIR = path.join(os.tmpdir(), 'payloadtwist-preview-media')
 
 export const DEMO_USER = {
   name: 'Alex Morgan',
@@ -143,6 +149,7 @@ const POSTS = [
 export async function seed(payload: Payload): Promise<void> {
   const existing = await payload.count({ collection: 'users' })
   if (existing.totalDocs > 0) return
+  fs.rmSync(MEDIA_DIR, { recursive: true, force: true })
 
   const req = { context: { seeding: true } } as unknown as PayloadRequest
   const ctx = { context: { seeding: true }, req }
