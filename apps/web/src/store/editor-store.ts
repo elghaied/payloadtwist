@@ -1,284 +1,128 @@
-import { getDefaultTheme } from '@/payload-theme/config'
-import { PayloadThemeConfig } from '@/payload-theme/types'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import type { Density, FontRole } from '@/payload-theme/controls'
+import type { SeedKey } from '@/payload-theme/ramps'
+import {
+  defaultTheme,
+  parseTheme,
+  setDensity,
+  setFont,
+  setRamp,
+  setRoundness,
+  setSeed,
+  setToken,
+  setTypeScale,
+  type Mode,
+  type ThemeConfig,
+} from '@/payload-theme/theme'
 
-const MAX_HISTORY_COUNT = 30
-const HISTORY_OVERRIDE_THRESHOLD_MS = 500
+const MAX_HISTORY = 50
+/** Edits closer together than this (e.g. dragging a picker) collapse into one undo step */
+const COALESCE_MS = 500
 
-interface HistoryEntry {
-  config: PayloadThemeConfig
-  timestamp: number
-}
+export type PreviewTheme = 'light' | 'dark'
 
-interface EditorStore {
-  config: PayloadThemeConfig
-  history: HistoryEntry[]
-  future: HistoryEntry[]
+interface EditorState {
+  theme: ThemeConfig
+  past: ThemeConfig[]
+  future: ThemeConfig[]
+  lastEditAt: number
 
-  setVariable(varName: string, value: string, mode: 'light' | 'dark'): void
-  setBaseScale(vars: Record<string, string>): void
-  setBaseRadius(m: number): void
-  setBemOverride(blockName: string, css: string): void
-  setComponentOverride(selector: string, property: string, value: string): void
-  resetComponentOverrides(): void
+  previewTheme: PreviewTheme
+  enhancedContrast: boolean
+
+  setSeed(key: SeedKey, hex: string | null): void
+  setRamp(varName: string, value: string | null): void
+  setToken(varName: string, value: string | null, mode: Mode): void
+  setRoundness(px: number | null): void
+  setDensity(density: Density): void
+  setTypeScale(scale: number): void
+  setFont(role: FontRole, family: string | null): void
+  setCustomCss(css: string): void
+  /** Replace the whole theme (presets, imports, saved presets). Always its own undo step. */
+  loadTheme(theme: unknown): void
   resetTheme(): void
-  importTheme(config: PayloadThemeConfig): void
   undo(): void
   redo(): void
-  canUndo(): boolean
-  canRedo(): boolean
+
+  setPreviewTheme(theme: PreviewTheme): void
+  setEnhancedContrast(enabled: boolean): void
 }
 
-export const useEditorStore = create<EditorStore>()(
+export const useEditorStore = create<EditorState>()(
   persist(
-    (set, get) => ({
-      config: getDefaultTheme(),
-      history: [],
-      future: [],
-
-      setVariable(varName: string, value: string, mode: 'light' | 'dark') {
-        const currentConfig = get().config
-        const currentHistory = get().history
-        const currentTime = Date.now()
-
-        const lastEntry =
-          currentHistory.length > 0 ? currentHistory[currentHistory.length - 1] : null
-        let updatedHistory = currentHistory
-
-        if (!lastEntry || currentTime - lastEntry.timestamp >= HISTORY_OVERRIDE_THRESHOLD_MS) {
-          updatedHistory = [...currentHistory, { config: currentConfig, timestamp: currentTime }]
-          if (updatedHistory.length > MAX_HISTORY_COUNT) {
-            updatedHistory = updatedHistory.slice(1)
-          }
-        }
-
-        const newConfig: PayloadThemeConfig = {
-          ...currentConfig,
-          [mode]: {
-            ...currentConfig[mode],
-            [varName]: value,
-          },
-        }
-
+    (set, get) => {
+      const commit = (update: (t: ThemeConfig) => ThemeConfig, coalesce = true) => {
+        const { theme, past, lastEditAt } = get()
+        const next = update(theme)
+        if (next === theme) return
+        const now = Date.now()
+        const merge = coalesce && now - lastEditAt < COALESCE_MS && past.length > 0
         set({
-          config: newConfig,
-          history: updatedHistory,
+          theme: next,
+          past: merge ? past : [...past, theme].slice(-MAX_HISTORY),
           future: [],
+          lastEditAt: coalesce ? now : 0,
         })
-      },
+      }
 
-      setBaseScale(vars: Record<string, string>) {
-        const currentConfig = get().config
-        const currentHistory = get().history
-        const currentTime = Date.now()
+      return {
+        theme: defaultTheme(),
+        past: [],
+        future: [],
+        lastEditAt: 0,
+        previewTheme: 'light',
+        enhancedContrast: false,
 
-        const lastEntry =
-          currentHistory.length > 0 ? currentHistory[currentHistory.length - 1] : null
-        let updatedHistory = currentHistory
+        setSeed: (key, hex) => commit((t) => setSeed(t, key, hex)),
+        setRamp: (v, value) => commit((t) => setRamp(t, v, value)),
+        setToken: (v, value, mode) => commit((t) => setToken(t, v, value, mode)),
+        setRoundness: (px) => commit((t) => setRoundness(t, px)),
+        setDensity: (d) => commit((t) => setDensity(t, d)),
+        setTypeScale: (s) => commit((t) => setTypeScale(t, s)),
+        setFont: (role, family) => commit((t) => setFont(t, role, family)),
+        setCustomCss: (css) => commit((t) => ({ ...t, customCss: css })),
+        loadTheme: (input) => commit(() => parseTheme(input), false),
+        resetTheme: () => commit(() => defaultTheme(), false),
 
-        if (!lastEntry || currentTime - lastEntry.timestamp >= HISTORY_OVERRIDE_THRESHOLD_MS) {
-          updatedHistory = [...currentHistory, { config: currentConfig, timestamp: currentTime }]
-          if (updatedHistory.length > MAX_HISTORY_COUNT) {
-            updatedHistory = updatedHistory.slice(1)
-          }
-        }
+        undo() {
+          const { past, theme, future } = get()
+          if (!past.length) return
+          set({ theme: past[past.length - 1], past: past.slice(0, -1), future: [theme, ...future], lastEditAt: 0 })
+        },
+        redo() {
+          const { past, theme, future } = get()
+          if (!future.length) return
+          set({ theme: future[0], past: [...past, theme], future: future.slice(1), lastEditAt: 0 })
+        },
 
-        set({
-          config: {
-            ...currentConfig,
-            light: { ...currentConfig.light, ...vars },
-          },
-          history: updatedHistory,
-          future: [],
-        })
-      },
-
-      setBaseRadius(m: number) {
-        const currentConfig = get().config
-        const currentHistory = get().history
-        const currentTime = Date.now()
-
-        const lastEntry =
-          currentHistory.length > 0 ? currentHistory[currentHistory.length - 1] : null
-        let updatedHistory = currentHistory
-
-        if (!lastEntry || currentTime - lastEntry.timestamp >= HISTORY_OVERRIDE_THRESHOLD_MS) {
-          updatedHistory = [...currentHistory, { config: currentConfig, timestamp: currentTime }]
-          if (updatedHistory.length > MAX_HISTORY_COUNT) {
-            updatedHistory = updatedHistory.slice(1)
-          }
-        }
-
-        const s = Math.max(1, Math.round(m / 1.5))
-        const l = Math.round(m * 2)
-
-        set({
-          config: {
-            ...currentConfig,
-            light: {
-              ...currentConfig.light,
-              '--style-radius-s': `${s}px`,
-              '--style-radius-m': `${m}px`,
-              '--style-radius-l': `${l}px`,
-            },
-          },
-          history: updatedHistory,
-          future: [],
-        })
-      },
-
-      setBemOverride(blockName: string, css: string) {
-        const currentConfig = get().config
-        const currentHistory = get().history
-        const currentTime = Date.now()
-
-        const lastEntry =
-          currentHistory.length > 0 ? currentHistory[currentHistory.length - 1] : null
-        let updatedHistory = currentHistory
-
-        if (!lastEntry || currentTime - lastEntry.timestamp >= HISTORY_OVERRIDE_THRESHOLD_MS) {
-          updatedHistory = [...currentHistory, { config: currentConfig, timestamp: currentTime }]
-          if (updatedHistory.length > MAX_HISTORY_COUNT) {
-            updatedHistory = updatedHistory.slice(1)
-          }
-        }
-
-        const bemOverrides = { ...(currentConfig.bemOverrides ?? {}) }
-        if (css.trim()) {
-          bemOverrides[blockName] = css
-        } else {
-          delete bemOverrides[blockName]
-        }
-
-        set({
-          config: { ...currentConfig, bemOverrides },
-          history: updatedHistory,
-          future: [],
-        })
-      },
-
-      setComponentOverride(selector: string, property: string, value: string) {
-        const currentConfig = get().config
-        const currentHistory = get().history
-        const currentTime = Date.now()
-
-        const lastEntry =
-          currentHistory.length > 0 ? currentHistory[currentHistory.length - 1] : null
-        let updatedHistory = currentHistory
-
-        if (!lastEntry || currentTime - lastEntry.timestamp >= HISTORY_OVERRIDE_THRESHOLD_MS) {
-          updatedHistory = [...currentHistory, { config: currentConfig, timestamp: currentTime }]
-          if (updatedHistory.length > MAX_HISTORY_COUNT) {
-            updatedHistory = updatedHistory.slice(1)
-          }
-        }
-
-        const key = `${selector}||${property}`
-        const componentOverrides = { ...(currentConfig.componentOverrides ?? {}) }
-        if (value.trim()) {
-          componentOverrides[key] = value
-        } else {
-          delete componentOverrides[key]
-        }
-
-        set({
-          config: { ...currentConfig, componentOverrides },
-          history: updatedHistory,
-          future: [],
-        })
-      },
-
-      resetComponentOverrides() {
-        const currentConfig = get().config
-        const currentTime = Date.now()
-        let updatedHistory = [...get().history, { config: currentConfig, timestamp: currentTime }]
-        if (updatedHistory.length > MAX_HISTORY_COUNT) {
-          updatedHistory = updatedHistory.slice(1)
-        }
-
-        set({
-          config: { ...currentConfig, componentOverrides: {} },
-          history: updatedHistory,
-          future: [],
-        })
-      },
-
-      resetTheme() {
-        const currentConfig = get().config
-        const currentTime = Date.now()
-        let updatedHistory = [...get().history, { config: currentConfig, timestamp: currentTime }]
-        if (updatedHistory.length > MAX_HISTORY_COUNT) {
-          updatedHistory = updatedHistory.slice(1)
-        }
-
-        set({
-          config: getDefaultTheme(),
-          history: updatedHistory,
-          future: [],
-        })
-      },
-
-      importTheme(config: PayloadThemeConfig) {
-        const currentConfig = get().config
-        const currentTime = Date.now()
-        let updatedHistory = [...get().history, { config: currentConfig, timestamp: currentTime }]
-        if (updatedHistory.length > MAX_HISTORY_COUNT) {
-          updatedHistory = updatedHistory.slice(1)
-        }
-
-        set({
-          config,
-          history: updatedHistory,
-          future: [],
-        })
-      },
-
-      undo() {
-        const history = get().history
-        if (history.length === 0) return
-
-        const currentConfig = get().config
-        const future = get().future
-        const lastEntry = history[history.length - 1]
-
-        set({
-          config: lastEntry.config,
-          history: history.slice(0, -1),
-          future: [{ config: currentConfig, timestamp: Date.now() }, ...future],
-        })
-      },
-
-      redo() {
-        const future = get().future
-        if (future.length === 0) return
-
-        const currentConfig = get().config
-        const history = get().history
-        const firstEntry = future[0]
-
-        let updatedHistory = [...history, { config: currentConfig, timestamp: Date.now() }]
-        if (updatedHistory.length > MAX_HISTORY_COUNT) {
-          updatedHistory = updatedHistory.slice(1)
-        }
-
-        set({
-          config: firstEntry.config,
-          history: updatedHistory,
-          future: future.slice(1),
-        })
-      },
-
-      canUndo: () => get().history.length > 0,
-      canRedo: () => get().future.length > 0,
-    }),
+        setPreviewTheme: (previewTheme) => set({ previewTheme }),
+        setEnhancedContrast: (enhancedContrast) => set({ enhancedContrast }),
+      }
+    },
     {
-      name: 'payload-editor-storage',
-      // Only persist the theme config — history/future are ephemeral session state.
-      // Persisting history caused a server/client hydration mismatch: the server
-      // renders canUndo()=false (empty history) but the client would rehydrate
-      // with a non-empty history, producing a disabled="" vs disabled={false} diff.
-      partialize: (state) => ({ config: state.config }),
+      name: 'payloadtwist-editor-v4',
+      version: 1,
+      partialize: (s) => ({ theme: s.theme, previewTheme: s.previewTheme, enhancedContrast: s.enhancedContrast }),
+      // A corrupted or hand-edited localStorage entry must not brick the editor
+      merge: (persisted, current) => {
+        const p = persisted as Partial<EditorState> | undefined
+        let theme = current.theme
+        try {
+          if (p?.theme) theme = parseTheme(p.theme)
+        } catch {
+          // fall back to the default theme
+        }
+        return {
+          ...current,
+          theme,
+          previewTheme: p?.previewTheme === 'dark' ? 'dark' : 'light',
+          enhancedContrast: p?.enhancedContrast === true,
+        }
+      },
     },
   ),
 )
+
+export const selectCanUndo = (s: EditorState) => s.past.length > 0
+export const selectCanRedo = (s: EditorState) => s.future.length > 0
