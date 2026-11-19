@@ -1,4 +1,4 @@
-FROM node:22-slim AS base
+FROM node:24-trixie-slim AS base
 
 # --- Prune workspace for web app ---
 FROM base AS pruner
@@ -37,6 +37,13 @@ RUN --mount=type=secret,id=AUTH_DATABASE_URL \
 FROM base AS runner
 WORKDIR /app
 
+# Patch OS packages and drop the package managers bundled in the Node image: the standalone
+# server never needs them, and their vendored deps (tar, glob, sigstore, ...) carry CVEs.
+RUN apt-get update && apt-get upgrade -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /usr/local/lib/node_modules /opt/yarn-* \
+       /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack /usr/local/bin/yarn /usr/local/bin/yarnpkg
+
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
@@ -59,5 +66,7 @@ USER nextjs
 
 EXPOSE 3000
 ENV PORT=3000
+# Bind all interfaces: Docker sets HOSTNAME to the container id, which breaks localhost healthchecks.
+ENV HOSTNAME=0.0.0.0
 
 CMD ["node", "apps/web/server.js"]

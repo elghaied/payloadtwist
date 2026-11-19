@@ -24,7 +24,16 @@
       "sharp",
       "esbuild",
       "unrs-resolver"
-    ]
+    ],
+    "overrides": {
+      "better-call>zod": "^4.6.6",
+      "immutable@<4.3.9": "^4.3.9",
+      "nanoid@<3.3.18": "^3.3.18",
+      "postcss@<8.5.18": "^8.5.18",
+      "brace-expansion@>=2.0.0 <2.1.6": "^2.1.6",
+      "brace-expansion@>=5.0.0 <5.0.11": "^5.0.11",
+      "source-map-js@<1.2.2": "^1.2.2"
+    }
   },
   "packageManager": "pnpm@10.6.5"
 }

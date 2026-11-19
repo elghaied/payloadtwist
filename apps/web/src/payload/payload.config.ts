@@ -4,16 +4,37 @@ import { fileURLToPath } from 'url'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { APIError, buildConfig, createFolderField } from 'payload'
-import type { CollectionBeforeOperationHook, CollectionConfig, Field, GlobalConfig } from 'payload'
+import type {
+  CollectionBeforeOperationHook,
+  CollectionConfig,
+  Field,
+  GlobalConfig,
+} from 'payload'
+import { migrations } from './migrations'
 import { DEMO_USER, seed } from './seed'
 
-// The preview is a shared, public demo: reads and admin UI state are allowed,
-// content writes are rejected so visitors can't change what others see.
+const dirname = path.dirname(fileURLToPath(import.meta.url))
+
+// The preview is a shared, public demo: reads, auth and admin UI state are allowed,
+// every other operation is rejected so visitors can't change what others see.
+const ALLOWED_OPERATIONS = new Set<string>([
+  'find',
+  'findByID',
+  'findDistinct',
+  'findVersions',
+  'findVersionByID',
+  'read',
+  'readDistinct',
+  'count',
+  'countVersions',
+  'validate',
+  'login',
+  'refresh',
+])
+
 const readOnly: CollectionBeforeOperationHook = ({ operation, req }) => {
-  if (req.context?.seeding) return
-  if (operation === 'create' || operation === 'update' || operation === 'delete') {
-    throw new APIError('This is a read-only preview. Changes are not saved.', 403, null, true)
-  }
+  if (req.context?.seeding || ALLOWED_OPERATIONS.has(operation)) return
+  throw new APIError('This is a read-only preview. Changes are not saved.', 403, null, true)
 }
 
 const demo = (config: CollectionConfig): CollectionConfig => ({
@@ -24,7 +45,8 @@ const demo = (config: CollectionConfig): CollectionConfig => ({
 
 const Users = demo({
   slug: 'users',
-  auth: true,
+  // Everyone shares the auto-login account, so failed logins must never lock it.
+  auth: { maxLoginAttempts: 0 },
   admin: { useAsTitle: 'name', group: 'Settings', defaultColumns: ['name', 'email', 'role'] },
   fields: [
     { name: 'name', type: 'text', required: true },
@@ -234,11 +256,17 @@ export default buildConfig({
   globals: [SiteSettings],
   editor: lexicalEditor(),
   // shortcut: in-memory DB re-seeded on every boot; if the preview ever needs persistence, use a file URL.
-  db: sqliteAdapter({ client: { url: ':memory:' }, push: true }),
+  db: sqliteAdapter({
+    client: { url: ':memory:' },
+    migrationDir: path.resolve(dirname, 'migrations'),
+    // Dev pushes the schema; production (no push) builds the fresh in-memory DB from migrations.
+    // Regenerate with `pnpm payload migrate:create` after changing collections.
+    prodMigrations: migrations,
+  }),
   secret: process.env.PAYLOAD_SECRET || process.env.BETTER_AUTH_SECRET || '',
   telemetry: false,
   typescript: {
-    outputFile: path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'payload-types.ts'),
+    outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   onInit: seed,
 })

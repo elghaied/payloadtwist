@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto'
 import type { Payload, PayloadRequest } from 'payload'
 import type { Post, User } from './payload-types'
 
@@ -153,11 +154,11 @@ export async function seed(payload: Payload): Promise<void> {
     { name: 'Jonas Weber', email: 'jonas@example.com', role: 'author' },
     { name: 'Maya Chen', email: 'maya@example.com', role: 'author' },
   ]
-  for (const [i, u] of people.entries()) {
+  for (const u of people) {
     users.push(
       await payload.create({
         collection: 'users',
-        data: { ...u, password: u.password ?? `${DEMO_USER.password}-${i}` },
+        data: { ...u, password: u.password ?? randomUUID() },
         ...ctx,
       }),
     )

@@ -5,6 +5,10 @@ const nextConfig = {
   output: 'standalone',
   poweredByHeader: false,
   experimental: { globalNotFound: true },
+  // Payload's upload handler loads strtok3 through its "node" export condition, which tracing misses.
+  outputFileTracingIncludes: {
+    '/preview-api/**': ['../../node_modules/.pnpm/strtok3@*/node_modules/strtok3/lib/**'],
+  },
   async headers() {
     return [
       {
