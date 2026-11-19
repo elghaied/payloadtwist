@@ -1,46 +1,20 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { FixedToolbarFeature, lexicalEditor, TableFeature } from '@payloadcms/richtext-lexical'
 import { APIError, buildConfig, createFolderField } from 'payload'
-import type { CollectionBeforeOperationHook, CollectionConfig, Field, GlobalConfig } from 'payload'
+import type { Field, GlobalConfig } from 'payload'
+import { demo } from './demo'
+import { FieldShowcase } from './field-showcase'
 import { migrations } from './migrations'
 import { DEMO_USER, MEDIA_DIR, seed } from './seed'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
-// The preview is a shared, public demo: reads, auth and admin UI state are allowed,
-// every other operation is rejected so visitors can't change what others see.
-const ALLOWED_OPERATIONS = new Set<string>([
-  'find',
-  'findByID',
-  'findDistinct',
-  'findVersions',
-  'findVersionByID',
-  'read',
-  'readDistinct',
-  'count',
-  'countVersions',
-  'validate',
-  'login',
-  'refresh',
-])
-
-const readOnly: CollectionBeforeOperationHook = ({ operation, req }) => {
-  if (req.context?.seeding || ALLOWED_OPERATIONS.has(operation)) return
-  throw new APIError('This is a read-only preview. Changes are not saved.', 403, null, true)
-}
-
-const demo = (config: CollectionConfig): CollectionConfig => ({
-  ...config,
-  access: { create: () => true, read: () => true, update: () => true, delete: () => true },
-  hooks: { ...config.hooks, beforeOperation: [readOnly] },
-})
-
 const Users = demo({
   slug: 'users',
   // Everyone shares the auto-login account, so failed logins must never lock it.
-  auth: { maxLoginAttempts: 0 },
+  auth: { maxLoginAttempts: 0, useAPIKey: true },
   admin: { useAsTitle: 'name', group: 'Settings', defaultColumns: ['name', 'email', 'role'] },
   fields: [
     { name: 'name', type: 'text', required: true },
@@ -78,6 +52,7 @@ const Categories = demo({
   fields: [
     { name: 'title', type: 'text', required: true },
     { name: 'description', type: 'textarea' },
+    { name: 'posts', type: 'join', collection: 'posts', on: 'categories' },
   ],
 })
 
@@ -143,8 +118,8 @@ const Posts = demo({
         {
           label: 'Content',
           fields: [
-            { name: 'title', type: 'text', required: true },
-            { name: 'excerpt', type: 'textarea' },
+            { name: 'title', type: 'text', required: true, localized: true },
+            { name: 'excerpt', type: 'textarea', localized: true },
             { name: 'heroImage', type: 'upload', relationTo: 'media' },
             { name: 'content', type: 'richText' },
           ],
@@ -202,7 +177,7 @@ const Posts = demo({
 const Pages = demo({
   slug: 'pages',
   admin: { useAsTitle: 'title', group: 'Content', defaultColumns: ['title', 'slug', '_status'] },
-  versions: { drafts: true },
+  versions: { drafts: { autosave: true } },
   fields: [
     { name: 'title', type: 'text', required: true },
     layoutBlocks,
@@ -273,9 +248,20 @@ export default buildConfig({
     },
   },
   routes: { admin: '/preview', api: '/preview-api' },
-  collections: [Posts, Pages, Media, Categories, Folders, Users],
+  collections: [Posts, Pages, FieldShowcase, Media, Categories, Folders, Users],
   globals: [SiteSettings],
-  editor: lexicalEditor(),
+  editor: lexicalEditor({
+    features: ({ defaultFeatures }) => [...defaultFeatures, FixedToolbarFeature(), TableFeature()],
+  }),
+  localization: {
+    locales: [
+      { label: 'English', code: 'en' },
+      { label: 'Français', code: 'fr' },
+      { label: 'العربية', code: 'ar', rtl: true },
+    ],
+    defaultLocale: 'en',
+    fallback: true,
+  },
   // shortcut: in-memory DB re-seeded on every boot; if the preview ever needs persistence, use a file URL.
   db: sqliteAdapter({
     client: { url: ':memory:' },

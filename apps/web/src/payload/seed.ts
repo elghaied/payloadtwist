@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
-import type { Payload, PayloadRequest } from 'payload'
+import type { Payload } from 'payload'
 import type { Post, User } from './payload-types'
 
 /** Upload dir for the in-memory demo; wiped on seed so files never pile up across restarts. */
@@ -151,8 +151,9 @@ export async function seed(payload: Payload): Promise<void> {
   if (existing.totalDocs > 0) return
   fs.rmSync(MEDIA_DIR, { recursive: true, force: true })
 
-  const req = { context: { seeding: true } } as unknown as PayloadRequest
-  const ctx = { context: { seeding: true }, req }
+  // Only a context (no shared req): Payload builds a fresh request per call, so a locale set on
+  // one call can't leak into the next
+  const ctx = { context: { seeding: true } }
 
   const users = []
   const people: (Pick<User, 'name' | 'email' | 'role'> & { password?: string })[] = [
@@ -247,6 +248,25 @@ export async function seed(payload: Payload): Promise<void> {
     })
   }
 
+  // Translations so the locale switcher (incl. RTL Arabic) shows real content
+  const firstPost = (await payload.find({ collection: 'posts', sort: 'createdAt', limit: 1, ...ctx })).docs[0]
+  if (firstPost) {
+    await payload.update({
+      collection: 'posts',
+      id: firstPost.id,
+      locale: 'fr',
+      data: { title: 'Concevoir un thème d’administration par jetons', excerpt: 'Les rôles sémantiques gardent les modes clair et sombre synchronisés.' },
+      ...ctx,
+    })
+    await payload.update({
+      collection: 'posts',
+      id: firstPost.id,
+      locale: 'ar',
+      data: { title: 'تصميم سمة إدارة قائمة على الرموز', excerpt: 'الأدوار الدلالية تبقي الوضعين الفاتح والداكن متزامنين.' },
+      ...ctx,
+    })
+  }
+
   for (const [i, title] of ['Home', 'Pricing', 'About us', 'Contact'].entries()) {
     await payload.create({
       collection: 'pages',
@@ -273,6 +293,81 @@ export async function seed(payload: Payload): Promise<void> {
       ...ctx,
     })
   }
+
+  const showcase = await payload.create({
+    collection: 'field-showcase',
+    data: {
+      title: 'Spring campaign launch',
+      summary: 'Everything editors touch in a real project — every field type, in one document.',
+      contactEmail: 'campaigns@northwind.example',
+      priority: 2,
+      rating: 4.5,
+      keywords: ['launch', 'spring', 'newsletter'],
+      scores: [72, 88, 95],
+      internalId: 'CMP-2026-014',
+      reviewNotes: 'Hero copy needs a final legal check.',
+      status: 'review',
+      channels: ['web', 'email', 'social'],
+      audience: 'members',
+      tone: 'friendly',
+      featured: true,
+      allowComments: true,
+      publishAt: new Date(Date.now() + 5 * day).toISOString(),
+      deadline: new Date(Date.now() + 3 * day).toISOString(),
+      reminderTime: new Date().toISOString(),
+      campaignMonth: new Date().toISOString(),
+      location: [-0.1276, 51.5072],
+      snippet: "export const launch = async () => {\n  await notify({ channel: 'email', audience: 'members' })\n}\n",
+      styles: '.hero {\n  background: var(--color-bg-brand);\n  border-radius: var(--radius-large);\n}\n',
+      metadata: { campaign: 'spring', budget: 12000, owners: ['priya', 'jonas'], live: false },
+      owner: users[1].id,
+      reviewer: users[0].id,
+      dueDate: new Date(Date.now() + 2 * day).toISOString(),
+      relatedPosts: [],
+      cover: media[1].id,
+      attachments: [media[2].id, media[3].id, media[4].id],
+      body: richText(
+        heading('Launch plan'),
+        paragraph('Coordinate the newsletter, homepage takeover and social posts for launch week.'),
+        heading('Open questions', 'h3'),
+        paragraph('Confirm budget split between paid social and podcast sponsorships.'),
+      ),
+      sections: [
+        { blockType: 'quote', quote: 'Shipping the theme took an afternoon, not a sprint.', attribution: 'Priya, Editor' },
+        { blockType: 'stats', items: [{ value: 42, label: 'Articles' }, { value: 7, label: 'Authors' }, { value: 3, label: 'Locales' }] },
+        { blockType: 'gallery', images: [media[0].id, media[5].id], layout: 'grid' },
+      ],
+      structure: {
+        checklist: [
+          { task: 'Write hero copy', done: true },
+          { task: 'Legal review', done: false },
+          { task: 'Schedule newsletter', done: false },
+        ],
+        seo: { title: 'Spring campaign — Northwind', description: 'Our biggest launch of the year.', noIndex: false },
+        internalNote: 'Coordinate with the brand team.',
+        cacheSeconds: 600,
+        experimental: true,
+      },
+      _status: 'draft',
+    },
+    draft: true,
+    ...ctx,
+  })
+  const posts = await payload.find({ collection: 'posts', limit: 2, ...ctx })
+  const pages = await payload.find({ collection: 'pages', limit: 1, ...ctx })
+  await payload.update({
+    collection: 'field-showcase',
+    id: showcase.id,
+    draft: true,
+    data: {
+      relatedPosts: posts.docs.map((d) => d.id),
+      linkedContent: [
+        ...posts.docs.slice(0, 1).map((d) => ({ relationTo: 'posts' as const, value: d.id })),
+        ...pages.docs.map((d) => ({ relationTo: 'pages' as const, value: d.id })),
+      ],
+    },
+    ...ctx,
+  })
 
   await payload.updateGlobal({
     slug: 'site-settings',

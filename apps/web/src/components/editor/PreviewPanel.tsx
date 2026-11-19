@@ -12,6 +12,7 @@ const DEMO_ROUTES = [
   { label: 'Dashboard', path: '/preview' },
   { label: 'List', path: '/preview/collections/posts' },
   { label: 'Edit', path: '/preview/collections/posts/1' },
+  { label: 'Fields', path: '/preview/collections/field-showcase/1' },
   { label: 'Media', path: '/preview/collections/media' },
   { label: 'Settings', path: '/preview/globals/site-settings' },
   { label: 'Gallery', path: '/preview/gallery' },

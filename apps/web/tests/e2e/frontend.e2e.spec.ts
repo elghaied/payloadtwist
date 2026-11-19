@@ -21,6 +21,7 @@ test.describe('Embedded Payload v4 admin', () => {
       ['/preview', 'Editorial overview'],
       ['/preview/collections/posts', 'Create New'],
       ['/preview/gallery', 'Component gallery'],
+      ['/preview/collections/field-showcase/1', 'Spring campaign launch'],
     ] as const) {
       await page.goto(path)
       await expect(page.getByText(text).first()).toBeVisible({ timeout: 30_000 })

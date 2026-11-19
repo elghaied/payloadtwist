@@ -139,19 +139,23 @@ export type SupportedTimezones =
   | 'Pacific/Fiji';
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "LexicalNodes_53DF7F6C".
+ * via the `definition` "LexicalNodes_DDB34419".
  */
-export type LexicalNodes_53DF7F6C =
+export type LexicalNodes_DDB34419 =
   | SerializedTextNode
   | SerializedTabNode
   | SerializedLineBreakNode
-  | SerializedParagraphNode<LexicalNodes_53DF7F6C>
+  | SerializedParagraphNode<LexicalNodes_DDB34419>
+  | SerializedTableNode<LexicalNodes_DDB34419>
+  | SerializedTableCellNode<LexicalNodes_DDB34419>
+  | SerializedTableRowNode<LexicalNodes_DDB34419>
   | SerializedHorizontalRuleNode
   | SerializedUploadNode<'media'>
-  | SerializedQuoteNode<LexicalNodes_53DF7F6C>
+  | SerializedQuoteNode<LexicalNodes_DDB34419>
   | SerializedRelationshipNode<
       | 'posts'
       | 'pages'
+      | 'field-showcase'
       | 'categories'
       | 'folders'
       | 'users'
@@ -160,11 +164,11 @@ export type LexicalNodes_53DF7F6C =
       | 'payload-preferences'
       | 'payload-migrations'
     >
-  | SerializedAutoLinkNode<LexicalNodes_53DF7F6C, LexicalLinkFields>
-  | SerializedLinkNode<LexicalNodes_53DF7F6C, LexicalLinkFields>
-  | SerializedListNode<LexicalNodes_53DF7F6C>
-  | SerializedListItemNode<LexicalNodes_53DF7F6C>
-  | SerializedHeadingNode<LexicalNodes_53DF7F6C>;
+  | SerializedAutoLinkNode<LexicalNodes_DDB34419, LexicalLinkFields>
+  | SerializedLinkNode<LexicalNodes_DDB34419, LexicalLinkFields>
+  | SerializedListNode<LexicalNodes_DDB34419>
+  | SerializedListItemNode<LexicalNodes_DDB34419>
+  | SerializedHeadingNode<LexicalNodes_DDB34419>;
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "LexicalNodes_3DE324E4".
@@ -186,6 +190,7 @@ export interface Config {
   collections: {
     posts: Post;
     pages: Page;
+    'field-showcase': FieldShowcase;
     media: Media;
     categories: Category;
     folders: Folder;
@@ -196,10 +201,15 @@ export interface Config {
     'payload-migrations': PayloadMigration;
     'payload-llm-instructions': PayloadLlmInstruction;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    categories: {
+      posts: 'posts';
+    };
+  };
   collectionsSelect: {
     posts: PostsSelect<false> | PostsSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    'field-showcase': FieldShowcaseSelect<false> | FieldShowcaseSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     folders: FoldersSelect<false> | FoldersSelect<true>;
@@ -213,14 +223,14 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'fr' | 'ar') | ('en' | 'fr' | 'ar')[];
   globals: {
     'site-settings': SiteSetting;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
-  locale: null;
+  locale: 'en' | 'fr' | 'ar';
   widgets: {
     editorial: EditorialWidget;
     welcome: WelcomeWidget;
@@ -262,7 +272,7 @@ export interface Post {
   title: string;
   excerpt?: string | null;
   heroImage?: (number | null) | Media;
-  content?: LexicalRichText<LexicalNodes_53DF7F6C> | null;
+  content?: LexicalRichText<LexicalNodes_DDB34419> | null;
   readingTime?: number | null;
   difficulty?: ('beginner' | 'intermediate' | 'advanced') | null;
   resources?:
@@ -370,6 +380,9 @@ export interface User {
   } | null;
   updatedAt: string;
   createdAt: string;
+  apiKey?: string | null;
+  apiKeyLast4?: string | null;
+  apiKeyIndex?: string | null;
   email: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
@@ -407,6 +420,11 @@ export interface Category {
   id: number;
   title: string;
   description?: string | null;
+  posts?: {
+    docs?: (number | Post)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   createdBy?: {
     relationTo: 'users';
     value: number | User;
@@ -457,7 +475,7 @@ export interface Hero {
  * via the `definition` "Content".
  */
 export interface Content {
-  body?: LexicalRichText<LexicalNodes_53DF7F6C> | null;
+  body?: LexicalRichText<LexicalNodes_DDB34419> | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'content';
@@ -473,6 +491,157 @@ export interface CallToAction {
   id?: string | null;
   blockName?: string | null;
   blockType: 'callToAction';
+}
+/**
+ * Every Payload v4 field type and state — use it to judge a theme against real editing UI.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "field-showcase".
+ */
+export interface FieldShowcase {
+  id: number;
+  title: string;
+  slug: string;
+  /**
+   * Shown in listings. Max 280 characters.
+   */
+  summary?: string | null;
+  contactEmail?: string | null;
+  priority?: number | null;
+  rating?: number | null;
+  /**
+   * Text field with hasMany — press enter to add.
+   */
+  keywords?: string[] | null;
+  scores?: number[] | null;
+  /**
+   * Read-only field.
+   */
+  internalId?: string | null;
+  /**
+   * Only shown while the status is “In review” (conditional field).
+   */
+  reviewNotes?: string | null;
+  status: 'idea' | 'progress' | 'review' | 'done';
+  channels?: ('web' | 'email' | 'social' | 'print' | 'podcast')[] | null;
+  audience?: ('everyone' | 'members' | 'staff') | null;
+  tone?: ('friendly' | 'neutral' | 'formal') | null;
+  featured?: boolean | null;
+  allowComments?: boolean | null;
+  publishAt?: string | null;
+  deadline?: string | null;
+  reminderTime?: string | null;
+  campaignMonth?: string | null;
+  /**
+   * Longitude / latitude.
+   *
+   * @minItems 2
+   * @maxItems 2
+   */
+  location?: [number, number] | null;
+  snippet?: string | null;
+  styles?: string | null;
+  metadata?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  owner?: (number | null) | User;
+  relatedPosts?: (number | Post)[] | null;
+  /**
+   * Polymorphic relationship to posts and pages.
+   */
+  linkedContent?:
+    | (
+        | {
+            relationTo: 'posts';
+            value: number | Post;
+          }
+        | {
+            relationTo: 'pages';
+            value: number | Page;
+          }
+      )[]
+    | null;
+  cover?: (number | null) | Media;
+  attachments?: (number | Media)[] | null;
+  body?: LexicalRichText<LexicalNodes_DDB34419> | null;
+  sections?: (Quote | Stats | Gallery)[] | null;
+  structure?: {
+    checklist?:
+      | {
+          task: string;
+          done?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+    seo?: {
+      title?: string | null;
+      description?: string | null;
+      noIndex?: boolean | null;
+    };
+    internalNote?: string | null;
+    cacheSeconds?: number | null;
+    experimental?: boolean | null;
+    hiddenDetail?: string | null;
+  };
+  reviewer?: (number | null) | User;
+  dueDate?: string | null;
+  confidential?: boolean | null;
+  createdBy?: {
+    relationTo: 'users';
+    value: number | User;
+  } | null;
+  updatedBy?: {
+    relationTo: 'users';
+    value: number | User;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Quote".
+ */
+export interface Quote {
+  quote: string;
+  attribution?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'quote';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Stats".
+ */
+export interface Stats {
+  items?:
+    | {
+        value: number;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'stats';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Gallery".
+ */
+export interface Gallery {
+  images?: (number | Media)[] | null;
+  layout?: ('grid' | 'carousel' | 'masonry') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'gallery';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -505,6 +674,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'field-showcase';
+        value: number | FieldShowcase;
       } | null)
     | ({
         relationTo: 'media';
@@ -663,6 +836,106 @@ export interface PagesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "field-showcase_select".
+ */
+export interface FieldShowcaseSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  summary?: T;
+  contactEmail?: T;
+  priority?: T;
+  rating?: T;
+  keywords?: T;
+  scores?: T;
+  internalId?: T;
+  reviewNotes?: T;
+  status?: T;
+  channels?: T;
+  audience?: T;
+  tone?: T;
+  featured?: T;
+  allowComments?: T;
+  publishAt?: T;
+  deadline?: T;
+  reminderTime?: T;
+  campaignMonth?: T;
+  location?: T;
+  snippet?: T;
+  styles?: T;
+  metadata?: T;
+  owner?: T;
+  relatedPosts?: T;
+  linkedContent?: T;
+  cover?: T;
+  attachments?: T;
+  body?: T;
+  sections?:
+    | T
+    | {
+        quote?:
+          | T
+          | {
+              quote?: T;
+              attribution?: T;
+              id?: T;
+              blockName?: T;
+            };
+        stats?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    value?: T;
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        gallery?:
+          | T
+          | {
+              images?: T;
+              layout?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  structure?:
+    | T
+    | {
+        checklist?:
+          | T
+          | {
+              task?: T;
+              done?: T;
+              id?: T;
+            };
+        seo?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              noIndex?: T;
+            };
+        internalNote?: T;
+        cacheSeconds?: T;
+        experimental?: T;
+        hiddenDetail?: T;
+      };
+  reviewer?: T;
+  dueDate?: T;
+  confidential?: T;
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
@@ -702,6 +975,7 @@ export interface MediaSelect<T extends boolean = true> {
 export interface CategoriesSelect<T extends boolean = true> {
   title?: T;
   description?: T;
+  posts?: T;
   createdBy?: T;
   updatedBy?: T;
   updatedAt?: T;
@@ -732,6 +1006,9 @@ export interface UsersSelect<T extends boolean = true> {
   updatedBy?: T;
   updatedAt?: T;
   createdAt?: T;
+  apiKey?: T;
+  apiKeyLast4?: T;
+  apiKeyIndex?: T;
   email?: T;
   resetPasswordToken?: T;
   resetPasswordExpiration?: T;
@@ -892,7 +1169,7 @@ export interface CollectionsWidget {
 export interface CollectionQueryWidget {
   data?: {
     title?: string | null;
-    relatedCollection: 'posts' | 'pages' | 'media' | 'categories' | 'folders' | 'users';
+    relatedCollection: 'posts' | 'pages' | 'field-showcase' | 'media' | 'categories' | 'folders' | 'users';
     where?:
       | {
           [k: string]: unknown;
@@ -914,7 +1191,8 @@ export interface CollectionQueryWidget {
  */
 export interface ActivityWidget {
   data?: {
-    excludedCollections?: ('posts' | 'pages' | 'media' | 'categories' | 'folders' | 'users')[] | null;
+    excludedCollections?:
+      ('posts' | 'pages' | 'field-showcase' | 'media' | 'categories' | 'folders' | 'users')[] | null;
   };
   width: 'small' | 'medium' | 'large' | 'x-large' | 'full';
 }
@@ -985,6 +1263,27 @@ export interface SerializedParagraphNode<TChildren> extends SerializedLexicalEle
   type: 'paragraph';
   textFormat: number;
   textStyle: string;
+}
+
+export interface SerializedTableNode<TChildren> extends SerializedLexicalElementBase<TChildren> {
+  type: 'table';
+  colWidths?: number[];
+  frozenColumnCount?: number;
+  frozenRowCount?: number;
+  rowStriping?: boolean;
+}
+export interface SerializedTableRowNode<TChildren> extends SerializedLexicalElementBase<TChildren> {
+  type: 'tablerow';
+  height?: number;
+}
+export interface SerializedTableCellNode<TChildren> extends SerializedLexicalElementBase<TChildren> {
+  type: 'tablecell';
+  backgroundColor?: string | null;
+  colSpan?: number;
+  headerState: number;
+  rowSpan?: number;
+  verticalAlign?: string;
+  width?: number;
 }
 
 export interface SerializedHorizontalRuleNode {
