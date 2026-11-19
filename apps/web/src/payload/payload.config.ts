@@ -286,6 +286,8 @@ export default buildConfig({
   }),
   secret: process.env.PAYLOAD_SECRET || process.env.BETTER_AUTH_SECRET || '',
   telemetry: false,
+  // Every rejected demo write throws an APIError; keep visitors' Save clicks out of production logs
+  loggingLevels: { APIError: 'debug' },
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
