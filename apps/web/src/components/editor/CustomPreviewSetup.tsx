@@ -45,7 +45,7 @@ export function CustomPreviewSetup() {
       <div>
         <h2 className="text-base font-semibold mb-1">Preview on your own Payload v4 admin</h2>
         <p className="text-[var(--pt-text-muted)]">
-          Theme your real collections and custom components. Three steps, all local to your project — nothing is sent anywhere
+          Theme your real collections and custom components. A one-time setup, all local to your project — nothing is sent anywhere
           except the CSS you are editing.
         </p>
       </div>
