@@ -20,6 +20,8 @@ apps/web/src/
 │   ├── (payload)/           Payload's root layout: admin at /preview, REST at /preview-api
 │   ├── api/                 better-auth + /api/health
 │   └── global-not-found.tsx (no app/layout.tsx — two root layouts)
+├── admin-themes/            generated (pnpm generate:admin-themes): presets exported as
+│                            payload-admin-ui-themes packages, registered by the demo admin
 ├── payload/                 the embedded demo Payload (see "Preview")
 │   ├── payload.config.ts    collections, globals, dashboard widgets, gallery view, bridge
 │   ├── seed.ts              demo content (runs onInit), DEMO_USER, MEDIA_DIR
@@ -95,6 +97,12 @@ typed properties per component, emitted after the token blocks on Payload's BEM 
   `pnpm payload migrate:create` (prodMigrations), `pnpm generate:importmap`, `payload generate:types`.
 - Uploads go to `MEDIA_DIR` (os.tmpdir), wiped on seed. `next.config.mjs` force-traces `strtok3`.
 - `/preview/gallery` is a custom admin view with every component family and token.
+- `field-showcase` has every field type; `lexical.ts` enables every Lexical feature (seed builders in
+  `seed-richtext.ts` cover every node type). The JSX debug panel only has default converters, so its
+  field gets a "portable" copy without custom blocks/internal links.
+- `payload-admin-ui-themes` (installed under that alias — its client path is hard-coded) registers
+  `src/admin-themes`; `density: false` because its density overrides editor tokens. While the editor
+  drives the preview, the bridge resets `data-admin-theme` to `stock`.
 
 ### Editor ⇄ preview
 
@@ -122,11 +130,13 @@ pnpm --filter @payloadtwist/web test:e2e                 # playwright (E2E_BASE_
 pnpm --filter @payloadtwist/web extract-payload-theme    # after every @payloadcms/ui upgrade
 pnpm --filter @payloadtwist/web generate:importmap
 pnpm --filter @payloadtwist/web payload migrate:create   # after demo collection changes
+pnpm --filter @payloadtwist/web generate:admin-themes    # after preset or exporter changes
 ```
 
 ## What NOT to do
 
-- Never hand-edit `payload-theme-schema.json`, `payload-types.ts`, `migrations/`, `importMap.js`.
+- Never hand-edit `payload-theme-schema.json`, `payload-types.ts`, `migrations/`, `importMap.js`,
+  `src/admin-themes/`.
 - Never use `!important` in generated CSS or `.dark` selectors (Payload uses `[data-theme]`).
 - Never bring back v3 variables or SCSS.
 - Never inject CSS into the editor's own document — only into the preview iframe via the bridge.

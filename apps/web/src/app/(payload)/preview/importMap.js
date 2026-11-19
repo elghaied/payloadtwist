@@ -34,7 +34,20 @@ import { TreeViewFeatureClient as TreeViewFeatureClient_e70f5e05f09f93e00b997edb
 import { ShowcaseNotice as ShowcaseNotice_52ac7a0371297d72c6bc8b68f4b2c407 } from '@/payload/components/ShowcaseNotice'
 import { LLMInstructionsDescription as LLMInstructionsDescription_3817bf644402e67bfe6577f60ef982de } from '@payloadcms/ui'
 import { LLMInstructionsCell as LLMInstructionsCell_ab83ff7e88da8d3530831f296ec4756a } from '@payloadcms/ui/rsc'
+import { AdminThemeMenuSetting as AdminThemeMenuSetting_3d46b45d5e57b786067916bc3fb093f8 } from 'payload-admin-ui-themes/client'
 import { PreviewBridge as PreviewBridge_b92e8337b84ef83b9025368a848d3ea2 } from '@/payload/components/PreviewBridge'
+import { LightCreamThemeProvider as LightCreamThemeProvider_2bcbc77f8dad080cadd84922419ff4cc } from '@/admin-themes/light-cream/client'
+import { NordThemeProvider as NordThemeProvider_b36f7913a202da24f0e7c23ea6926166 } from '@/admin-themes/nord/client'
+import { PaperThemeProvider as PaperThemeProvider_a450d6c45392a15bae7d12f70cb16875 } from '@/admin-themes/paper/client'
+import { CorporateThemeProvider as CorporateThemeProvider_61000d51a13f80c7d82091de0953b7f9 } from '@/admin-themes/corporate/client'
+import { MidnightThemeProvider as MidnightThemeProvider_9638bc8666d9f8a1484c4190812958f3 } from '@/admin-themes/midnight/client'
+import { ForestThemeProvider as ForestThemeProvider_ec010bf871e461be56cfa224b2899c4c } from '@/admin-themes/forest/client'
+import { TerminalThemeProvider as TerminalThemeProvider_8de3df4adaf341dfa379940241757c8a } from '@/admin-themes/terminal/client'
+import { SunsetThemeProvider as SunsetThemeProvider_f87f036468fe5b79456d37886e8e0784 } from '@/admin-themes/sunset/client'
+import { CandyThemeProvider as CandyThemeProvider_4eda2eb2a3dc4992a9cab47d3c130c88 } from '@/admin-themes/candy/client'
+import { BrutalThemeProvider as BrutalThemeProvider_d5f4a8af9cd31e886618a2f2d0456812 } from '@/admin-themes/brutal/client'
+import { MonoThemeProvider as MonoThemeProvider_22a60e6b529a1d39ea5a4b63a63c3de5 } from '@/admin-themes/mono/client'
+import { AdminUIThemesProvider as AdminUIThemesProvider_3d46b45d5e57b786067916bc3fb093f8 } from 'payload-admin-ui-themes/client'
 import { FolderIcon as FolderIcon_3817bf644402e67bfe6577f60ef982de } from '@payloadcms/ui'
 import { HierarchySidebarTabServer as HierarchySidebarTabServer_ab83ff7e88da8d3530831f296ec4756a } from '@payloadcms/ui/rsc'
 import { GalleryView as GalleryView_c5c33b20575c030209e3484336922d17 } from '@/payload/components/GalleryView'
@@ -87,7 +100,20 @@ export const importMap = {
   "@/payload/components/ShowcaseNotice#ShowcaseNotice": ShowcaseNotice_52ac7a0371297d72c6bc8b68f4b2c407,
   "@payloadcms/ui#LLMInstructionsDescription": LLMInstructionsDescription_3817bf644402e67bfe6577f60ef982de,
   "@payloadcms/ui/rsc#LLMInstructionsCell": LLMInstructionsCell_ab83ff7e88da8d3530831f296ec4756a,
+  "payload-admin-ui-themes/client#AdminThemeMenuSetting": AdminThemeMenuSetting_3d46b45d5e57b786067916bc3fb093f8,
   "@/payload/components/PreviewBridge#PreviewBridge": PreviewBridge_b92e8337b84ef83b9025368a848d3ea2,
+  "@/admin-themes/light-cream/client#LightCreamThemeProvider": LightCreamThemeProvider_2bcbc77f8dad080cadd84922419ff4cc,
+  "@/admin-themes/nord/client#NordThemeProvider": NordThemeProvider_b36f7913a202da24f0e7c23ea6926166,
+  "@/admin-themes/paper/client#PaperThemeProvider": PaperThemeProvider_a450d6c45392a15bae7d12f70cb16875,
+  "@/admin-themes/corporate/client#CorporateThemeProvider": CorporateThemeProvider_61000d51a13f80c7d82091de0953b7f9,
+  "@/admin-themes/midnight/client#MidnightThemeProvider": MidnightThemeProvider_9638bc8666d9f8a1484c4190812958f3,
+  "@/admin-themes/forest/client#ForestThemeProvider": ForestThemeProvider_ec010bf871e461be56cfa224b2899c4c,
+  "@/admin-themes/terminal/client#TerminalThemeProvider": TerminalThemeProvider_8de3df4adaf341dfa379940241757c8a,
+  "@/admin-themes/sunset/client#SunsetThemeProvider": SunsetThemeProvider_f87f036468fe5b79456d37886e8e0784,
+  "@/admin-themes/candy/client#CandyThemeProvider": CandyThemeProvider_4eda2eb2a3dc4992a9cab47d3c130c88,
+  "@/admin-themes/brutal/client#BrutalThemeProvider": BrutalThemeProvider_d5f4a8af9cd31e886618a2f2d0456812,
+  "@/admin-themes/mono/client#MonoThemeProvider": MonoThemeProvider_22a60e6b529a1d39ea5a4b63a63c3de5,
+  "payload-admin-ui-themes/client#AdminUIThemesProvider": AdminUIThemesProvider_3d46b45d5e57b786067916bc3fb093f8,
   "@payloadcms/ui#FolderIcon": FolderIcon_3817bf644402e67bfe6577f60ef982de,
   "@payloadcms/ui/rsc#HierarchySidebarTabServer": HierarchySidebarTabServer_ab83ff7e88da8d3530831f296ec4756a,
   "@/payload/components/GalleryView#GalleryView": GalleryView_c5c33b20575c030209e3484336922d17,

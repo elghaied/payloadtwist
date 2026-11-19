@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process'
 import { test, expect, type Page } from '@playwright/test'
 
 const previewVar = (page: Page, name: string) =>
@@ -26,6 +27,19 @@ test.describe('Embedded Payload v4 admin', () => {
       await page.goto(path)
       await expect(page.getByText(text).first()).toBeVisible({ timeout: 30_000 })
     }
+  })
+
+  test('registers payloadtwist themes with payload-admin-ui-themes', async ({ page }) => {
+    await page.goto('/preview')
+    await expect(page.getByText('Editorial overview')).toBeVisible({ timeout: 30_000 })
+    // the plugin stores the choice per user (demo user id 1)
+    await page.evaluate(() => localStorage.setItem('payload-admin-ui-theme:1', 'corporate'))
+    await page.reload()
+    await expect(page.locator('html')).toHaveAttribute('data-admin-theme', 'corporate')
+    await expect
+      .poll(() => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--ramp-blue-500').trim()))
+      .toBe('#1d4ed8')
+    await page.evaluate(() => localStorage.removeItem('payload-admin-ui-theme:1'))
   })
 
   test('rejects writes', async ({ request }) => {
@@ -72,6 +86,13 @@ test.describe('Editor', () => {
     await expect(dialog.getByText('--radius-medium: 0rem;')).toBeVisible()
     await dialog.getByRole('tab', { name: 'Theme package' }).click()
     await expect(dialog.getByText(/html\[data-admin-theme="my-theme"\]/).first()).toBeVisible()
+
+    const [download] = await Promise.all([page.waitForEvent('download'), dialog.getByRole('button', { name: /Download \.zip/ }).click()])
+    expect(download.suggestedFilename()).toBe('my-theme-payload-theme.zip')
+    const file = await download.path()
+    const listing = execFileSync('unzip', ['-l', file]).toString()
+    for (const f of ['theme.css', 'client.tsx', 'index.ts', 'README.md']) expect(listing).toContain(`my-theme/${f}`)
+    expect(execFileSync('unzip', ['-p', file, 'my-theme/theme.css']).toString()).toContain('--radius-medium: 0rem;')
   })
 })
 

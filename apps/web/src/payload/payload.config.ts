@@ -3,6 +3,9 @@ import { fileURLToPath } from 'url'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { APIError, buildConfig, createFolderField } from 'payload'
 import type { Field, GlobalConfig } from 'payload'
+import { payloadAdminUIThemes } from 'payload-admin-ui-themes'
+import { stockTheme } from 'payload-admin-ui-themes/themes/stock'
+import { payloadtwistAdminThemes } from '../admin-themes'
 import { demo } from './demo'
 import { fullEditor } from './lexical'
 import { FieldShowcase } from './field-showcase'
@@ -275,5 +278,14 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
+  plugins: [
+    // The built-in presets, exported by payloadtwist's own theme-package exporter (src/admin-themes)
+    payloadAdminUIThemes({
+      themes: [stockTheme, ...payloadtwistAdminThemes],
+      defaultTheme: 'stock',
+      // The editor drives sizes through tokens; the plugin's density would override them
+      density: false,
+    }),
+  ],
   onInit: seed,
 })

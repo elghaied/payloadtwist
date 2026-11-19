@@ -83,6 +83,9 @@ importers:
       payload:
         specifier: 4.0.0-beta.10
         version: 4.0.0-beta.10(graphql@16.15.0)(typescript@6.0.3)
+      payload-admin-ui-themes:
+        specifier: npm:@zubricks/payload-admin-ui-themes@0.1.0
+        version: '@zubricks/payload-admin-ui-themes@0.1.0(@payloadcms/ui@4.0.0-beta.10(@types/react@19.3.0)(monaco-editor@0.55.1)(payload@4.0.0-beta.10(graphql@16.15.0)(typescript@6.0.3))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@6.0.3))(payload@4.0.0-beta.10(graphql@16.15.0)(typescript@6.0.3))(react@19.3.1)'
       pg:
         specifier: ^8.23.1
         version: 8.23.1
@@ -3158,6 +3161,14 @@ packages:
 
   '@vitest/spy@5.1.1':
     resolution: {integrity: sha512-6K8C6alQG1/Yc8/ZI22iJS7JEsxPdVzqtqDq+/xM4Z0mGVykemMVjLhqMy/q6/IHYG3kKD8hKSwRen/ZdyI9vQ==}
+
+  '@zubricks/payload-admin-ui-themes@0.1.0':
+    resolution: {integrity: sha512-dQVWWAR6JLSGY1KOEWQOqkVVjYl/H/b6ceI+n75wl7k7ZQDTE8wGqqYWn11JdyZk7GqoNDSWWSg6R7wknhG7rQ==}
+    engines: {node: '>=24.15.0', pnpm: ^9 || ^10 || ^11}
+    peerDependencies:
+      '@payloadcms/ui': ^4.0.0
+      payload: ^4.0.0
+      react: ^19.0.0
 
   accepts@2.0.0:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
@@ -9984,6 +9995,12 @@ snapshots:
       vite: 7.3.8(@types/node@24.12.3)(jiti@2.7.0)(lightningcss@1.33.0)(sass@1.77.4)(tsx@4.23.15)
 
   '@vitest/spy@5.1.1': {}
+
+  '@zubricks/payload-admin-ui-themes@0.1.0(@payloadcms/ui@4.0.0-beta.10(@types/react@19.3.0)(monaco-editor@0.55.1)(payload@4.0.0-beta.10(graphql@16.15.0)(typescript@6.0.3))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@6.0.3))(payload@4.0.0-beta.10(graphql@16.15.0)(typescript@6.0.3))(react@19.3.1)':
+    dependencies:
+      '@payloadcms/ui': 4.0.0-beta.10(@types/react@19.3.0)(monaco-editor@0.55.1)(payload@4.0.0-beta.10(graphql@16.15.0)(typescript@6.0.3))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@6.0.3)
+      payload: 4.0.0-beta.10(graphql@16.15.0)(typescript@6.0.3)
+      react: 19.3.1
 
   accepts@2.0.0:
     dependencies:

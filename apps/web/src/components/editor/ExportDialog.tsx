@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Check, Copy, Download, X } from 'lucide-react'
-import { buildThemePackage, toThemeId } from '@/payload-theme/css'
+import { zipFiles } from '@/lib/zip'
+import { ADMIN_THEMES_INSTALL, buildThemePackage, themeNames, toThemeId } from '@/payload-theme/css'
 import type { ThemeConfig } from '@/payload-theme/theme'
 import { useEditorStore } from '@/store/editor-store'
 
@@ -63,6 +64,7 @@ export function ExportDialog({ open, onClose, theme, css }: { open: boolean; onC
   }, [open])
 
   const id = toThemeId(name)
+  const names = themeNames(id)
   const pkg = tab === 'package' ? buildThemePackage(theme, { id, label: name }) : null
   const json = JSON.stringify(theme, null, 2)
 
@@ -126,25 +128,55 @@ export function ExportDialog({ open, onClose, theme, css }: { open: boolean; onC
               <a className="underline" href="https://github.com/zubricks/payload-admin-ui-themes" target="_blank" rel="noreferrer">
                 payload-admin-ui-themes
               </a>
-              : editors pick it from their Settings menu, alongside Payload&apos;s own theme. Add the files to{' '}
-              <Code>{`src/admin-themes/${id}/`}</Code> and register the manifest in the plugin&apos;s <Code>themes</Code> array.
+              : editors pick it from their Settings menu next to Payload&apos;s own theme, in light and dark. Every rule is scoped
+              to <Code>{`html[data-admin-theme="${id}"]`}</Code>, so it never affects other themes. The demo admin in this editor runs
+              exactly these packages — open <Code>/preview</Code> → your account → Settings → Admin theme.
             </p>
-            <label className="flex items-center gap-2">
-              <span className="text-[var(--pt-text-muted)]">Theme name</span>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="flex-1 max-w-xs bg-[var(--pt-bg)] border border-[var(--pt-border)] rounded px-2 py-1 focus:outline-none focus:border-[var(--pt-accent)]"
-              />
+            <div className="flex flex-wrap items-center gap-3">
+              <label className="flex items-center gap-2">
+                <span className="text-[var(--pt-text-muted)]">Theme name</span>
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-48 bg-[var(--pt-bg)] border border-[var(--pt-border)] rounded px-2 py-1 focus:outline-none focus:border-[var(--pt-accent)]"
+                />
+              </label>
               <code className="text-[var(--pt-text-faint)]">id: {id}</code>
-            </label>
-            {Object.entries(pkg).map(([file, content]) => (
-              <FileBlock key={file} name={`src/admin-themes/${id}/${file}`} content={content} mime={file.endsWith('.css') ? 'text/css' : 'text/plain'} />
-            ))}
+              <button
+                onClick={() => {
+                  const files = Object.fromEntries(Object.entries(pkg).map(([f, c]) => [`${id}/${f}`, c]))
+                  const zip = zipFiles(files)
+                  const url = URL.createObjectURL(new Blob([zip.buffer as ArrayBuffer], { type: 'application/zip' }))
+                  const a = Object.assign(document.createElement('a'), { href: url, download: `${id}-payload-theme.zip` })
+                  a.click()
+                  URL.revokeObjectURL(url)
+                }}
+                className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[var(--pt-accent)] text-white"
+              >
+                <Download size={12} /> Download .zip
+              </button>
+            </div>
+            <ol className="list-decimal pl-5 space-y-1 text-[var(--pt-text-muted)]">
+              <li>
+                Install the plugin under the name its components expect: <Code>{ADMIN_THEMES_INSTALL}</Code>
+              </li>
+              <li>
+                Unzip into <Code>src/admin-themes/</Code> (or copy the files below into <Code>{`src/admin-themes/${id}/`}</Code>).
+              </li>
+              <li>Register it (excerpt below), then run <Code>pnpm payload generate:importmap</Code>.</li>
+            </ol>
             <FileBlock
               name="payload.config.ts (excerpt)"
-              content={`import { payloadAdminUIThemes } from 'payload-admin-ui-themes'\nimport { ${id.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase())}Theme } from './admin-themes/${id}'\n\nplugins: [\n  payloadAdminUIThemes({\n    themes: [${id.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase())}Theme],\n    defaultTheme: '${id}',\n  }),\n],`}
+              content={`import { payloadAdminUIThemes } from 'payload-admin-ui-themes'\nimport { stockTheme } from 'payload-admin-ui-themes/themes/stock'\nimport { ${names.manifest} } from './admin-themes/${id}'\n\nplugins: [\n  payloadAdminUIThemes({\n    themes: [stockTheme, ${names.manifest}],\n    defaultTheme: '${id}',\n    // this theme sets its own sizes; the plugin's density would override them\n    density: false,\n  }),\n],`}
             />
+            {Object.entries(pkg).map(([file, content]) => (
+              <FileBlock
+                key={file}
+                name={`src/admin-themes/${id}/${file}`}
+                content={content}
+                mime={file.endsWith('.css') ? 'text/css' : file.endsWith('.md') ? 'text/markdown' : 'text/plain'}
+              />
+            ))}
           </>
         )}
 

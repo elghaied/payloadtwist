@@ -23,7 +23,12 @@ export function PreviewBridge({ children }: { children?: ReactNode }) {
       if (event.origin !== window.location.origin || event.source !== window.parent) return
       const msg = event.data
       if (!isToPreview(msg)) return
-      if (msg.type === 'css') applyCss(document, msg.css)
+      if (msg.type === 'css') {
+        applyCss(document, msg.css)
+        // An installed admin theme (Settings → Admin theme) is scoped more specifically than the
+        // editor's CSS; while the editor drives the preview, show it on Payload's stock theme
+        document.documentElement.dataset.adminTheme = 'stock'
+      }
       else if (msg.type === 'theme') setTheme(msg.theme)
       else if (msg.type === 'contrast') setHighContrastMode(msg.enabled)
       else if (msg.type === 'navigate' && msg.path.startsWith('/preview')) router.push(msg.path)

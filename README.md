@@ -32,8 +32,10 @@
 - **Advanced** — all 484 Payload v4 tokens, searchable, per mode
 - **Light, dark and enhanced contrast** preview, desktop/tablet/mobile widths, undo/redo
 - **Export** — `custom.css` (no `!important`: Payload's styles are layered), a
-  [`payload-admin-ui-themes`](https://github.com/zubricks/payload-admin-ui-themes) theme package,
-  or JSON
+  [`payload-admin-ui-themes`](https://github.com/zubricks/payload-admin-ui-themes) theme package
+  (one-click `.zip` with CSS, provider, manifest and install README), or JSON
+- **Proven export** — the demo admin runs payloadtwist's own presets as exported packages: open
+  `/preview` → account → Settings → Admin theme
 - **Accounts & gallery** — save presets, share them publicly, rate others, preview them live
 
 ## Quick start
@@ -87,6 +89,7 @@ pnpm --filter @payloadtwist/web test:e2e   # end-to-end (playwright)
 | `extract-payload-theme` | Regenerate the token schema from the installed `@payloadcms/ui`. Run after every Payload upgrade. |
 | `generate:importmap` | Regenerate the demo admin's import map after adding admin components. |
 | `payload migrate:create` | Regenerate the demo DB migration after changing demo collections (production builds the in-memory DB from it). |
+| `generate:admin-themes` | Re-export the built-in presets into `src/admin-themes/` (a test fails if they drift). |
 | `fetch-google-fonts` | Refresh the Google Fonts catalog. |
 | `db:generate` / `db:migrate` | Auth database migrations (Drizzle). |
 

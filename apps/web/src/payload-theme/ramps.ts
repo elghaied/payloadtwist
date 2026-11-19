@@ -73,18 +73,19 @@ function deriveFamily(
   const [h, s, l] = seed
   const [ha, sa, la] = anchorDefault
   const satRatio = sa > 1 ? s / sa : 1
-  const list = steps(family)
-  const anchorIdx = anchor ? list.indexOf(anchor) : -1
   const out: Record<string, string> = {}
 
-  list.forEach((step, i) => {
+  for (const step of steps(family)) {
     const [dh, ds, dl] = hexToHsl(DEFAULT_RAMPS[family][step])
-    const falloff = anchorIdx < 0 ? 0 : Math.max(0, 1 - Math.abs(i - anchorIdx) / Math.max(anchorIdx, list.length - 1 - anchorIdx))
+    // Lightness maps proportionally: steps lighter than Payload's anchor scale into seed→white,
+    // darker ones into black→seed. Never clips (a bright seed can't push a step to pure white)
+    // and keeps Payload's spacing. Related families (no anchor) keep their own lightness.
+    const lig = !anchor ? dl : dl >= la ? l + ((dl - la) * (100 - l)) / Math.max(1e-6, 100 - la) : (dl * l) / Math.max(1e-6, la)
     // Grey has no hue of its own: every step takes the seed's tint, capped so it stays neutral
     const sat = sa > 1 ? ds * satRatio : Math.min(s, 30)
     const hue = sa > 1 ? h + (dh - ha) : h
-    out[rampVar(family, step)] = hslToHex(hue, clamp(sat), clamp(dl + (l - la) * falloff))
-  })
+    out[rampVar(family, step)] = hslToHex(hue, clamp(sat), clamp(lig))
+  }
   return out
 }
 

@@ -58,6 +58,15 @@ describe('generateSeedRamps', () => {
     }
   })
 
+  it('never clips light steps to white for bright seeds', () => {
+    for (const seed of ['#6366f1', '#facc15', '#22d3ee', '#f0abfc']) {
+      const ramps = generateSeedRamps('brand', seed)
+      expect(ramps['--ramp-blue-200']).not.toBe('#ffffff')
+      expect(hexToHsl(ramps['--ramp-blue-200'])[2]).toBeLessThan(99)
+      expect(hexToHsl(ramps['--ramp-blue-200'])[2]).toBeGreaterThan(hexToHsl(ramps['--ramp-blue-400'])[2])
+    }
+  })
+
   it('tints the grey family with the neutral seed', () => {
     const ramps = generateSeedRamps('neutral', '#64748b')
     expect(hexToHsl(ramps['--ramp-grey-100'])[1]).toBeGreaterThan(0)
