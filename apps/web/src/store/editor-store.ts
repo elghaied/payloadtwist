@@ -1,13 +1,16 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { Density, FontRole } from '@/payload-theme/controls'
+import type { BorderStyle, Density, FontRole, ShadowStyle, SurfaceOptions } from '@/payload-theme/controls'
 import type { SeedKey } from '@/payload-theme/ramps'
 import {
   defaultTheme,
   parseTheme,
   setDensity,
+  setBorders,
   setFont,
   setRamp,
+  setShadows,
+  setSurfaces,
   setRoundness,
   setSeed,
   setToken,
@@ -38,6 +41,9 @@ interface EditorState {
   setDensity(density: Density): void
   setTypeScale(scale: number): void
   setFont(role: FontRole, family: string | null): void
+  setSurfaces(opts: SurfaceOptions | null): void
+  setShadows(style: ShadowStyle): void
+  setBorders(style: BorderStyle): void
   setCustomCss(css: string): void
   /** Replace the whole theme (presets, imports, saved presets). Always its own undo step. */
   loadTheme(theme: unknown): void
@@ -81,6 +87,9 @@ export const useEditorStore = create<EditorState>()(
         setDensity: (d) => commit((t) => setDensity(t, d)),
         setTypeScale: (s) => commit((t) => setTypeScale(t, s)),
         setFont: (role, family) => commit((t) => setFont(t, role, family)),
+        setSurfaces: (opts) => commit((t) => setSurfaces(t, opts)),
+        setShadows: (style) => commit((t) => setShadows(t, style)),
+        setBorders: (style) => commit((t) => setBorders(t, style)),
         setCustomCss: (css) => commit((t) => ({ ...t, customCss: css })),
         loadTheme: (input) => commit(() => parseTheme(input), false),
         resetTheme: () => commit(() => defaultTheme(), false),

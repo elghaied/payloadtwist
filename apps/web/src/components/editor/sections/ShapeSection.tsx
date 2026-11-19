@@ -2,7 +2,7 @@
 
 import { RotateCcw } from 'lucide-react'
 import { ScrubberInput } from '@/components/editor/ScrubberInput'
-import { DEFAULT_ROUNDNESS, DENSITIES, type Density } from '@/payload-theme/controls'
+import { BORDER_STYLES, DEFAULT_ROUNDNESS, DENSITIES, SHADOW_STYLES, type Density } from '@/payload-theme/controls'
 import { TOKENS } from '@/payload-theme/schema'
 import type { ThemeConfig } from '@/payload-theme/theme'
 import { useEditorStore } from '@/store/editor-store'
@@ -12,6 +12,35 @@ const DENSITY_INFO: Record<Density, string> = {
   compact: 'Payload default — 24px controls',
   comfortable: '40px controls, roomier fields',
   spacious: '46px controls, large touch targets',
+}
+
+const SHADOW_INFO: Record<string, string> = {
+  default: 'Payload',
+  flat: 'Outlines only',
+  soft: 'Diffuse, airy',
+  deep: 'Strong lift',
+  glow: 'Brand-colored',
+}
+
+function Segmented<T extends string>({ label, options, value, info, onChange }: { label: string; options: readonly T[]; value: T; info?: Record<string, string>; onChange: (v: T) => void }) {
+  return (
+    <div className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }} role="radiogroup" aria-label={label}>
+      {options.map((o) => (
+        <button
+          key={o}
+          role="radio"
+          aria-checked={value === o}
+          onClick={() => onChange(o)}
+          className={`rounded-md border px-1.5 py-1.5 text-left transition-colors ${
+            value === o ? 'border-[var(--pt-accent)] bg-[var(--pt-accent-soft)]' : 'border-[var(--pt-border)] hover:border-[var(--pt-border-strong)]'
+          }`}
+        >
+          <span className="block text-[11px] font-medium capitalize text-[var(--pt-text)]">{o}</span>
+          {info?.[o] && <span className="block text-[9.5px] text-[var(--pt-text-faint)] leading-tight mt-0.5">{info[o]}</span>}
+        </button>
+      ))}
+    </div>
+  )
 }
 
 const pxOf = (v: string | undefined) => (v ? (v.endsWith('rem') ? parseFloat(v) * 16 : parseFloat(v)) : 0)
@@ -34,7 +63,7 @@ function PxTokenRow({ varName, label, min, max, theme }: { varName: string; labe
 }
 
 export function ShapeSection({ theme }: { theme: ThemeConfig }) {
-  const { setRoundness, setDensity } = useEditorStore()
+  const { setRoundness, setDensity, setShadows, setBorders } = useEditorStore()
   const roundness = theme.controls.roundness ?? DEFAULT_ROUNDNESS
   const density = theme.controls.density ?? 'compact'
 
@@ -79,6 +108,14 @@ export function ShapeSection({ theme }: { theme: ThemeConfig }) {
             </button>
           ))}
         </div>
+      </Group>
+
+      <Group title="Shadows" hint="Payload's four elevation levels: cards, tooltips, menus and modals.">
+        <Segmented label="Shadows" options={SHADOW_STYLES} value={theme.controls.shadows ?? 'default'} info={SHADOW_INFO} onChange={setShadows} />
+      </Group>
+
+      <Group title="Borders" hint="Strength of field and control outlines.">
+        <Segmented label="Borders" options={BORDER_STYLES} value={theme.controls.borders ?? 'default'} onChange={setBorders} />
       </Group>
 
       <Group title="Layout">

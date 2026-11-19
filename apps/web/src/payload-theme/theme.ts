@@ -1,5 +1,8 @@
-import { isHex, normalizeHex } from './color'
+import { hexToHsl, isHex, normalizeHex } from './color'
 import {
+  BORDER_STYLES,
+  BORDER_VARS,
+  borderTokens,
   DEFAULT_ROUNDNESS,
   DENSITIES,
   DENSITY_VARS,
@@ -9,10 +12,18 @@ import {
   roundnessTokens,
   TYPE_SCALE_VARS,
   typeScaleTokens,
+  SHADOW_STYLES,
+  SHADOW_VARS,
+  shadowTokens,
+  SURFACE_VARS,
+  surfaceTokens,
+  type BorderStyle,
   type Density,
   type FontRole,
+  type ShadowStyle,
+  type SurfaceOptions,
 } from './controls'
-import { generateSeedRamps, SEED_KEYS, seedRampVars, type SeedKey } from './ramps'
+import { defaultSeed, generateSeedRamps, SEED_KEYS, seedRampVars, type SeedKey } from './ramps'
 import { TOKENS } from './schema'
 
 export type Mode = 'light' | 'dark'
@@ -29,6 +40,9 @@ export interface ThemeConfig {
     density?: Density
     typeScale?: number
     fonts?: Partial<Record<FontRole, string>>
+    surfaces?: SurfaceOptions
+    shadows?: ShadowStyle
+    borders?: BorderStyle
   }
   /** `--ramp-*` overrides — mode-independent palette */
   ramps: Record<string, string>
@@ -53,12 +67,62 @@ const without = (obj: Record<string, string>, keys: string[]) => {
 export function setSeed(theme: ThemeConfig, key: SeedKey, hex: string | null): ThemeConfig {
   const ramps = without(theme.ramps, seedRampVars(key))
   const seeds = { ...theme.seeds }
-  if (hex === null) {
-    delete seeds[key]
-    return { ...theme, seeds, ramps }
+  if (hex === null) delete seeds[key]
+  else seeds[key] = normalizeHex(hex)
+  const next = { ...theme, seeds, ramps: hex === null ? ramps : { ...ramps, ...generateSeedRamps(key, hex) } }
+  // Surfaces and glow shadows are derived from seeds: keep them in sync
+  return applyShadows(applySurfaces(next))
+}
+
+/** Color that tints surfaces: the neutral seed when it has a hue, otherwise the brand seed. */
+export function surfaceSource(theme: ThemeConfig): string {
+  const neutral = theme.seeds.neutral
+  if (neutral && hexToHsl(neutral)[1] > 3) return neutral
+  return theme.seeds.brand ?? defaultSeed('brand')
+}
+
+const mergeModes = (theme: ThemeConfig, vars: string[], tokens: { light: Record<string, string>; dark: Record<string, string> }) => ({
+  ...theme,
+  light: { ...without(theme.light, vars), ...tokens.light },
+  dark: { ...without(theme.dark, vars), ...tokens.dark },
+})
+
+function applySurfaces(theme: ThemeConfig): ThemeConfig {
+  const opts = theme.controls.surfaces
+  if (!opts) return theme
+  return mergeModes(theme, SURFACE_VARS, surfaceTokens(surfaceSource(theme), opts))
+}
+
+function applyShadows(theme: ThemeConfig): ThemeConfig {
+  const style = theme.controls.shadows
+  if (!style) return theme
+  return mergeModes(theme, SHADOW_VARS, shadowTokens(style, theme.seeds.brand ?? defaultSeed('brand')))
+}
+
+/** Surface tint (0–1) and dark depth (-1–1); both 0 restores Payload's surfaces. */
+export function setSurfaces(theme: ThemeConfig, opts: SurfaceOptions | null): ThemeConfig {
+  const controls: ThemeConfig['controls'] = { ...theme.controls }
+  if (!opts || (opts.tint === 0 && opts.depth === 0)) {
+    delete controls.surfaces
+    return mergeModes({ ...theme, controls }, SURFACE_VARS, { light: {}, dark: {} })
   }
-  seeds[key] = normalizeHex(hex)
-  return { ...theme, seeds, ramps: { ...ramps, ...generateSeedRamps(key, hex) } }
+  controls.surfaces = { tint: opts.tint, depth: opts.depth }
+  return applySurfaces({ ...theme, controls })
+}
+
+export function setShadows(theme: ThemeConfig, style: ShadowStyle): ThemeConfig {
+  const controls: ThemeConfig['controls'] = { ...theme.controls, shadows: style }
+  if (style === 'default') {
+    delete controls.shadows
+    return mergeModes({ ...theme, controls }, SHADOW_VARS, { light: {}, dark: {} })
+  }
+  return applyShadows({ ...theme, controls })
+}
+
+export function setBorders(theme: ThemeConfig, style: BorderStyle): ThemeConfig {
+  const controls: ThemeConfig['controls'] = { ...theme.controls, borders: style }
+  if (style === 'default') delete controls.borders
+  return mergeModes({ ...theme, controls }, BORDER_VARS, borderTokens(style))
 }
 
 export function setRamp(theme: ThemeConfig, varName: string, value: string | null): ThemeConfig {
@@ -165,6 +229,22 @@ export function parseTheme(input: unknown): ThemeConfig {
       }
       controls.fonts[role as FontRole] = family
     }
+  }
+
+  if (c.surfaces !== undefined) {
+    const { tint, depth } = c.surfaces ?? ({} as SurfaceOptions)
+    if (typeof tint !== 'number' || tint < 0 || tint > 1 || typeof depth !== 'number' || depth < -1 || depth > 1) {
+      throw new Error('controls.surfaces out of range')
+    }
+    controls.surfaces = { tint, depth }
+  }
+  if (c.shadows !== undefined) {
+    if (!SHADOW_STYLES.includes(c.shadows)) throw new Error('controls.shadows invalid')
+    controls.shadows = c.shadows
+  }
+  if (c.borders !== undefined) {
+    if (!BORDER_STYLES.includes(c.borders)) throw new Error('controls.borders invalid')
+    controls.borders = c.borders
   }
 
   const customCss = typeof t.customCss === 'string' ? t.customCss : ''
