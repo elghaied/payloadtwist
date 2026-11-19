@@ -13,24 +13,17 @@
   "devDependencies": {
     "prettier": "^3.4.2",
     "turbo": "^2.5.0",
-    "typescript": "5.7.3"
+    "typescript": "6.0.3"
   },
   "engines": {
-    "node": "^18.20.2 || >=20.9.0",
+    "node": ">=24.22.3",
     "pnpm": "^9 || ^10"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
       "sharp",
       "esbuild",
-      "unrs-resolver",
-      "libsql",
-      "@libsql/linux-x64-gnu",
-      "@libsql/linux-x64-musl",
-      "@libsql/linux-arm64-gnu",
-      "@libsql/linux-arm64-musl",
-      "@libsql/darwin-arm64",
-      "@libsql/darwin-x64"
+      "unrs-resolver"
     ]
   },
   "packageManager": "pnpm@10.6.5"

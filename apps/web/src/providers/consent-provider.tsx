@@ -4,9 +4,9 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
+  useSyncExternalStore,
   type ReactNode,
 } from 'react'
 import {
@@ -26,6 +26,8 @@ interface ConsentContextValue {
   hasConsent: (category: ConsentCategory) => boolean
 }
 
+const noopSubscribe = () => () => {}
+
 const ConsentContext = createContext<ConsentContextValue | null>(null)
 
 export function useConsent(): ConsentContextValue {
@@ -37,19 +39,13 @@ export function useConsent(): ConsentContextValue {
 }
 
 export function ConsentProvider({ children }: { children: ReactNode }) {
-  const [consent, setConsent] = useState<ConsentState | null>(null)
-  const [showBanner, setShowBanner] = useState(false)
-  const [mounted, setMounted] = useState(false)
-
-  // Read from localStorage after mount
-  useEffect(() => {
-    const stored = readConsent()
-    setConsent(stored)
-    if (!stored) {
-      setShowBanner(true)
-    }
-    setMounted(true)
-  }, [])
+  // false during SSR/hydration, true after: localStorage is only read on the client
+  const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false)
+  const stored = useMemo(() => (mounted ? readConsent() : null), [mounted])
+  const [saved, setConsent] = useState<ConsentState | null>(null)
+  const [bannerOverride, setShowBanner] = useState<boolean | null>(null)
+  const consent = saved ?? stored
+  const showBanner = bannerOverride ?? !stored
 
   const persist = useCallback((categories: Record<ConsentCategory, boolean>) => {
     const state: ConsentState = {

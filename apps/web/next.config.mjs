@@ -1,8 +1,10 @@
+import { withPayload } from '@payloadcms/next/withPayload'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
   poweredByHeader: false,
-  transpilePackages: ['@payloadcms/ui', '@payloadcms/translations'],
+  experimental: { globalNotFound: true },
   async headers() {
     return [
       {
@@ -31,15 +33,6 @@ const nextConfig = {
       },
     ]
   },
-  webpack: (webpackConfig) => {
-    webpackConfig.resolve.extensionAlias = {
-      '.cjs': ['.cts', '.cjs'],
-      '.js': ['.ts', '.tsx', '.js', '.jsx'],
-      '.mjs': ['.mts', '.mjs'],
-    }
-
-    return webpackConfig
-  },
 }
 
-export default nextConfig
+export default withPayload(nextConfig, { devBundleServerPackages: false })

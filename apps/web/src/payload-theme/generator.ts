@@ -1,4 +1,4 @@
-import { getDefaultTheme, getVariablesByCategory, PAYLOAD_VARIABLES } from './config.js'
+import { getDefaultTheme, getVariablesByCategory, PAYLOAD_VARIABLES } from './config'
 import type { PayloadThemeConfig } from './types.ts'
 
 // Theme vars that must have both light AND dark values emitted together.

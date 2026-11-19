@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useCallback, useEffect, useMemo } from 'react'
+import { useState, useRef, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ColorSwatch } from './ColorSwatch'
 import { hexToHsl, hslToHex } from '@/payload-theme/scale-generator'
@@ -82,7 +82,9 @@ function SVCanvas({
   const containerRef = useRef<HTMLDivElement>(null)
   const dragging = useRef(false)
   const onChangeRef = useRef(onChange)
-  onChangeRef.current = onChange
+  useLayoutEffect(() => {
+    onChangeRef.current = onChange
+  })
   const W = 220
   const H = 140
 
@@ -181,7 +183,9 @@ function HueSlider({ hue, onChange }: { hue: number; onChange: (h: number) => vo
   const trackRef = useRef<HTMLDivElement>(null)
   const dragging = useRef(false)
   const onChangeRef = useRef(onChange)
-  onChangeRef.current = onChange
+  useLayoutEffect(() => {
+    onChangeRef.current = onChange
+  })
   const W = 220
 
   const getHue = useCallback(
@@ -266,7 +270,9 @@ export function ColorPopover({
   defaultValue,
 }: ColorPopoverProps) {
   const onChangeRef = useRef(onChange)
-  onChangeRef.current = onChange
+  useLayoutEffect(() => {
+    onChangeRef.current = onChange
+  })
 
   const throttleRef = useRef<{ timer?: ReturnType<typeof setTimeout>; latest?: string }>({})
 
@@ -297,14 +303,16 @@ export function ColorPopover({
   const [inputMode, setInputMode] = useState<InputMode>('hex')
   const [hexInput, setHexInput] = useState(hex)
 
-  // Sync from parent on external changes
-  useEffect(() => {
+  // Sync from parent on external changes (adjust state during render, not in an effect)
+  const [syncedValue, setSyncedValue] = useState(value)
+  if (value !== syncedValue) {
+    setSyncedValue(value)
     const newHex = toHex(value)
     const [h2, s2, l2] = hexToHsl(newHex)
     const [, sv2, v2] = hslToHsv(h2, s2, l2)
     setLocalHsv([h2, sv2, v2])
     setHexInput(newHex)
-  }, [value])
+  }
 
   const updateFromHsv = useCallback(
     (hue: number, sat: number, val: number) => {

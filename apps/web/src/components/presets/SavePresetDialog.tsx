@@ -30,15 +30,10 @@ export function SavePresetDialog({
   useEffect(() => {
     if (open) {
       dialogRef.current?.showModal()
-      if (existingPreset) {
-        setName(existingPreset.name)
-        setDescription(existingPreset.description || '')
-        setIsPublic(existingPreset.isPublic)
-      }
     } else {
       dialogRef.current?.close()
     }
-  }, [open, existingPreset])
+  }, [open])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

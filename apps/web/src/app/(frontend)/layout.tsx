@@ -1,10 +1,19 @@
 import type { ReactNode } from 'react'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { ThemeProvider } from '@/providers/theme-provider'
 import { ConsentProvider } from '@/providers/consent-provider'
 import { Footer } from '@/components/Footer'
 import { CookieConsent } from '@/components/CookieConsent'
 import './globals.css'
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0a0a0f' },
+  ],
+  width: 'device-width',
+  initialScale: 1,
+}
 
 const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://payloadtwist.com'
 
@@ -57,18 +66,30 @@ export const metadata: Metadata = {
 
 export default function FrontendLayout({ children }: { children: ReactNode }) {
   return (
-    <ThemeProvider>
-      <ConsentProvider>
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-purple-600 focus:text-white focus:text-sm focus:font-medium"
-        >
-          Skip to main content
-        </a>
-        {children}
-        <Footer />
-        <CookieConsent />
-      </ConsentProvider>
-    </ThemeProvider>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body style={{ fontFamily: "'Outfit', sans-serif" }}>
+        <ThemeProvider>
+          <ConsentProvider>
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-purple-600 focus:text-white focus:text-sm focus:font-medium"
+            >
+              Skip to main content
+            </a>
+            {children}
+            <Footer />
+            <CookieConsent />
+          </ConsentProvider>
+        </ThemeProvider>
+      </body>
+    </html>
   )
 }
