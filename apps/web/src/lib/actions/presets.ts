@@ -6,7 +6,7 @@ import { db } from '@/db'
 import { presets, ratings } from '@/db/schema'
 import { auth } from '@/lib/auth'
 import { eq, and, desc, sql, ilike } from 'drizzle-orm'
-import type { PayloadThemeConfig } from '@/payload-theme/types'
+import { parseTheme, type ThemeConfig } from '@/payload-theme/theme'
 
 /** Escape Postgres LIKE/ILIKE special characters */
 function escapeLike(s: string): string {
@@ -22,7 +22,7 @@ async function getSessionOrThrow() {
 export async function createPreset(data: {
   name: string
   description?: string
-  themeData: PayloadThemeConfig
+  themeData: ThemeConfig
   isPublic?: boolean
 }) {
   const session = await getSessionOrThrow()
@@ -30,7 +30,8 @@ export async function createPreset(data: {
   const name = data.name?.trim()
   if (!name || name.length > 100) throw new Error('Name is required and must be under 100 characters')
   if (data.description && data.description.length > 1000) throw new Error('Description must be under 1000 characters')
-  if (!data.themeData || typeof data.themeData !== 'object') throw new Error('Invalid theme data')
+  // Client input: validate the full theme shape before it reaches the DB
+  const themeData = parseTheme(data.themeData)
 
   const [preset] = await db
     .insert(presets)
@@ -38,7 +39,7 @@ export async function createPreset(data: {
       userId: session.user.id,
       name,
       description: data.description?.trim() || '',
-      themeData: data.themeData,
+      themeData,
       isPublic: data.isPublic ?? false,
     })
     .returning()
@@ -53,7 +54,7 @@ export async function updatePreset(
   data: {
     name?: string
     description?: string
-    themeData?: PayloadThemeConfig
+    themeData?: ThemeConfig
     isPublic?: boolean
   },
 ) {
@@ -77,7 +78,7 @@ export async function updatePreset(
     .set({
       ...(data.name !== undefined && { name: data.name.trim() }),
       ...(data.description !== undefined && { description: data.description.trim() }),
-      ...(data.themeData !== undefined && { themeData: data.themeData }),
+      ...(data.themeData !== undefined && { themeData: parseTheme(data.themeData) }),
       ...(data.isPublic !== undefined && { isPublic: data.isPublic }),
       updatedAt: new Date(),
     })
@@ -109,6 +110,9 @@ export async function ratePreset(presetId: string, score: number) {
   if (!Number.isInteger(score) || score < 1 || score > 5) throw new Error('Score must be integer 1-5')
 
   const session = await getSessionOrThrow()
+
+  const [target] = await db.select({ isPublic: presets.isPublic }).from(presets).where(eq(presets.id, presetId)).limit(1)
+  if (!target?.isPublic) throw new Error('Preset not found')
 
   // Upsert the rating
   await db
@@ -177,9 +181,15 @@ export async function getPublicPresets(opts?: { limit?: number; offset?: number;
     .offset(offset)
 }
 
+/** A public preset, or a private one owned by the caller. Callable from the client, so it must check. */
 export async function getPresetById(id: string) {
   const [preset] = await db.select().from(presets).where(eq(presets.id, id)).limit(1)
-  return preset || null
+  if (!preset) return null
+  if (!preset.isPublic) {
+    const session = await auth.api.getSession({ headers: await headers() })
+    if (session?.user.id !== preset.userId) return null
+  }
+  return preset
 }
 
 export async function getUserRating(presetId: string) {

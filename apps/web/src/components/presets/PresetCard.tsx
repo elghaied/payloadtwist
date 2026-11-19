@@ -1,12 +1,13 @@
 import Link from 'next/link'
 import { Star, Globe, Lock } from 'lucide-react'
-import type { PayloadThemeConfig } from '@/payload-theme/types'
+import type { ThemeConfig } from '@/payload-theme/theme'
+import { ThemeSwatches } from './ThemeSwatches'
 
 interface PresetCardProps {
   id: string
   name: string
   description?: string | null
-  themeData: PayloadThemeConfig
+  themeData: ThemeConfig
   authorName?: string
   averageRating: number
   ratingCount: number
@@ -14,31 +15,6 @@ interface PresetCardProps {
   isOwner?: boolean
   onDelete?: () => void
   onTogglePublic?: () => void
-}
-
-function ColorSwatches({ themeData }: { themeData: PayloadThemeConfig }) {
-  const baseColors = [
-    '--color-base-0',
-    '--color-base-100',
-    '--color-base-250',
-    '--color-base-500',
-    '--color-base-800',
-  ]
-  const colors = baseColors.map((v) => themeData.light[v]).filter(Boolean)
-
-  if (colors.length === 0) return null
-
-  return (
-    <div className="flex gap-0.5 mb-3">
-      {colors.map((color, i) => (
-        <div
-          key={i}
-          className="h-4 flex-1 first:rounded-l last:rounded-r"
-          style={{ backgroundColor: color }}
-        />
-      ))}
-    </div>
-  )
 }
 
 export function PresetCard({
@@ -56,7 +32,9 @@ export function PresetCard({
 }: PresetCardProps) {
   return (
     <div className="rounded-xl border border-[var(--lp-border)] bg-[var(--lp-surface)] p-4 hover:border-purple-500/30 transition-colors group">
-      <ColorSwatches themeData={themeData} />
+      <div className="mb-3">
+        <ThemeSwatches themeData={themeData} />
+      </div>
 
       <div className="flex items-start justify-between gap-2 mb-1">
         <Link href={`/presets/${id}`} className="text-sm font-semibold text-[var(--lp-text)] hover:text-purple-400 transition-colors truncate">

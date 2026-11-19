@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation'
 import { PresetCard } from '@/components/presets/PresetCard'
 import { PresetGrid } from '@/components/presets/PresetGrid'
 import { deletePreset, updatePreset } from '@/lib/actions/presets'
-import type { PayloadThemeConfig } from '@/payload-theme/types'
+import type { ThemeConfig } from '@/payload-theme/theme'
 
 interface PresetRow {
   id: string
   name: string
   description: string | null
-  themeData: PayloadThemeConfig
+  themeData: ThemeConfig
   isPublic: boolean
   averageRating: number
   ratingCount: number

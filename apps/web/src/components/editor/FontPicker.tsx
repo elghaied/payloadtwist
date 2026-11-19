@@ -39,33 +39,11 @@ const MAX_RENDERED_ITEMS = 80
 
 // ─── Font loading ───────────────────────────────────────────────────────────
 
-const loadedFontsInIframe = new Set<string>()
 const loadedFontsInParent = new Set<string>()
 
 function getGoogleFontUrl(family: string): string {
   const encoded = family.replace(/\s+/g, '+')
   return `https://fonts.googleapis.com/css2?family=${encoded}:wght@400;500;600;700&display=swap`
-}
-
-function injectFontIntoIframe(family: string): void {
-  if (loadedFontsInIframe.has(family)) return
-
-  const iframe = document.querySelector('iframe#payload-preview') as HTMLIFrameElement | null
-  const iframeDoc = iframe?.contentDocument ?? iframe?.contentWindow?.document
-  if (!iframeDoc) return
-
-  const linkId = `tweakpayload-font-${family.replace(/\s+/g, '-').toLowerCase()}`
-  if (iframeDoc.getElementById(linkId)) {
-    loadedFontsInIframe.add(family)
-    return
-  }
-
-  const link = iframeDoc.createElement('link')
-  link.id = linkId
-  link.rel = 'stylesheet'
-  link.href = getGoogleFontUrl(family)
-  iframeDoc.head.appendChild(link)
-  loadedFontsInIframe.add(family)
 }
 
 function loadFontInParent(family: string): void {
@@ -197,7 +175,6 @@ export function FontPicker({
 
   const handleSelectGoogle = useCallback(
     (font: GoogleFont) => {
-      injectFontIntoIframe(font.family)
       loadFontInParent(font.family)
       onChange(fontValueFromFamily(font.family, font.category))
       setIsOpen(false)

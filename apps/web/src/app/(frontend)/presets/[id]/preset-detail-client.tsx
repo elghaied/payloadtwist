@@ -5,47 +5,18 @@ import Link from 'next/link'
 import { Star, ArrowLeft, Copy, Palette } from 'lucide-react'
 import { RatingStars } from '@/components/presets/RatingStars'
 import { useSession } from '@/lib/auth-client'
-import { generateExportCSS } from '@/payload-theme/generator'
-import type { PayloadThemeConfig } from '@/payload-theme/types'
+import { ThemeSwatches } from '@/components/presets/ThemeSwatches'
+import { buildThemeCss } from '@/payload-theme/css'
+import { parseTheme, type ThemeConfig } from '@/payload-theme/theme'
 
 interface PresetData {
   id: string
   name: string
   description: string | null
-  themeData: PayloadThemeConfig
+  themeData: ThemeConfig
   averageRating: number
   ratingCount: number
   isPublic: boolean
-}
-
-function ColorPalette({ themeData }: { themeData: PayloadThemeConfig }) {
-  const scaleVars = [
-    '--color-base-0',
-    '--color-base-50',
-    '--color-base-100',
-    '--color-base-150',
-    '--color-base-200',
-    '--color-base-250',
-    '--color-base-300',
-    '--color-base-350',
-    '--color-base-400',
-    '--color-base-500',
-    '--color-base-600',
-    '--color-base-650',
-    '--color-base-700',
-    '--color-base-800',
-    '--color-base-850',
-    '--color-base-1000',
-  ]
-  const colors = scaleVars.map((v) => themeData.light[v]).filter(Boolean)
-
-  return (
-    <div className="flex rounded-lg overflow-hidden">
-      {colors.map((color, i) => (
-        <div key={i} className="h-10 flex-1" style={{ backgroundColor: color }} />
-      ))}
-    </div>
-  )
 }
 
 export function PresetDetailClient({
@@ -59,7 +30,7 @@ export function PresetDetailClient({
   const [copied, setCopied] = useState(false)
 
   const handleCopyCSS = async () => {
-    const css = generateExportCSS(preset.themeData)
+    const css = buildThemeCss(parseTheme(preset.themeData))
     try {
       await navigator.clipboard.writeText(css)
       setCopied(true)
@@ -99,7 +70,7 @@ export function PresetDetailClient({
       )}
 
       <div className="mb-6">
-        <ColorPalette themeData={preset.themeData} />
+        <ThemeSwatches themeData={preset.themeData} size="lg" />
       </div>
 
       <div className="flex items-center justify-between mb-6">

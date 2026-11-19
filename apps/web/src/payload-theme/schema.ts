@@ -28,6 +28,23 @@ export function resolveToken(
   mode: 'light' | 'dark',
   overrides: { ramps: Record<string, string>; light: Record<string, string>; dark: Record<string, string> },
 ): string {
+  const values = effectiveValues(mode, overrides)
+  return resolveValue(values[varName] ?? `var(${varName})`, values)
+}
+
+/** Every token resolved to a concrete value for a mode — one pass for whole editor panels. */
+export function resolveAll(
+  mode: 'light' | 'dark',
+  overrides: { ramps: Record<string, string>; light: Record<string, string>; dark: Record<string, string> },
+): Record<string, string> {
+  const values = effectiveValues(mode, overrides)
+  return Object.fromEntries(Object.keys(values).map((v) => [v, resolveValue(values[v], values)]))
+}
+
+function effectiveValues(
+  mode: 'light' | 'dark',
+  overrides: { ramps: Record<string, string>; light: Record<string, string>; dark: Record<string, string> },
+): Record<string, string> {
   const values: Record<string, string> = {}
   for (const t of schema.tokens) values[t.var] = mode === 'dark' ? (t.dark ?? t.light) : t.light
   Object.assign(values, overrides.ramps)
@@ -36,5 +53,5 @@ export function resolveToken(
     if (mode === 'light' || !TOKENS[v]?.dark) values[v] = value
   }
   if (mode === 'dark') Object.assign(values, overrides.dark)
-  return resolveValue(values[varName] ?? `var(${varName})`, values)
+  return values
 }

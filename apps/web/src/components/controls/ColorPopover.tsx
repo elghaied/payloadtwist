@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ColorSwatch } from './ColorSwatch'
-import { hexToHsl, hslToHex } from '@/payload-theme/scale-generator'
+import { hexToHsl, hslToHex, parseColor } from '@/payload-theme/color'
 
 // ─── HSV ↔ HSL helpers ──────────────────────────────────────────────────────
 
@@ -27,20 +27,10 @@ function hsvToHsl(h: number, s: number, v: number): [number, number, number] {
 
 // ─── Color format utilities ─────────────────────────────────────────────────
 
-function rgbToHex(value: string): string {
-  const match = value.match(/rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/)
-  if (!match) return '#000000'
-  return (
-    '#' +
-    [match[1], match[2], match[3]]
-      .map((n) => parseInt(n).toString(16).padStart(2, '0'))
-      .join('')
-  )
-}
-
 function toHex(value: string): string {
   if (!value) return '#000000'
-  if (value.startsWith('rgb(')) return rgbToHex(value)
+  const parsed = parseColor(value)
+  if (parsed) return '#' + [parsed.r, parsed.g, parsed.b].map((n) => Math.round(n).toString(16).padStart(2, '0')).join('')
   if (value.startsWith('#')) {
     if (/^#[0-9a-fA-F]{3}$/.test(value)) {
       return '#' + value[1] + value[1] + value[2] + value[2] + value[3] + value[3]
@@ -259,6 +249,8 @@ interface ColorPopoverProps {
   hasOverride?: boolean
   swatchSize?: 'sm' | 'lg'
   defaultValue?: string
+  /** Extra classes for the swatch trigger, e.g. to stretch it in a ramp strip */
+  swatchClassName?: string
 }
 
 export function ColorPopover({
@@ -268,6 +260,7 @@ export function ColorPopover({
   hasOverride,
   swatchSize = 'sm',
   defaultValue,
+  swatchClassName,
 }: ColorPopoverProps) {
   const onChangeRef = useRef(onChange)
   useLayoutEffect(() => {
@@ -376,8 +369,8 @@ export function ColorPopover({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <div>
-          <ColorSwatch color={hex} hasOverride={hasOverride} size={swatchSize} />
+        <div className={swatchClassName ? 'w-full' : undefined}>
+          <ColorSwatch color={parseColor(value) ? value : hex} hasOverride={hasOverride} size={swatchSize} className={swatchClassName} />
         </div>
       </PopoverTrigger>
       <PopoverContent

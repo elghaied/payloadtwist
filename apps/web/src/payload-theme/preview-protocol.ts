@@ -10,6 +10,11 @@ export type ToPreview =
   | { source: 'payloadtwist'; type: 'contrast'; enabled: boolean }
   | { source: 'payloadtwist'; type: 'navigate'; path: string }
 
+/** A message to the preview without the `source` tag (added by the sender). */
+export type ToPreviewBody = {
+  [K in ToPreview['type']]: Omit<Extract<ToPreview, { type: K }>, 'source'>
+}[ToPreview['type']]
+
 export type FromPreview =
   | { source: 'payloadtwist-preview'; type: 'ready'; version: 1 }
   | { source: 'payloadtwist-preview'; type: 'route'; path: string }

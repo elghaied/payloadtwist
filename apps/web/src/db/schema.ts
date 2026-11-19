@@ -9,7 +9,7 @@ import {
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core'
-import type { PayloadThemeConfig } from '@/payload-theme/types'
+import type { ThemeConfig } from '@/payload-theme/theme'
 
 // ── Better Auth managed tables ──
 
@@ -72,7 +72,7 @@ export const presets = pgTable('presets', {
     .references(() => users.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   description: text('description').default(''),
-  themeData: jsonb('theme_data').$type<PayloadThemeConfig>().notNull(),
+  themeData: jsonb('theme_data').$type<ThemeConfig>().notNull(),
   isPublic: boolean('is_public').notNull().default(false),
   averageRating: real('average_rating').notNull().default(0),
   ratingCount: integer('rating_count').notNull().default(0),

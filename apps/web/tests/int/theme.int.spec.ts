@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { contrastRatio, hexToHsl, hslToHex } from '@/payload-theme/color'
+import { contrastRatio, flatten, hexToHsl, hslToHex, parseColor } from '@/payload-theme/color'
 import { buildThemeCss, buildThemePackage, darkDeclarations, isDefaultTheme } from '@/payload-theme/css'
 import { generateSeedRamps, seedRampVars } from '@/payload-theme/ramps'
 import { DEFAULT_RAMPS, resolveToken, TOKENS } from '@/payload-theme/schema'
@@ -21,6 +21,12 @@ describe('color', () => {
       const [h, s, l] = hexToHsl(hex)
       expect(hslToHex(h, s, l)).toBe(hex)
     }
+  })
+  it('parses rgba and composites translucent colors', () => {
+    expect(parseColor('rgba(0, 0, 0, 0.5)')).toEqual({ r: 0, g: 0, b: 0, a: 0.5 })
+    expect(parseColor('var(--x)')).toBeNull()
+    expect(flatten('rgba(0, 0, 0, 0.5)', '#ffffff')).toBe('#808080')
+    expect(flatten('#123456', '#ffffff')).toBe('#123456')
   })
   it('computes WCAG contrast', () => {
     expect(contrastRatio('#000000', '#ffffff')).toBeCloseTo(21, 0)

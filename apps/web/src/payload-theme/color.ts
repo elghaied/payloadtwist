@@ -44,6 +44,28 @@ export function hslToHex(h: number, s: number, l: number): string {
   return rgbToHex(f(0) * 255, f(8) * 255, f(4) * 255)
 }
 
+/** Parses #rgb/#rrggbb/rgb()/rgba() into channels + alpha; null for anything else (var(), named colors). */
+export function parseColor(value: string): { r: number; g: number; b: number; a: number } | null {
+  const v = value.trim()
+  if (isHex(v)) {
+    const [r, g, b] = hexToRgb(v)
+    return { r, g, b, a: 1 }
+  }
+  const m = v.match(/^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)(?:[\s,/]+([\d.]+%?))?\s*\)$/i)
+  if (!m) return null
+  const a = m[4] === undefined ? 1 : m[4].endsWith('%') ? parseFloat(m[4]) / 100 : parseFloat(m[4])
+  return { r: +m[1], g: +m[2], b: +m[3], a: clamp(a, 0, 1) }
+}
+
+/** Composites a possibly translucent color over an opaque backdrop; returns hex or null if unparseable. */
+export function flatten(color: string, backdrop: string): string | null {
+  const fg = parseColor(color)
+  const bg = parseColor(backdrop)
+  if (!fg || !bg) return null
+  const mix = (f: number, b: number) => f * fg.a + b * (1 - fg.a)
+  return rgbToHex(mix(fg.r, bg.r), mix(fg.g, bg.g), mix(fg.b, bg.b))
+}
+
 /** WCAG 2.x relative luminance */
 export function luminance(hex: string): number {
   const [r, g, b] = hexToRgb(hex).map((v) => {

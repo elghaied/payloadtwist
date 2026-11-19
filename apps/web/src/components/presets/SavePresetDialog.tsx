@@ -3,12 +3,12 @@
 import { useState, useRef, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { createPreset, updatePreset } from '@/lib/actions/presets'
-import type { PayloadThemeConfig } from '@/payload-theme/types'
+import type { ThemeConfig } from '@/payload-theme/theme'
 
 interface SavePresetDialogProps {
   open: boolean
   onClose: () => void
-  themeData: PayloadThemeConfig
+  themeData: ThemeConfig
   existingPreset?: { id: string; name: string; description?: string | null; isPublic: boolean } | null
   onSaved?: (presetId: string) => void
 }
