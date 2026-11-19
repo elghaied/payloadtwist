@@ -1,10 +1,10 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
-import { FixedToolbarFeature, lexicalEditor, TableFeature } from '@payloadcms/richtext-lexical'
 import { APIError, buildConfig, createFolderField } from 'payload'
 import type { Field, GlobalConfig } from 'payload'
 import { demo } from './demo'
+import { fullEditor } from './lexical'
 import { FieldShowcase } from './field-showcase'
 import { migrations } from './migrations'
 import { DEMO_USER, MEDIA_DIR, seed } from './seed'
@@ -250,9 +250,7 @@ export default buildConfig({
   routes: { admin: '/preview', api: '/preview-api' },
   collections: [Posts, Pages, FieldShowcase, Media, Categories, Folders, Users],
   globals: [SiteSettings],
-  editor: lexicalEditor({
-    features: ({ defaultFeatures }) => [...defaultFeatures, FixedToolbarFeature(), TableFeature()],
-  }),
+  editor: fullEditor,
   localization: {
     locales: [
       { label: 'English', code: 'en' },

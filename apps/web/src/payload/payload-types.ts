@@ -139,19 +139,23 @@ export type SupportedTimezones =
   | 'Pacific/Fiji';
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "LexicalNodes_DDB34419".
+ * via the `definition` "LexicalNodes_4617909B".
  */
-export type LexicalNodes_DDB34419 =
+export type LexicalNodes_4617909B =
   | SerializedTextNode
   | SerializedTabNode
   | SerializedLineBreakNode
-  | SerializedParagraphNode<LexicalNodes_DDB34419>
-  | SerializedTableNode<LexicalNodes_DDB34419>
-  | SerializedTableCellNode<LexicalNodes_DDB34419>
-  | SerializedTableRowNode<LexicalNodes_DDB34419>
+  | SerializedParagraphNode<LexicalNodes_4617909B>
+  | SerializedBlockNode<Callout | CodeSnippet>
+  | SerializedInlineBlockNode<Mention | Badge>
+  | SerializedTableNode<LexicalNodes_4617909B>
+  | SerializedTableCellNode<LexicalNodes_4617909B>
+  | SerializedTableRowNode<LexicalNodes_4617909B>
+  | SerializedUploadNode<'media', LexicalUploadFields_57BDE750>
+  | SerializedAutoLinkNode<LexicalNodes_4617909B, LexicalLinkFields_B540ABDC>
+  | SerializedLinkNode<LexicalNodes_4617909B, LexicalLinkFields_B540ABDC>
   | SerializedHorizontalRuleNode
-  | SerializedUploadNode<'media'>
-  | SerializedQuoteNode<LexicalNodes_DDB34419>
+  | SerializedQuoteNode<LexicalNodes_4617909B>
   | SerializedRelationshipNode<
       | 'posts'
       | 'pages'
@@ -164,11 +168,9 @@ export type LexicalNodes_DDB34419 =
       | 'payload-preferences'
       | 'payload-migrations'
     >
-  | SerializedAutoLinkNode<LexicalNodes_DDB34419, LexicalLinkFields>
-  | SerializedLinkNode<LexicalNodes_DDB34419, LexicalLinkFields>
-  | SerializedListNode<LexicalNodes_DDB34419>
-  | SerializedListItemNode<LexicalNodes_DDB34419>
-  | SerializedHeadingNode<LexicalNodes_DDB34419>;
+  | SerializedListNode<LexicalNodes_4617909B>
+  | SerializedListItemNode<LexicalNodes_4617909B>
+  | SerializedHeadingNode<LexicalNodes_4617909B>;
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "LexicalNodes_3DE324E4".
@@ -272,7 +274,7 @@ export interface Post {
   title: string;
   excerpt?: string | null;
   heroImage?: (number | null) | Media;
-  content?: LexicalRichText<LexicalNodes_DDB34419> | null;
+  content?: LexicalRichText<LexicalNodes_4617909B> | null;
   readingTime?: number | null;
   difficulty?: ('beginner' | 'intermediate' | 'advanced') | null;
   resources?:
@@ -475,7 +477,7 @@ export interface Hero {
  * via the `definition` "Content".
  */
 export interface Content {
-  body?: LexicalRichText<LexicalNodes_DDB34419> | null;
+  body?: LexicalRichText<LexicalNodes_4617909B> | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'content';
@@ -569,7 +571,14 @@ export interface FieldShowcase {
     | null;
   cover?: (number | null) | Media;
   attachments?: (number | Media)[] | null;
-  body?: LexicalRichText<LexicalNodes_DDB34419> | null;
+  /**
+   * Every Lexical feature, seeded with every node type.
+   */
+  body?: LexicalRichText<LexicalNodes_4617909B> | null;
+  /**
+   * Same content plus Lexical’s tree view, JSX output and test recorder.
+   */
+  debugBody?: LexicalRichText<LexicalNodes_4617909B> | null;
   sections?: (Quote | Stats | Gallery)[] | null;
   structure?: {
     checklist?:
@@ -869,6 +878,7 @@ export interface FieldShowcaseSelect<T extends boolean = true> {
   cover?: T;
   attachments?: T;
   body?: T;
+  debugBody?: T;
   sections?:
     | T
     | {
@@ -1208,6 +1218,76 @@ export interface UploadDropzoneWidget {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Callout".
+ */
+export interface Callout {
+  id: string;
+  blockType: 'callout';
+  style?: ('info' | 'success' | 'warning' | 'danger') | null;
+  title?: string | null;
+  message: string;
+  blockName?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CodeSnippet".
+ */
+export interface CodeSnippet {
+  id: string;
+  blockType: 'codeSnippet';
+  language?: ('ts' | 'tsx' | 'css' | 'json' | 'bash') | null;
+  code: string;
+  blockName?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Mention".
+ */
+export interface Mention {
+  id: string;
+  blockType: 'mention';
+  user: number | User;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Badge".
+ */
+export interface Badge {
+  id: string;
+  blockType: 'badge';
+  label: string;
+  tone?: ('brand' | 'success' | 'warning' | 'danger') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LexicalUploadFields_57BDE750".
+ */
+export interface LexicalUploadFields_57BDE750 {
+  caption?: string | null;
+  credit?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LexicalLinkFields_B540ABDC".
+ */
+export interface LexicalLinkFields_B540ABDC {
+  linkType: 'custom' | 'internal';
+  url?: string;
+  doc?: {
+    relationTo: string;
+    value:
+      | string
+      | number
+      | {
+          id: string | number;
+          [k: string]: unknown;
+        };
+  } | null;
+  newTab: boolean;
+  rel?: ('noopener' | 'noreferrer' | 'nofollow')[] | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "auth".
  */
 export interface Auth {
@@ -1265,6 +1345,20 @@ export interface SerializedParagraphNode<TChildren> extends SerializedLexicalEle
   textStyle: string;
 }
 
+export type SerializedBlockNode<TFields extends { blockType: string }> = TFields extends unknown ? {
+  type: 'block';
+  format: LexicalElementFormat;
+  /** @deprecated Ignored when loading. Typed as required only to match Lexical's types: rich text sent through the API, CLI or MCP may not contain it. */
+  version: number;
+  fields: { id: string; blockName?: string | null } & Omit<TFields, 'id' | 'blockName'>;
+} : never;
+export type SerializedInlineBlockNode<TFields extends { blockType: string }> = TFields extends unknown ? {
+  type: 'inlineBlock';
+  /** @deprecated Ignored when loading. Typed as required only to match Lexical's types: rich text sent through the API, CLI or MCP may not contain it. */
+  version: number;
+  fields: { id: string } & Omit<TFields, 'id'>;
+} : never;
+
 export interface SerializedTableNode<TChildren> extends SerializedLexicalElementBase<TChildren> {
   type: 'table';
   colWidths?: number[];
@@ -1286,12 +1380,6 @@ export interface SerializedTableCellNode<TChildren> extends SerializedLexicalEle
   width?: number;
 }
 
-export interface SerializedHorizontalRuleNode {
-  type: 'horizontalrule';
-  /** @deprecated Ignored when loading. Typed as required only to match Lexical's types: rich text sent through the API, CLI or MCP may not contain it. */
-  version: number;
-}
-
 export type SerializedUploadNode<TSlugs extends keyof Config['collections'], TFields = { [k: string]: unknown }> = {
   type: 'upload';
   format: LexicalElementFormat;
@@ -1299,22 +1387,6 @@ export type SerializedUploadNode<TSlugs extends keyof Config['collections'], TFi
   /** @deprecated Ignored when loading. Typed as required only to match Lexical's types: rich text sent through the API, CLI or MCP may not contain it. */
   version: number;
   fields: TFields;
-} & {
-  [TSlug in TSlugs]: {
-    relationTo: TSlug;
-    value: Config['collections'][TSlug]['id'] | Config['collections'][TSlug];
-  };
-}[TSlugs];
-
-export interface SerializedQuoteNode<TChildren> extends SerializedLexicalElementBase<TChildren> {
-  type: 'quote';
-}
-
-export type SerializedRelationshipNode<TSlugs extends keyof Config['collections']> = {
-  type: 'relationship';
-  format: LexicalElementFormat;
-  /** @deprecated Ignored when loading. Typed as required only to match Lexical's types: rich text sent through the API, CLI or MCP may not contain it. */
-  version: number;
 } & {
   [TSlug in TSlugs]: {
     relationTo: TSlug;
@@ -1341,6 +1413,28 @@ export interface SerializedAutoLinkNode<TChildren, TFields = LexicalLinkFields> 
   type: 'autolink';
   fields: TFields;
 }
+
+export interface SerializedHorizontalRuleNode {
+  type: 'horizontalrule';
+  /** @deprecated Ignored when loading. Typed as required only to match Lexical's types: rich text sent through the API, CLI or MCP may not contain it. */
+  version: number;
+}
+
+export interface SerializedQuoteNode<TChildren> extends SerializedLexicalElementBase<TChildren> {
+  type: 'quote';
+}
+
+export type SerializedRelationshipNode<TSlugs extends keyof Config['collections']> = {
+  type: 'relationship';
+  format: LexicalElementFormat;
+  /** @deprecated Ignored when loading. Typed as required only to match Lexical's types: rich text sent through the API, CLI or MCP may not contain it. */
+  version: number;
+} & {
+  [TSlug in TSlugs]: {
+    relationTo: TSlug;
+    value: Config['collections'][TSlug]['id'] | Config['collections'][TSlug];
+  };
+}[TSlugs];
 
 export interface SerializedListNode<TChildren> extends SerializedLexicalElementBase<TChildren> {
   type: 'list';

@@ -2860,6 +2860,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "debug_body": {
+          "name": "debug_body",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "structure_seo_title": {
           "name": "structure_seo_title",
           "type": "text",
@@ -4138,6 +4145,13 @@
         "version_cover_id": {
           "name": "version_cover_id",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "version_debug_body": {
+          "name": "version_debug_body",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -8364,6 +8378,6 @@
   "internal": {
     "indexes": {}
   },
-  "id": "690fed37-46f6-4ee2-acaa-02c225e85b63",
+  "id": "78239ec9-0b79-4323-93df-82d7c9881a1c",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

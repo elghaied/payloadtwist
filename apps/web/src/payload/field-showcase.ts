@@ -1,5 +1,6 @@
 import type { Block, CollectionConfig } from 'payload'
 import { demo } from './demo'
+import { debugEditor } from './lexical'
 
 // Every Payload v4 field type, variant and state in one document, so a theme can be judged
 // against everything editors will actually see.
@@ -50,7 +51,7 @@ export const FieldShowcase: CollectionConfig = demo({
     useAsTitle: 'title',
     group: 'Showcase',
     description: 'Every Payload v4 field type and state — use it to judge a theme against real editing UI.',
-    defaultColumns: ['title', 'status', 'priority', 'rating', 'updatedAt'],
+    defaultColumns: ['title', 'status', 'body', 'priority', 'rating', 'updatedAt'],
   },
   versions: { drafts: { autosave: { interval: 2000 } } },
   trash: true,
@@ -177,7 +178,14 @@ export const FieldShowcase: CollectionConfig = demo({
         {
           label: 'Content',
           fields: [
-            { name: 'body', type: 'richText', localized: true },
+            { name: 'body', type: 'richText', localized: true, admin: { description: 'Every Lexical feature, seeded with every node type.' } },
+            {
+              name: 'debugBody',
+              label: 'Rich text with developer panels',
+              type: 'richText',
+              editor: debugEditor,
+              admin: { description: 'Same content plus Lexical’s tree view, JSX output and test recorder.' },
+            },
             { name: 'sections', type: 'blocks', blocks: [quoteBlock, statsBlock, galleryBlock] },
           ],
         },

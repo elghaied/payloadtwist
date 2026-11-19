@@ -3,7 +3,11 @@ import fs from 'fs'
 import os from 'os'
 import path from 'path'
 import type { Payload } from 'payload'
-import type { Post, User } from './payload-types'
+import type { FieldShowcase, Post, User } from './payload-types'
+import { articleDocument, everythingDocument, p as para, root } from './seed-richtext'
+
+// Lexical's node union is generated per-config; Payload validates the JSON against the editor on create
+const asRichText = (doc: unknown) => doc as NonNullable<Post['content']>
 
 /** Upload dir for the in-memory demo; wiped on seed so files never pile up across restarts. */
 export const MEDIA_DIR = path.join(os.tmpdir(), 'payloadtwist-preview-media')
@@ -14,28 +18,6 @@ export const DEMO_USER = {
   // Public on purpose: autoLogin into a read-only, in-memory demo.
   password: 'payloadtwist-preview',
 }
-
-const paragraph = (text: string) => ({
-  type: 'paragraph',
-  version: 1,
-  direction: 'ltr' as const,
-  format: '' as const,
-  indent: 0,
-  textFormat: 0,
-  children: [{ type: 'text', version: 1, text, format: 0, detail: 0, mode: 'normal', style: '' }],
-})
-
-const heading = (text: string, tag: 'h2' | 'h3' = 'h2') => ({
-  ...paragraph(text),
-  type: 'heading',
-  tag,
-})
-
-// Lexical's node union is generated per-config; the JSON here is validated by Payload on create.
-const richText = (...nodes: ReturnType<typeof paragraph>[]) =>
-  ({
-    root: { type: 'root', version: 1, direction: 'ltr', format: '', indent: 0, children: nodes },
-  }) as unknown as NonNullable<Post['content']>
 
 const gradientSvg = (from: string, to: string, label: string) =>
   Buffer.from(
@@ -217,15 +199,7 @@ export async function seed(payload: Payload): Promise<void> {
           .replace(/[^a-z0-9]+/g, '-')
           .replace(/(^-|-$)/g, ''),
         heroImage: media[i % media.length].id,
-        content: richText(
-          paragraph(p.excerpt),
-          heading('What changed'),
-          paragraph(
-            'Payload 4 ships a new design system built on semantic tokens, so a single variable can restyle a whole family of components in both color modes.',
-          ),
-          heading('Next steps', 'h3'),
-          paragraph('Try the editor, export the CSS, and paste it into your project.'),
-        ),
+        content: asRichText(articleDocument(p.excerpt, { media: media[i % media.length].id })),
         readingTime: 3 + (i % 7),
         difficulty: p.difficulty,
         resources: [
@@ -285,7 +259,7 @@ export async function seed(payload: Payload): Promise<void> {
           },
           {
             blockType: 'content',
-            body: richText(paragraph('Composable blocks keep layouts flexible.')),
+            body: asRichText(root([para('Composable blocks keep layouts flexible.')])),
           },
           { blockType: 'callToAction', label: 'Get started', url: '/editor', style: 'primary' },
         ],
@@ -326,12 +300,6 @@ export async function seed(payload: Payload): Promise<void> {
       relatedPosts: [],
       cover: media[1].id,
       attachments: [media[2].id, media[3].id, media[4].id],
-      body: richText(
-        heading('Launch plan'),
-        paragraph('Coordinate the newsletter, homepage takeover and social posts for launch week.'),
-        heading('Open questions', 'h3'),
-        paragraph('Confirm budget split between paid social and podcast sponsorships.'),
-      ),
       sections: [
         { blockType: 'quote', quote: 'Shipping the theme took an afternoon, not a sprint.', attribution: 'Priya, Editor' },
         { blockType: 'stats', items: [{ value: 42, label: 'Articles' }, { value: 7, label: 'Authors' }, { value: 3, label: 'Locales' }] },
@@ -355,11 +323,23 @@ export async function seed(payload: Payload): Promise<void> {
   })
   const posts = await payload.find({ collection: 'posts', limit: 2, ...ctx })
   const pages = await payload.find({ collection: 'pages', limit: 1, ...ctx })
+  const everything = everythingDocument({
+    media: media.map((m) => m.id),
+    post: posts.docs[0].id,
+    page: pages.docs[0].id,
+    user: users[1].id,
+  })
+  const everythingPortable = everythingDocument(
+    { media: media.map((m) => m.id), post: posts.docs[0].id, page: pages.docs[0].id, user: users[1].id },
+    { portable: true },
+  )
   await payload.update({
     collection: 'field-showcase',
     id: showcase.id,
     draft: true,
     data: {
+      body: asRichText(everything) as FieldShowcase['body'],
+      debugBody: asRichText(everythingPortable) as FieldShowcase['debugBody'],
       relatedPosts: posts.docs.map((d) => d.id),
       linkedContent: [
         ...posts.docs.slice(0, 1).map((d) => ({ relationTo: 'posts' as const, value: d.id })),
