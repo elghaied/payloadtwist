@@ -5,7 +5,7 @@ import { ChevronRight, RotateCcw, Search } from 'lucide-react'
 import { ColorPopover } from '@/components/controls'
 import { parseColor } from '@/payload-theme/color'
 import { schema, TOKENS } from '@/payload-theme/schema'
-import type { Mode, ThemeConfig } from '@/payload-theme/theme'
+import { isSafeValue, type Mode, type ThemeConfig } from '@/payload-theme/theme'
 import { useEditorStore } from '@/store/editor-store'
 import { useResolved } from '../token-ui'
 
@@ -40,8 +40,8 @@ function ValueInput({ value, onCommit }: { value: string; onCommit: (v: string) 
   }
   const commit = () => {
     const v = draft.trim()
-    // Same rule as parseTheme: a value must not be able to end the declaration
-    if (v && v !== value && !/[;{}<]/.test(v)) onCommit(v)
+    // Same rule as parseTheme
+    if (v && v !== value && isSafeValue(v)) onCommit(v)
     else setDraft(value)
   }
   return (

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Star, ArrowLeft, Copy, Palette } from 'lucide-react'
 import { RatingStars } from '@/components/presets/RatingStars'
 import { useSession } from '@/lib/auth-client'
+import { ThemePreviewFrame } from '@/components/presets/ThemePreviewFrame'
 import { ThemeSwatches } from '@/components/presets/ThemeSwatches'
 import { buildThemeCss } from '@/payload-theme/css'
 import { parseTheme, type ThemeConfig } from '@/payload-theme/theme'
@@ -71,6 +72,10 @@ export function PresetDetailClient({
 
       <div className="mb-6">
         <ThemeSwatches themeData={preset.themeData} size="lg" />
+      </div>
+
+      <div className="mb-6">
+        <ThemePreviewFrame theme={parseTheme(preset.themeData)} />
       </div>
 
       <div className="flex items-center justify-between mb-6">

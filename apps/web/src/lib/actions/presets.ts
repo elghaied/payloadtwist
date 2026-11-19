@@ -185,11 +185,10 @@ export async function getPublicPresets(opts?: { limit?: number; offset?: number;
 export async function getPresetById(id: string) {
   const [preset] = await db.select().from(presets).where(eq(presets.id, id)).limit(1)
   if (!preset) return null
-  if (!preset.isPublic) {
-    const session = await auth.api.getSession({ headers: await headers() })
-    if (session?.user.id !== preset.userId) return null
-  }
-  return preset
+  const session = await auth.api.getSession({ headers: await headers() })
+  const isOwner = session?.user.id === preset.userId
+  if (!preset.isPublic && !isOwner) return null
+  return { ...preset, isOwner }
 }
 
 export async function getUserRating(presetId: string) {

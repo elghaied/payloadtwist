@@ -104,6 +104,12 @@ describe('parseTheme (trust boundary)', () => {
     expect(() => parseTheme({ version: 4, seeds: { brand: 'javascript:1' } })).toThrow()
     expect(() => parseTheme({ version: 4, customCss: '</style><script>' })).toThrow()
     expect(() => parseTheme({ version: 4, controls: { fonts: { body: "x'; }" } } })).toThrow()
+    // exfiltration vectors and unknown/misplaced keys
+    expect(() => parseTheme({ version: 4, light: { '--color-bg': 'url(https://evil.test/x)' } })).toThrow()
+    expect(() => parseTheme({ version: 4, light: { '--color-bg': 'u\\72l(x)' } })).toThrow()
+    expect(() => parseTheme({ version: 4, light: { '--made-up': '#fff' } })).toThrow()
+    expect(() => parseTheme({ version: 4, light: { '--ramp-blue-500': '#fff' } })).toThrow()
+    expect(() => parseTheme({ version: 4, ramps: { '--color-bg': '#fff' } })).toThrow()
   })
 })
 

@@ -51,6 +51,8 @@ function Editor() {
   const [exportOpen, setExportOpen] = useState(false)
   const [saveOpen, setSaveOpen] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
+  // An owned preset opened via ?preset= — Save updates it instead of creating a copy
+  const [ownPreset, setOwnPreset] = useState<{ id: string; name: string; description: string | null; isPublic: boolean } | null>(null)
   const { data: session } = useSession()
   const searchParams = useSearchParams()
 
@@ -71,8 +73,15 @@ function Editor() {
     getPresetById(id)
       .then((preset) => {
         if (!preset) return showToast('Preset not found')
-        loadTheme(preset.themeData)
-        showToast(`Loaded “${preset.name}”`)
+        // Someone else's custom CSS is never auto-applied: it would run inside a connected admin
+        const foreignCss = !preset.isOwner && !!preset.themeData.customCss?.trim()
+        setOwnPreset(preset.isOwner ? { id: preset.id, name: preset.name, description: preset.description, isPublic: preset.isPublic } : null)
+        loadTheme(foreignCss ? { ...preset.themeData, customCss: '' } : preset.themeData)
+        showToast(
+          foreignCss
+            ? `Loaded “${preset.name}” without its custom CSS (review it on the preset page)`
+            : `Loaded “${preset.name}”`,
+        )
       })
       .catch(() => showToast('This preset was made for an older Payload version'))
   }, [searchParams, loadTheme, showToast])
@@ -242,7 +251,14 @@ function Editor() {
       )}
 
       <ExportDialog open={exportOpen} onClose={() => setExportOpen(false)} theme={theme} css={css} />
-      <SavePresetDialog open={saveOpen} onClose={() => setSaveOpen(false)} themeData={theme} onSaved={() => showToast('Preset saved')} />
+      <SavePresetDialog
+        key={ownPreset?.id ?? 'new'}
+        open={saveOpen}
+        onClose={() => setSaveOpen(false)}
+        themeData={theme}
+        existingPreset={ownPreset}
+        onSaved={() => showToast(ownPreset ? 'Preset updated' : 'Preset saved')}
+      />
     </div>
   )
 }

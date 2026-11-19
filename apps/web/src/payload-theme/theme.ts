@@ -109,6 +109,15 @@ export function setFont(theme: ThemeConfig, role: FontRole, family: string | nul
   return { ...theme, controls: { ...theme.controls, fonts }, light: { ...theme.light, [v]: fontValue(family) } }
 }
 
+/**
+ * Token values end up in a <style> tag inside the preview (possibly the user's real, logged-in
+ * admin) and in exported CSS. Disallow anything that can end the declaration or fetch a URL
+ * (CSS-based exfiltration), plus escapes that could spell those out.
+ */
+export function isSafeValue(v: string): boolean {
+  return v.length <= 500 && !/[;{}<>\\]|url\(|@import|expression\(|image-set\(|src\(/i.test(v)
+}
+
 /** Accepts unknown input (imports, presets from the DB) and returns a valid ThemeConfig or throws. */
 export function parseTheme(input: unknown): ThemeConfig {
   if (!input || typeof input !== 'object') throw new Error('Theme must be an object')
@@ -118,9 +127,11 @@ export function parseTheme(input: unknown): ThemeConfig {
     if (m === undefined) return {}
     if (!m || typeof m !== 'object' || Array.isArray(m)) throw new Error(`${name} must be an object`)
     for (const [k, v] of Object.entries(m)) {
-      if (!k.startsWith('--') || typeof v !== 'string') throw new Error(`${name}: invalid entry ${k}`)
-      // Values end up inside a <style> tag and exported CSS: block anything that can close a declaration
-      if (/[;{}<]/.test(v)) throw new Error(`${name}: invalid value for ${k}`)
+      // Only real Payload tokens (ramps only in `ramps`) — no arbitrary custom properties
+      if (!TOKENS[k] || (name === 'ramps') !== k.startsWith('--ramp-') || typeof v !== 'string') {
+        throw new Error(`${name}: invalid entry ${k}`)
+      }
+      if (!isSafeValue(v)) throw new Error(`${name}: invalid value for ${k}`)
     }
     return m as Record<string, string>
   }
@@ -149,7 +160,7 @@ export function parseTheme(input: unknown): ThemeConfig {
   if (c.fonts !== undefined) {
     controls.fonts = {}
     for (const [role, family] of Object.entries(c.fonts)) {
-      if (!(role in FONT_VARS) || typeof family !== 'string' || /[;{}<]/.test(family)) {
+      if (!(role in FONT_VARS) || typeof family !== 'string' || !isSafeValue(family)) {
         throw new Error(`controls.fonts: invalid entry ${role}`)
       }
       controls.fonts[role as FontRole] = family
