@@ -2,414 +2,117 @@
 
 ## What this project is
 
-A visual CSS theme editor for the Payload CMS admin panel.
-The user tweaks CSS variables and component styles in the editor UI.
-A sandboxed preview (using `@payloadcms/ui` components with mock providers)
-reflects changes in real time via iframe CSS injection.
-Output is a custom.scss snippet the user copies into their Payload project.
+A visual theme editor for the **Payload v4** admin (v3 is not supported). The user edits
+Payload's design tokens; a real Payload v4 admin in an iframe reflects every change live; the
+output is a `custom.css` (or a `payload-admin-ui-themes` theme package) the user pastes into
+their project.
 
-Note: Payload CMS runtime (admin panel, database, collections) has been removed.
-Only `@payloadcms/ui` and `@payloadcms/translations` remain for component rendering.
+Stack: Next.js 16.4.6, React 19.3, TypeScript 6.0.3, Node ≥ 24.22, Payload `4.0.0-beta.10`
+(pinned — v4 is beta), Turborepo + pnpm, Tailwind 4 (editor chrome only), zustand, Better Auth
+(Postgres via Drizzle).
 
-## Project structure (Turborepo monorepo)
+## Project structure
+
 ```
-payloadtwist/                        ← Workspace root
-├── apps/
-│   └── web/                         ← Main Next.js app
-│       ├── src/
-│       │   ├── app/
-│       │   │   ├── (frontend)/      ← Editor/landing/auth UI
-│       │   │   │   ├── page.tsx     ← Landing page
-│       │   │   │   ├── layout.tsx   ← Frontend layout
-│       │   │   │   ├── globals.css  ← Editor chrome styles
-│       │   │   │   ├── editor/      ← Main editor UI (the product)
-│       │   │   │   ├── dashboard/   ← User dashboard (preset management)
-│       │   │   │   ├── presets/     ← Browse/view presets
-│       │   │   │   ├── login/       ← Better Auth login
-│       │   │   │   └── register/    ← Better Auth registration
-│       │   │   └── preview/         ← Sandbox preview routes (iframe targets)
-│       │   │       ├── layout.tsx   ← Loads @payloadcms/ui/css
-│       │   │       ├── admin/       ← Full admin panel mock
-│       │   │       └── gallery/     ← Component gallery
-│       │   ├── components/          ← All UI components
-│       │   │   ├── editor/          ← Editor UI components
-│       │   │   └── ui/              ← Shared UI (radix, resizable)
-│       │   ├── lib/                 ← Auth, actions, utils
-│       │   ├── payload-theme/       ← ALL theming logic — source of truth
-│       │   └── store/               ← Zustand store
-│       ├── tests/                   ← E2E tests
-│       ├── drizzle/                 ← Auth DB migrations
-│       ├── public/
-│       ├── next.config.mjs
-│       ├── package.json             ← @payloadtwist/web
-│       └── tsconfig.json
-├── packages/
-│   └── ui-sandbox/                  ← Payload UI component sandbox
-│       ├── src/
-│       │   ├── PayloadUIShell.tsx   ← 7-provider wrapper for Payload UI
-│       │   ├── FieldPreview.tsx     ← Field component preview (FieldContext)
-│       │   ├── ViewPreview.tsx      ← View component preview
-│       │   ├── ThemeToggle.tsx      ← Light/dark toggle button
-│       │   ├── ErrorBoundary.tsx    ← Render error catcher
-│       │   ├── mock/               ← Mock configs for providers
-│       │   └── styles/             ← Sandbox-specific CSS
-│       ├── package.json             ← @payloadtwist/ui-sandbox
-│       └── tsconfig.json
-├── turbo.json                       ← Turborepo task config
-├── pnpm-workspace.yaml              ← Workspace definition
-├── package.json                     ← Root workspace (payloadtwist-monorepo)
-├── docker-compose.yml
-├── .prettierrc.json
-├── .npmrc
-└── CLAUDE.md
+apps/web/src/
+├── app/
+│   ├── (frontend)/          own root layout: landing, /editor, /presets, /dashboard, auth pages
+│   ├── (payload)/           Payload's root layout: admin at /preview, REST at /preview-api
+│   ├── api/                 better-auth + /api/health
+│   └── global-not-found.tsx (no app/layout.tsx — two root layouts)
+├── payload/                 the embedded demo Payload (see "Preview")
+│   ├── payload.config.ts    collections, globals, dashboard widgets, gallery view, bridge
+│   ├── seed.ts              demo content (runs onInit), DEMO_USER, MEDIA_DIR
+│   ├── migrations/          generated — production builds the in-memory DB from these
+│   ├── payload-types.ts     generated (pnpm payload generate:types)
+│   └── components/          PreviewBridge, GalleryView/Client, EditorialWidget
+├── payload-theme/           ALL theming logic — pure, unit-tested
+│   ├── payload-theme-schema.json   generated — NEVER hand-edit
+│   ├── extract.ts           CSS token parser used by scripts/extract-payload-theme.ts
+│   ├── schema.ts            TOKENS, DEFAULT_RAMPS, resolveAll/resolveToken
+│   ├── theme.ts             ThemeConfig, reducers, parseTheme, isSafeValue
+│   ├── ramps.ts             seeds → ramp families
+│   ├── controls.ts          roundness, density, type scale, fonts → tokens
+│   ├── css.ts               buildThemeCss, buildThemePackage, darkDeclarations
+│   ├── presets.ts           built-in presets (expressed via the reducers)
+│   ├── preview-protocol.ts  editor ⇄ preview postMessage types
+│   └── bridge-source.ts     PayloadTwistBridge source users copy into their project
+├── components/editor/       PreviewPanel, sections/*, ExportDialog, CustomPreviewSetup
+├── store/editor-store.ts    zustand: theme + undo/redo + preview mode
+├── lib/actions/presets.ts   server actions (client-callable — every one checks access)
+└── proxy.ts                 route protection (Next 16 "proxy", formerly middleware)
 ```
 
-## Dev commands
+## Payload v4 token model — READ FIRST
+
+Payload v4 has no `--theme-*`, `--theme-elevation-*` or `--color-base-*`. Its CSS is plain CSS
+inside `@layer payload-default`, so **unlayered rules win without `!important`**.
+
+1. **Ramps** `--ramp-{family}-{step}` (blue, purple, grey, green, red, yellow, pink, pale-*, dark-red,
+   black/white alpha). Declared only on `:root`. Seeds regenerate these.
+2. **Semantic roles** `--color-*`, `--field-color-*`, `--special-*`: explicit light values on
+   `:root, [data-theme='light']` and dark values on `[data-theme='dark']`. No auto-inversion.
+   Payload **re-declares them on every element with `[data-theme]`** (portaled menus/popups).
+3. **Shape/type/spacing**: `--radius-*`, `--button-height`, `--field-*`, `--text-*`, `--spacer-*`,
+   `--nav-width`… mode-independent.
+4. Enhanced contrast: `html[data-enhanced-contrast]` blocks (captured in the schema, read-only).
+
+### CSS output rules (css.ts — keep these invariants)
+
+- Light block: `html, html [data-theme='light']` (nested selector reaches portaled UI).
+- Dark block: `html[data-theme='dark'], html [data-theme='dark']`.
+- An unlayered `html` override also wins in dark mode, so for any token Payload gives a separate
+  dark value, `darkDeclarations()` restates Payload's dark value unless the user set one.
+- Only values that differ from Payload's defaults are emitted. Google Fonts via `@import`.
+- `ThemeConfig` = `{ version: 4, seeds, controls, ramps, light, dark, customCss }`. Output is built
+  only from ramps/light/dark/customCss; seeds/controls remember how the editor produced them.
+
+## Preview
+
+`/preview` is a **real Payload v4 admin** (not mocks): `src/payload/payload.config.ts` with
+`@payloadcms/db-sqlite` on `:memory:`, re-seeded on every boot, `admin.autoLogin` as `DEMO_USER`.
+
+- Public & shared → **write-protected**: a `beforeOperation` allowlist (`find*`, `read`, `count*`,
+  `validate`, `login`, `refresh`); globals reject in `beforeChange`. Access functions return true
+  so fields look editable. `auth.maxLoginAttempts: 0` (shared account must not lock).
+- Dev pushes the schema; production has no push → after changing demo collections run
+  `pnpm payload migrate:create` (prodMigrations), `pnpm generate:importmap`, `payload generate:types`.
+- Uploads go to `MEDIA_DIR` (os.tmpdir), wiped on seed. `next.config.mjs` force-traces `strtok3`.
+- `/preview/gallery` is a custom admin view with every component family and token.
+
+### Editor ⇄ preview
+
+One postMessage protocol (`preview-protocol.ts`) for both the demo admin (`PreviewBridge`,
+same-origin only) and users' own admins (`PayloadTwistBridge`, generated with the editor origin
+baked in). Messages: `css`, `theme`, `contrast`, `navigate` → preview; `ready`, `route` ← preview.
+The editor re-sends everything on every `ready`. **Always check `event.origin` and `event.source`.**
+The iframe keeps `id="payload-preview"`.
+
+## Security rules
+
+- `parseTheme()` at every trust boundary (presets from DB, imports, localStorage, server actions):
+  only real token keys, `isSafeValue()` rejects `url(`, `@import`, escapes, `;{}<>`.
+- Someone else's preset never auto-applies its `customCss` (it would run in a connected admin).
+- Server actions are public endpoints: `getPresetById` returns only public or own presets;
+  `ratePreset` only public presets.
+- Docker runner has no npm/corepack/yarn; `HOSTNAME=0.0.0.0` for healthchecks.
+
+## Commands
+
 ```bash
-# Workspace-level (from repo root)
-pnpm dev                                    # Start all packages (turbo)
-pnpm build                                  # Build all packages (turbo)
-pnpm lint                                   # Lint all packages (turbo)
-pnpm typecheck                              # Typecheck all packages (turbo)
-
-# App-specific (filter to web app)
-pnpm --filter @payloadtwist/web dev         # Start only the web app
-pnpm --filter @payloadtwist/web build       # Build only the web app
-pnpm --filter @payloadtwist/web devsafe     # rm -rf .next && dev (clears cache)
-pnpm --filter @payloadtwist/web extract-payload-theme  # Regen schema
-```
-
-## Authentication
-
-Uses Better Auth (not Payload's built-in auth) for user accounts:
-- `apps/web/src/lib/auth.ts` — server-side config (drizzle adapter, PostgreSQL)
-- `apps/web/src/lib/auth-client.ts` — client-side auth hooks
-- `apps/web/src/middleware.ts` — route protection
-- `apps/web/src/lib/actions/presets.ts` — server actions for preset CRUD
-
-## Database
-
-- **Better Auth**: PostgreSQL via drizzle-orm (`AUTH_DATABASE_URL`)
-
-## Infrastructure
-
-- Turborepo monorepo with pnpm workspaces
-- `apps/web/Dockerfile` — uses `turbo prune` for efficient Docker builds, standalone Next.js output
-- `docker-compose.yml` — app + postgres (auth DB)
-- `apps/web/next.config.mjs` — `output: 'standalone'`, `transpilePackages` for `@payloadcms/ui`
-- `.env` files live in `apps/web/` (Next.js loads from app working directory)
-
-### Payload packages retained (UI only, no CMS runtime)
-- `payload` — kept as peer dependency of `@payloadcms/ui`
-- `@payloadcms/ui` — UI components used in preview routes and ui-sandbox
-- `@payloadcms/translations` — i18n strings for PayloadUIShell mock providers
-
-## Payload CSS variable system — READ THIS FIRST
-
-Payload has THREE layers of CSS variables. This distinction is critical.
-
-### Layer 1 — Raw color palette (what users override)
-```css
---color-base-0 through --color-base-1000   (white → black, 16 steps)
---color-success-100 through --color-success-500
---color-warning-100 through --color-warning-500
---color-error-100 through --color-error-500
-```
-Changing these rethemes everything. This is the primary theming lever.
-
-### Layer 2 — Elevation aliases (DO NOT expose in editor)
-```css
---theme-elevation-0: var(--color-base-0)
---theme-elevation-50: var(--color-base-50)
-...
-```
-Payload AUTO-INVERTS these in dark mode. Marked `overridable: false`.
-Never override these directly — it breaks dark mode inversion.
-
-### Layer 3 — Semantic theme vars (expose with light + dark pickers)
-```css
---theme-bg, --theme-text, --theme-input-bg, --theme-overlay
-```
-Only vars that need explicit `[data-theme="dark"]` overrides.
-
-## Dark mode — critical details
-
-- Payload uses `[data-theme="dark"]` on `<html>` — NOT `.dark`
-- Elevation and status vars are AUTO-INVERTED by Payload in dark mode
-- Only Layer 3 vars need explicit dark overrides in output CSS
-- Store's `config.dark` only contains Layer 3 vars
-
-## Live preview — how it works
-
-### Sandbox Preview (default)
-
-The editor uses sandbox routes rendered in a same-origin iframe:
-```html
-<iframe id="payload-preview" src="/preview/admin" />
-```
-
-Two preview modes:
-- **Admin** (`/preview/admin`) — Full admin panel mock using `@payloadtwist/ui-sandbox`
-  AdminPreview component with realistic fields (text, select, checkbox, etc.)
-- **Gallery** (`/preview/gallery`) — Component gallery showing all field types,
-  buttons, pills, banners, elevation swatches, and status colors
-
-Preview routes load `@payloadcms/ui/css` for authentic Payload styling.
-No real Payload CMS instance needed — all components are rendered via
-mock providers from `@payloadtwist/ui-sandbox`.
-
-### Custom Preview (user's own Payload)
-
-Users can connect their own Payload CMS instance via the Custom tab.
-Requires adding `live-preview.js` script to their Payload project.
-Uses `CrossOriginBridge` + `postMessage` protocol for CSS injection.
-
-### CSS Injection
-
-Same mechanism for both modes. The store injects `<style>` tags into the
-iframe's `<head>` on every state change:
-- `id="tweakpayload-vars"` — CSS variables + BEM CSS
-- `id="tweakpayload-components"` — Component override CSS (!important)
-
-All injection goes through `injectIntoIframe()` in generator.ts.
-NEVER inject into the parent document's `:root`.
-Must also be called on iframe `load` event.
-
-Dark mode toggle:
-```ts
-iframe.contentDocument?.documentElement
-  .setAttribute('data-theme', isDark ? 'dark' : 'light')
-```
-
-## Schema — source of truth
-
-`apps/web/src/payload-theme/payload-theme-schema.json` is generated by the
-extraction script. NEVER hand-edit this file.
-
-Regenerate after Payload UI version updates:
-```bash
-pnpm --filter @payloadtwist/web extract-payload-theme
-```
-
-Schema structure:
-```json
-{
-  "meta": { "payloadUiVersion": "...", "extractedAt": "..." },
-  "cssVariables": {
-    "base-scale": [],    ← --color-base-* (primary user control)
-    "theme": [],         ← --theme-bg/text/etc (explicit dark support)
-    "status": { "success": [], "warning": [], "error": [] },
-    "typography": [],
-    "layout": [],
-    "breakpoints": [],   ← overridable: false
-    "other": []
-  },
-  "bemBlocks": { ... },
-  "components": {
-    "elements": { "Button": { bemBlock, styleUsages, bemStructure } },
-    "fields": { "Array": { ... } },
-    "views": { ... },
-    "widgets": { ... }
-  }
-}
-```
-
-Each CSS variable has:
-- `var` — CSS custom property name
-- `value` — light mode default
-- `darkValue` — dark default (Layer 3 vars only)
-- `darkMode` — `"auto-inverted"` | `"explicit"` | `"none"`
-- `overridable` — `false` = hide from editor UI
-- `resolvedType` — `"color"` | `"size"` | `"font"` | `"number"` | `"other"`
-
-## Store API
-```typescript
-const {
-  config,               // PayloadThemeConfig { light, dark, componentOverrides, bemOverrides }
-  setVariable,          // (varName, value, mode: 'light'|'dark') => void
-  setBaseScale,         // (vars: Record<string, string>) => void — single undo step
-  setBaseRadius,        // (m: number) => void — derives s and l automatically
-  setComponentOverride, // (selector, property, value) => void
-  setBemOverride,       // (blockName, css) => void
-  resetTheme,
-  importTheme,
-  undo, redo, canUndo, canRedo
-} = useEditorStore()
-```
-
-`config.light` / `config.dark` — flat maps of var name → value
-`config.componentOverrides` — `"selector||property"` → value
-`config.bemOverrides` — block name → raw CSS string
-
-## CSS output format
-```scss
-/* Generated by payloadtwist */
-/* Paste into your Payload project's custom.scss */
-
-:root {
-  /* Base Color Scale */
-  --color-base-0: #f8f9fa;
-
-  /* Status Colors */
-  --color-success-500: #00c853;
-
-  /* Typography */
-  --font-body: 'DM Sans', sans-serif;
-
-  /* Layout */
-  --nav-width: 300px;
-}
-
-/* Dark mode — explicit overrides only */
-/* Elevation and status colors are auto-inverted by Payload */
-[data-theme="dark"] {
-  --theme-bg: #0d0d0d;
-  --theme-text: #f3f3f3;
-}
-
-/* Component Overrides */
-.btn--style-primary {
-  background-color: #1a1a2e;
-}
-
-/* BEM Raw CSS */
-.collection-list {
-  /* user written CSS */
-}
-```
-
-Only variables that differ from Payload defaults are included.
-
-## UI Sandbox package (`@payloadtwist/ui-sandbox`)
-
-### What it is and why it exists
-
-PayloadTwist generates AI-powered Payload CMS custom components. Users need
-to see these components rendered with real Payload admin styling. The problem:
-Payload UI components (`@payloadcms/ui`) require ~20 providers, specific HTML
-structure, and CSS to render. Outside the admin panel, they crash.
-
-`@payloadtwist/ui-sandbox` solves this by providing wrapper components that
-recreate the minimal Payload admin environment.
-
-### Core components
-
-- **PayloadUIShell** — sets up 7 Payload providers: ConfigProvider,
-  TranslationProvider, ThemeProvider, RouteTransitionProvider,
-  ServerFunctionsProvider, UploadHandlersProvider, OperationProvider.
-  AuthProvider is deliberately omitted (it makes API calls on mount).
-
-- **FieldPreview** — THE PRIMARY WAY to render field components. Wraps a
-  component in PayloadUIShell + `FieldContext.Provider` so that `useField()`
-  works. Manages field state with `useState`. Also passes `value`/`onChange`
-  as props for presentational Input components.
-
-- **ViewPreview** — same concept for view-level components (dashboards, etc.)
-
-- **ThemeToggle** — simple light/dark toggle using Payload CSS vars
-
-- **ErrorBoundary** — catches render errors, shows green/red border
-
-### How FieldPreview works (critical architecture)
-
-FieldPreview does NOT use Payload's `Form` component. Form requires Auth,
-Locale, and DocumentInfo providers that are impractical to mock. Instead:
-
-1. Uses `FieldContext` (exported from `@payloadcms/ui`, marked @experimental)
-2. `useField()` checks for FieldContext first — if found with matching path,
-   it returns the context value directly, bypassing `useFieldInForm` and all
-   its provider requirements
-3. For presentational `*Input` components, FieldPreview builds type-specific
-   props based on `fieldConfig.type`:
-   - text/textarea: `value` (string) + `onChange` (DOM event handler)
-   - select: `value` (string) + `onChange` (handles Option→string) + `options` + `name`
-   - checkbox: `checked` (boolean) + `onToggle` (toggle handler)
-
-### Rules for ui-sandbox maintenance
-
-- **FieldPreview is the primary way to render field components — do NOT
-  bypass it** by using raw Input components with manual `useState`. If
-  FieldPreview breaks, fix the package — don't remove the wrapper.
-- **Mock providers** in `packages/ui-sandbox/src/mock/` must stay compatible
-  with the installed `@payloadcms/ui` version (currently 3.78.0).
-- When sandbox rendering breaks, **fix the package** (mock data, providers,
-  FieldPreview internals) — never by removing the package's wrapper components.
-- Preview routes at `/preview/admin` and `/preview/gallery` load
-  `@payloadcms/ui/css` in their layout to provide Payload styles.
-
-### Consumer usage pattern
-```tsx
-import { FieldPreview, ErrorBoundary } from '@payloadtwist/ui-sandbox'
-import { TextInput, SelectInput, CheckboxInput } from '@payloadcms/ui'
-
-// Text fields — FieldPreview handles value/onChange
-<FieldPreview
-  component={TextInput}
-  fieldConfig={{ name: 'title', label: 'Title', type: 'text' }}
-  initialValue="Hello"
-  componentProps={{ placeholder: 'Enter title...' }}
-/>
-
-// Select fields — options in fieldConfig, FieldPreview handles Option→string
-<FieldPreview
-  component={SelectInput}
-  fieldConfig={{
-    name: 'status', label: 'Status', type: 'select',
-    options: [{ label: 'Draft', value: 'draft' }, { label: 'Published', value: 'published' }],
-  }}
-  initialValue="draft"
-/>
-
-// Checkbox fields — FieldPreview handles checked/onToggle automatically
-<FieldPreview
-  component={CheckboxInput}
-  fieldConfig={{ name: 'featured', label: 'Featured', type: 'checkbox' }}
-  initialValue={false}
-/>
+pnpm dev | build | lint | typecheck                      # workspace (turbo)
+pnpm --filter @payloadtwist/web test:int                 # vitest — payload-theme + store
+pnpm --filter @payloadtwist/web test:e2e                 # playwright (E2E_BASE_URL to reuse a server)
+pnpm --filter @payloadtwist/web extract-payload-theme    # after every @payloadcms/ui upgrade
+pnpm --filter @payloadtwist/web generate:importmap
+pnpm --filter @payloadtwist/web payload migrate:create   # after demo collection changes
 ```
 
 ## What NOT to do
 
-- Never hand-edit `payload-theme-schema.json`
-- Never inject CSS into parent `:root` — only into the iframe
-- Never use `.dark` selector — Payload uses `[data-theme="dark"]`
-- Never override `--theme-elevation-*` — breaks dark mode inversion
-- Never import Payload CSS into editor routes
-- Never change `id="payload-preview"` on the iframe
-- Never bypass FieldPreview by using raw Input components with manual useState
-- Never use Payload's Form component in ui-sandbox (it needs Auth/Locale/DocumentInfo providers)
-
-## Current status
-
-Working:
-- Public landing page at /
-- Better Auth login/register flows
-- User dashboard with preset management
-- Presets browsing with per-preset pages
-- Extraction script with full schema (reads from `@payloadcms/ui` node_modules):
-  - base-scale (--color-base-* vars, overridable)
-  - elevation (--theme-elevation-*, overridable: false, hidden)
-  - 149 component SCSS files extracted (elements, fields, views, widgets)
-- Zustand store with PayloadThemeConfig
-- iframe injection with correct [data-theme="dark"] targeting
-- Full editor UI at /editor:
-  - Color scale generator with color wheel + lightness slider
-  - Palette presets selector
-  - Tabbed component editor (General, UI Elements, Fields, Views, Overlays, Dashboard)
-  - Theme colors with light/dark pickers
-  - Status color controls
-  - Font picker with Google Fonts
-  - Scrubber inputs for numeric values
-  - Single roundness control deriving s/m/l radius
-  - BEM legacy raw CSS editor
-- Preview routes at /preview/admin and /preview/gallery (mock Payload UI)
-- Docker build with standalone output
-- UI sandbox package (`@payloadtwist/ui-sandbox`) with FieldPreview, PayloadUIShell
-
-Removed:
-- Payload CMS admin panel (/admin) — no longer embedded
-- Payload SQLite database and collections
-- Payload config, seed data, custom admin components
-
-Not started:
-- Deployment to production
+- Never hand-edit `payload-theme-schema.json`, `payload-types.ts`, `migrations/`, `importMap.js`.
+- Never use `!important` in generated CSS or `.dark` selectors (Payload uses `[data-theme]`).
+- Never bring back v3 variables or SCSS.
+- Never inject CSS into the editor's own document — only into the preview iframe via the bridge.
+- Never accept preview messages without origin + source checks.
+- Never allow writes on the demo admin beyond the allowlist.

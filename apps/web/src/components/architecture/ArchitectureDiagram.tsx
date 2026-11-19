@@ -6,7 +6,6 @@ import {
   siTailwindcss,
   siTypescript,
   siSqlite,
-  siSass,
   siRadixui,
   siGooglefonts,
 } from 'simple-icons'
@@ -166,7 +165,7 @@ function TechBadge({
    ───────────────────────────────────── */
 
 const techStack: { icon: SIcon; label: string; color?: string }[] = [
-  { icon: siNextdotjs, label: 'Next.js 15', color: 'var(--arch-icon-invert)' },
+  { icon: siNextdotjs, label: 'Next.js 16', color: 'var(--arch-icon-invert)' },
   { icon: siReact, label: 'React 19' },
   { icon: siTypescript, label: 'TypeScript' },
   {
@@ -176,7 +175,6 @@ const techStack: { icon: SIcon; label: string; color?: string }[] = [
   },
   { icon: siTailwindcss, label: 'Tailwind CSS' },
   { icon: siSqlite, label: 'SQLite', color: '#4d8ba0' },
-  { icon: siSass, label: 'SCSS' },
   { icon: siRadixui, label: 'Radix UI', color: 'var(--arch-icon-invert)' },
   { icon: siGooglefonts, label: 'Google Fonts' },
 ]
@@ -211,20 +209,20 @@ export function ArchitectureDiagram() {
         <LayerLabel text="Editor Interface" color="#a855f7" delay={100} />
         <div className="arch-row arch-row--3">
           <ArchNode
-            title="Color Scale"
-            description="3-anchor HSL interpolation generates all 16 base color steps"
+            title="Seed Colors"
+            description="Six seeds regenerate Payload&apos;s ramp families along its own lightness curve"
             accentColor="#a855f7"
             delay={150}
           />
           <ArchNode
             title="Typography"
-            description="Live Google Fonts preview with body &amp; heading pickers"
+            description="Google Fonts for body, headings and code, plus a type-scale multiplier"
             accentColor="#c084fc"
             delay={220}
           />
           <ArchNode
-            title="Layout &amp; Components"
-            description="Spacing, radii, z-index, and per-component BEM overrides"
+            title="Surfaces &amp; Shape"
+            description="Light/dark semantic roles with contrast checks, roundness and density"
             accentColor="#e879f9"
             delay={290}
           />
@@ -242,7 +240,7 @@ export function ArchitectureDiagram() {
         <div className="arch-row arch-row--1">
           <ArchNode
             title="Zustand Store"
-            description="PayloadThemeConfig with light/dark maps, component overrides, undo/redo history (30 entries), and localStorage persistence"
+            description="ThemeConfig v4 (seeds, ramps, light/dark tokens) on pure reducers, coalesced undo/redo, validated persistence"
             accentColor="#06b6d4"
             wide
             delay={500}
@@ -261,13 +259,13 @@ export function ArchitectureDiagram() {
         <div className="arch-row arch-row--2">
           <ArchNode
             title="CSS Generator"
-            description="Diffs config against Payload defaults, builds minimal :root and [data-theme=&quot;dark&quot;] blocks"
+            description="Diffs against Payload&apos;s tokens and computes the dark block from the real cascade — no !important"
             accentColor="#ec4899"
             delay={690}
           />
           <ArchNode
-            title="Scale Generator"
-            description="Two-segment HSL interpolation from 3 anchor colors into 16 smooth steps"
+            title="Token Schema"
+            description="484 tokens extracted from @payloadcms/ui&apos;s plain-CSS token files on every upgrade"
             accentColor="#f472b6"
             delay={750}
           />
@@ -308,14 +306,14 @@ export function ArchitectureDiagram() {
         <LayerLabel text="Output" color="#22c55e" delay={870} />
         <div className="arch-row arch-row--2">
           <ArchNode
-            title="Live Iframe Injection"
-            description="Injects &lt;style&gt; tags into the Payload admin iframe — same-origin, no CORS, instant preview"
+            title="Live Preview Bridge"
+            description="A real Payload v4 admin (or yours) receives CSS, color mode and contrast over an origin-checked postMessage bridge"
             accentColor="#22c55e"
             delay={930}
           />
           <ArchNode
             title="CSS Export"
-            description="Generates clean custom.scss with only changed variables — paste into any Payload project"
+            description="custom.css with only changed tokens, or a payload-admin-ui-themes theme package"
             accentColor="#4ade80"
             delay={990}
           />
@@ -340,11 +338,11 @@ export function ArchitectureDiagram() {
               <polyline points="2 17 12 22 22 17" />
               <polyline points="2 12 12 17 22 12" />
             </svg>
-            Payload&apos;s 3-Layer CSS System
+            Payload v4&apos;s token layers
           </span>
           <p className="arch-layers__desc">
-            PayloadTwist understands which variables to override and which to
-            leave alone
+            Payload v4 styles every component from these tokens — payloadtwist edits them
+            at the right layer
           </p>
         </div>
 
@@ -355,10 +353,10 @@ export function ArchitectureDiagram() {
           >
             <div className="arch-layer-card__num">1</div>
             <div>
-              <h4>Raw Palette</h4>
-              <p>--color-base-0 → 1000</p>
+              <h4>Color Ramps</h4>
+              <p>--ramp-blue-500, --ramp-grey-800…</p>
               <span className="arch-layer-card__tag arch-layer-card__tag--editable">
-                Editable
+                From seeds
               </span>
             </div>
           </div>
@@ -369,10 +367,10 @@ export function ArchitectureDiagram() {
           >
             <div className="arch-layer-card__num">2</div>
             <div>
-              <h4>Elevation Aliases</h4>
-              <p>--theme-elevation-*</p>
+              <h4>Semantic Roles</h4>
+              <p>--color-bg, --color-text-brand…</p>
               <span className="arch-layer-card__tag arch-layer-card__tag--auto">
-                Auto-inverted
+                Light + Dark
               </span>
             </div>
           </div>
@@ -383,10 +381,10 @@ export function ArchitectureDiagram() {
           >
             <div className="arch-layer-card__num">3</div>
             <div>
-              <h4>Semantic Theme</h4>
-              <p>--theme-bg, --theme-text</p>
+              <h4>Shape &amp; Type</h4>
+              <p>--radius-*, --button-height, --text-*</p>
               <span className="arch-layer-card__tag arch-layer-card__tag--explicit">
-                Light + Dark
+                Mode-independent
               </span>
             </div>
           </div>

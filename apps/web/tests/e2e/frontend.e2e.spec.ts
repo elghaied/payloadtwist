@@ -1,22 +1,75 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
+
+const previewVar = (page: Page, name: string) =>
+  page.evaluate((v) => {
+    const doc = (document.getElementById('payload-preview') as HTMLIFrameElement).contentDocument!
+    return getComputedStyle(doc.documentElement).getPropertyValue(v).trim()
+  }, name)
 
 test.describe('Landing page', () => {
-  test('renders with correct title', async ({ page }) => {
+  test('renders with Payload v4 copy and real generated CSS', async ({ page }) => {
     await page.goto('/')
     await expect(page).toHaveTitle(/payloadtwist/)
-  })
-
-  test('has navigation links', async ({ page }) => {
-    await page.goto('/')
-    await expect(page.getByRole('link', { name: /editor/i })).toBeVisible()
-    await expect(page.getByRole('link', { name: /gallery/i })).toBeVisible()
+    await expect(page.getByRole('link', { name: /editor/i }).first()).toBeVisible()
+    await expect(page.getByText("html [data-theme='dark'] {")).toBeVisible()
   })
 })
 
-test.describe('Editor page', () => {
-  test('loads without error', async ({ page }) => {
+test.describe('Embedded Payload v4 admin', () => {
+  test('dashboard, list, edit and gallery render', async ({ page }) => {
+    for (const [path, text] of [
+      ['/preview', 'Editorial overview'],
+      ['/preview/collections/posts', 'Create New'],
+      ['/preview/gallery', 'Component gallery'],
+    ] as const) {
+      await page.goto(path)
+      await expect(page.getByText(text).first()).toBeVisible({ timeout: 30_000 })
+    }
+  })
+
+  test('rejects writes', async ({ request }) => {
+    const res = await request.patch('/preview-api/posts/1', { data: { title: 'hacked' } })
+    expect(res.status()).toBe(403)
+  })
+})
+
+test.describe('Editor', () => {
+  test.beforeEach(async ({ page }) => {
     await page.goto('/editor')
-    await expect(page).toHaveTitle(/editor/i)
+    await page.evaluate(() => localStorage.removeItem('payloadtwist-editor-v4'))
+    await page.reload()
+    // the bridge inside the preview announces itself and receives the theme CSS
+    await expect
+      .poll(
+        () =>
+          page.evaluate(() => {
+            const f = document.getElementById('payload-preview') as HTMLIFrameElement | null
+            return !!f?.contentDocument?.getElementById('payloadtwist-theme')
+          }),
+        { timeout: 30_000 },
+      )
+      .toBe(true)
+  })
+
+  test('applies a preset to the live preview and follows dark mode', async ({ page }) => {
+    await page.getByRole('button', { name: 'Light Cream' }).click()
+    await expect.poll(() => previewVar(page, '--color-bg')).toBe('#faf7ed')
+    await expect.poll(() => previewVar(page, '--ramp-blue-500')).toBe('#83bf78')
+
+    await page.getByRole('button', { name: 'Preview dark mode' }).click()
+    await expect.poll(() => previewVar(page, '--color-bg')).toBe('#171a16')
+
+    await page.getByRole('button', { name: 'Undo' }).click()
+    await expect.poll(() => previewVar(page, '--ramp-blue-500')).toBe('#0d99ff')
+  })
+
+  test('exports custom.css', async ({ page }) => {
+    await page.getByRole('button', { name: 'Brutal' }).click()
+    await page.getByRole('button', { name: /^Export/ }).click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByText('--radius-medium: 0rem;')).toBeVisible()
+    await dialog.getByRole('tab', { name: 'Theme package' }).click()
+    await expect(dialog.getByText(/html\[data-admin-theme="my-theme"\]/).first()).toBeVisible()
   })
 })
 

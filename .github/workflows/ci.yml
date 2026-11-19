@@ -62,3 +62,17 @@ jobs:
           BETTER_AUTH_URL: http://localhost:3000
           NEXT_PUBLIC_APP_URL: http://localhost:3000
         run: pnpm test:int
+
+      - name: Install Playwright Chromium
+        working-directory: apps/web
+        run: npx playwright install --with-deps chromium
+
+      - name: Run e2e tests (editor, embedded Payload v4 admin, export)
+        working-directory: apps/web
+        env:
+          AUTH_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/payloadtwist_auth
+          BETTER_AUTH_SECRET: ci-test-secret-minimum-32-characters-long
+          BETTER_AUTH_URL: http://localhost:3000
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          CI: 'true'
+        run: pnpm test:e2e

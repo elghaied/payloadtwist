@@ -28,7 +28,7 @@ export default function TermsPage() {
             <p>
               payloadtwist is a visual CSS theme editor for the Payload CMS admin panel. It allows
               you to customize CSS variables and component styles, preview changes in real time, and
-              export the result as a <code className="text-foreground">custom.scss</code> file for
+              export the result as a <code className="text-foreground">custom.css</code> file for
               your Payload project.
             </p>
           </section>

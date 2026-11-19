@@ -4,16 +4,18 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import { ArchitectureDiagram } from '@/components/architecture/ArchitectureDiagram'
 import { UserMenu } from '@/components/auth/UserMenu'
 import { LogoMark, Wordmark } from '@/components/Logo'
+import { buildThemeCss } from '@/payload-theme/css'
+import { defaultTheme, setFont, setRoundness, setToken } from '@/payload-theme/theme'
 import './landing.css'
 
 export const metadata: Metadata = {
   title: 'payloadtwist — Visual Theme Editor for Payload CMS',
   description:
-    'A visual CSS theme editor for the Payload CMS admin panel. Tweak colors, typography, spacing and components with real-time preview, then export clean CSS.',
+    'A visual theme editor for the Payload v4 admin. Pick brand colors, surfaces, radius, density and fonts on a live admin, then export clean custom.css or an installable theme.',
   openGraph: {
     title: 'payloadtwist — Visual Theme Editor for Payload CMS',
     description:
-      'Design your Payload admin panel visually. Tweak colors, typography, spacing and components with real-time preview, then export clean CSS.',
+      'Design your Payload v4 admin visually. Theme brand colors, surfaces, radius, density and fonts on a live admin, then export clean CSS.',
   },
 }
 
@@ -111,25 +113,45 @@ function AnimatedLogo({ size = 180 }: { size?: number }) {
    Data
    ───────────────────────────────────────────────── */
 
+// Real output of the exporter for a small sample theme — the landing never drifts from the product
+const SAMPLE_CSS = buildThemeCss(
+  setToken(
+    setToken(setRoundness(setFont(defaultTheme(), 'body', 'DM Sans'), 8), '--color-bg', '#faf7ed', 'light'),
+    '--color-bg',
+    '#171a16',
+    'dark',
+  ),
+  { header: false },
+).trim()
+
+function cssLineClass(line: string): string {
+  const t = line.trim()
+  if (t.startsWith('/*') || t.startsWith('*')) return 'text-[var(--lp-code-comment)]'
+  if (t.startsWith('--')) return 'text-[var(--lp-code-prop)]'
+  if (t.startsWith('@')) return 'text-[var(--lp-code-value)]'
+  if (t === '}' || t === '') return 'text-[var(--lp-code-punct)]'
+  return 'text-[var(--lp-code-selector)]'
+}
+
 const features = [
   {
-    title: 'Live Iframe Preview',
+    title: 'A Real Payload v4 Admin',
     description:
-      'Your Payload admin panel runs in a live iframe. Every tweak injects CSS in real-time — no reload, no rebuild.',
+      'The preview is a real Payload v4 admin with demo content — dashboard, lists, edit views, drawers. Or connect your own. Every tweak applies instantly.',
     gradient: 'from-purple-500/10 to-pink-500/10',
     border: 'border-purple-500/10',
   },
   {
-    title: '16-Step Color Scale',
+    title: 'Seeds, Not 484 Pickers',
     description:
-      'A 3-anchor HSL interpolation engine generates all 16 base scale steps from your chosen colors. One change rethemes everything.',
+      'Six seed colors regenerate Payload\'s ramp families along its own lightness curve. Brand, accent, neutral and status — one change rethemes everything.',
     gradient: 'from-cyan-500/10 to-green-500/10',
     border: 'border-cyan-500/10',
   },
   {
-    title: 'Dark Mode Aware',
+    title: 'Light, Dark & Contrast',
     description:
-      'Understands Payload\'s 3-layer CSS system — auto-inverted elevations, explicit theme vars, and raw palette. Dark mode just works.',
+      'Every semantic role has light and dark values, with WCAG contrast checks that blend Payload\'s translucent roles exactly like the browser. Preview enhanced contrast too.',
     gradient: 'from-pink-500/10 to-orange-500/10',
     border: 'border-pink-500/10',
   },
@@ -141,16 +163,16 @@ const features = [
     border: 'border-amber-500/10',
   },
   {
-    title: 'Component Overrides',
+    title: 'Shape & Density',
     description:
-      'Go beyond variables. Target specific Payload components — buttons, nav, cards, fields — with visual controls per BEM block.',
+      'One roundness value drives every radius. Density and type scale resize fields, buttons and text together — the way Payload\'s tokens were designed.',
     gradient: 'from-green-500/10 to-emerald-500/10',
     border: 'border-green-500/10',
   },
   {
-    title: 'Export Clean CSS',
+    title: 'custom.css or a Theme Package',
     description:
-      'Generates a minimal custom.scss with only your changes. Paste it into your Payload project — no plugin needed.',
+      'Export a minimal custom.css — no !important, Payload v4 is layered — or a user-selectable theme for payload-admin-ui-themes.',
     gradient: 'from-violet-500/10 to-indigo-500/10',
     border: 'border-violet-500/10',
   },
@@ -160,17 +182,17 @@ const workflow = [
   {
     num: '1',
     title: 'Open the editor',
-    description: 'Visit /editor in your browser. Payload admin loads in a live iframe on the right.',
+    description: 'Visit /editor. A real Payload v4 admin loads next to the controls — or connect your own.',
   },
   {
     num: '2',
     title: 'Tweak visually',
-    description: 'Adjust colors, fonts, spacing, radii, and individual components using visual controls.',
+    description: 'Start from a preset, set seed colors, tune surfaces, roundness, density and fonts. Check contrast in light and dark.',
   },
   {
     num: '3',
     title: 'Export your theme',
-    description: 'Hit export. Copy the generated CSS. Paste it into your Payload project\'s custom.scss.',
+    description: 'Export custom.css for your Payload project, or a theme package your editors can pick from their settings.',
   },
 ]
 
@@ -245,7 +267,7 @@ export default function LandingPage() {
 
           <div className="anim-fade-up anim-delay-1 inline-flex items-center gap-2 rounded-full border border-[var(--lp-badge-border)] bg-[var(--lp-badge-bg)] px-4 py-1.5 text-xs font-medium tracking-wide text-[var(--lp-badge-text)] uppercase">
             <span className="h-1.5 w-1.5 rounded-full bg-purple-400 animate-pulse" />
-            Visual CSS Theme Editor
+            Theme editor for Payload v4
           </div>
 
           {/* Wordmark */}
@@ -262,8 +284,8 @@ export default function LandingPage() {
           </h1>
 
           <p className="anim-fade-up anim-delay-3 max-w-xl text-lg text-[var(--lp-text-faint)] leading-relaxed font-light">
-            Tweak colors, typography, spacing, and components with real-time preview on a live Payload instance.
-            Export clean CSS. No plugin required.
+            Built for Payload v4&apos;s token system. Theme brand, surfaces, radius, density and type on a live admin,
+            then export clean CSS. No plugin required.
           </p>
 
           <div className="anim-fade-up anim-delay-4 flex flex-col sm:flex-row items-center gap-4 mt-2">
@@ -434,9 +456,9 @@ export default function LandingPage() {
                 <div className="flex-1 p-3 flex flex-col gap-4 overflow-hidden">
                   {/* Color scale section */}
                   <div>
-                    <span className="text-[9px] uppercase tracking-wider text-[#71717a] font-medium">Color Scale</span>
+                    <span className="text-[9px] uppercase tracking-wider text-[#71717a] font-medium">Brand ramp</span>
                     <div className="mt-2 h-4 rounded-md overflow-hidden flex">
-                      {['#f8f9fa', '#e9ecef', '#dee2e6', '#ced4da', '#adb5bd', '#6c757d', '#495057', '#343a40', '#212529', '#0d1117'].map((c, i) => (
+                      {['#e5f4ff', '#bde3ff', '#80caff', '#0d99ff', '#007be5', '#0768cf', '#034ac1', '#093077', '#0d193f'].map((c, i) => (
                         <div key={i} className="flex-1" style={{ backgroundColor: c }} />
                       ))}
                     </div>
@@ -444,12 +466,12 @@ export default function LandingPage() {
 
                   {/* Theme colors */}
                   <div>
-                    <span className="text-[9px] uppercase tracking-wider text-[#71717a] font-medium">Theme Colors</span>
+                    <span className="text-[9px] uppercase tracking-wider text-[#71717a] font-medium">Surfaces</span>
                     <div className="mt-2 flex flex-col gap-2">
                       {[
-                        { label: '--theme-bg', color: '#ffffff' },
-                        { label: '--theme-text', color: '#1c1917' },
-                        { label: '--theme-input-bg', color: '#f8f7f5' },
+                        { label: '--color-bg', color: '#ffffff' },
+                        { label: '--color-text', color: '#1c1917' },
+                        { label: '--color-bg-brand', color: '#0d99ff' },
                       ].map((item) => (
                         <div key={item.label} className="flex items-center justify-between">
                           <span className="text-[9px] font-mono text-[#71717a]">{item.label}</span>
@@ -586,10 +608,10 @@ export default function LandingPage() {
           <div className="text-center mb-20">
             <span className="text-[10px] uppercase tracking-[4px] text-[var(--lp-section-label-alt)] font-medium">Features</span>
             <h2 className="mt-4 font-display font-extrabold text-4xl sm:text-5xl tracking-[-0.02em] text-[var(--lp-heading)]">
-              Built for Payload&apos;s <span className="text-gradient">CSS architecture</span>
+              Built for Payload v4&apos;s <span className="text-gradient">design tokens</span>
             </h2>
             <p className="mt-4 max-w-lg mx-auto text-sm text-[var(--lp-text-faint)] leading-relaxed">
-              PayloadTwist understands Payload&apos;s three-layer variable system — base palette, elevation aliases, and semantic theme vars — so your overrides are always correct.
+              Payload v4 styles every component from raw color ramps and semantic roles with explicit light and dark values. payloadtwist edits exactly those tokens, so your theme survives upgrades.
             </p>
           </div>
 
@@ -619,36 +641,23 @@ export default function LandingPage() {
               Clean CSS you <span className="text-gradient">own</span>
             </h2>
             <p className="mt-4 max-w-md mx-auto text-sm text-[var(--lp-text-faint)] leading-relaxed">
-              PayloadTwist generates a minimal custom.scss containing only the variables you changed. Paste it into your Payload project and you&apos;re done.
+              Only the tokens you changed, scoped so portaled menus and dark mode stay correct. Paste it into custom.css and you&apos;re done.
             </p>
           </div>
 
           <div className="rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-surface)] overflow-hidden">
             <div className="flex items-center gap-3 px-6 py-3 border-b border-[var(--lp-border-subtle)]">
-              <span className="text-[10px] uppercase tracking-[2px] text-[var(--lp-text-ghost)] font-medium">custom.scss</span>
+              <span className="text-[10px] uppercase tracking-[2px] text-[var(--lp-text-ghost)] font-medium">custom.css</span>
               <div className="flex-1" />
               <span className="text-[9px] text-[var(--lp-text-ghost)] font-mono">generated by payloadtwist</span>
             </div>
             <pre className="p-6 overflow-x-auto">
-              <code className="text-[13px] font-mono leading-relaxed whitespace-pre">{
-`\x1b[0m`}<span className="text-[var(--lp-code-comment)]">{`/* Custom Payload CMS Theme */
-/* Paste into your project's custom.scss */
-
-`}</span><span className="text-[var(--lp-code-selector)]">{`:root`}</span><span className="text-[var(--lp-code-punct)]">{` {
-  `}</span><span className="text-[var(--lp-code-comment)]">{`/* Base Color Scale */`}</span><span className="text-[var(--lp-code-punct)]">{`
-  `}</span><span className="text-[var(--lp-code-prop)]">{`--color-base-0`}</span><span className="text-[var(--lp-code-punct)]">{`: `}</span><span className="text-[var(--lp-code-value)]">{`#faf5f0`}</span><span className="text-[var(--lp-code-punct)]">{`;
-  `}</span><span className="text-[var(--lp-code-prop)]">{`--color-base-500`}</span><span className="text-[var(--lp-code-punct)]">{`: `}</span><span className="text-[var(--lp-code-value)]">{`#8b7355`}</span><span className="text-[var(--lp-code-punct)]">{`;
-  `}</span><span className="text-[var(--lp-code-prop)]">{`--color-base-1000`}</span><span className="text-[var(--lp-code-punct)]">{`: `}</span><span className="text-[var(--lp-code-value)]">{`#1a1510`}</span><span className="text-[var(--lp-code-punct)]">{`;
-
-  `}</span><span className="text-[var(--lp-code-comment)]">{`/* Typography */`}</span><span className="text-[var(--lp-code-punct)]">{`
-  `}</span><span className="text-[var(--lp-code-prop)]">{`--font-body`}</span><span className="text-[var(--lp-code-punct)]">{`: `}</span><span className="text-[var(--lp-code-value)]">{`'DM Sans', sans-serif`}</span><span className="text-[var(--lp-code-punct)]">{`;
-}`}</span>{`
-
-`}<span className="text-[var(--lp-code-comment)]">{`/* Dark mode — only explicit overrides */`}</span>{`
-`}<span className="text-[var(--lp-code-selector)]">{`[data-theme="dark"]`}</span><span className="text-[var(--lp-code-punct)]">{` {
-  `}</span><span className="text-[var(--lp-code-prop)]">{`--theme-bg`}</span><span className="text-[var(--lp-code-punct)]">{`: `}</span><span className="text-[var(--lp-code-value)]">{`#0d0d0d`}</span><span className="text-[var(--lp-code-punct)]">{`;
-  `}</span><span className="text-[var(--lp-code-prop)]">{`--theme-text`}</span><span className="text-[var(--lp-code-punct)]">{`: `}</span><span className="text-[var(--lp-code-value)]">{`#f3f3f3`}</span><span className="text-[var(--lp-code-punct)]">{`;
-}`}</span>
+              <code className="text-[13px] font-mono leading-relaxed whitespace-pre">
+                {SAMPLE_CSS.split('\n').map((line, i) => (
+                  <span key={i} className={cssLineClass(line)}>
+                    {line + '\n'}
+                  </span>
+                ))}
               </code>
             </pre>
           </div>

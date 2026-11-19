@@ -758,21 +758,18 @@ export function MyComponent() {
 }
 ```
 
-```scss
-// Use Payload's CSS variables
+```css
+/* Payload v4: plain CSS, semantic tokens on :root (no SCSS imports needed) */
 .my-component {
-  background-color: var(--theme-elevation-500);
-  color: var(--theme-text);
-  padding: var(--base);
-  border-radius: var(--border-radius-m);
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text);
+  padding: var(--spacer-3);
+  border-radius: var(--radius-medium);
 }
 
-// Import Payload's SCSS library
-@import '~@payloadcms/ui/scss';
-
-.my-component {
-  @include mid-break {
-    background-color: var(--theme-elevation-900);
+@media (max-width: 1024px) {
+  .my-component {
+    background-color: var(--color-bg-tertiary);
   }
 }
 ```

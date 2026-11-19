@@ -23,14 +23,14 @@ export const metadata: Metadata = {
     template: '%s | payloadtwist',
   },
   description:
-    'A visual CSS theme editor for the Payload CMS admin panel. Tweak colors, typography, spacing and components with real-time preview, then export clean CSS.',
+    'A visual theme editor for the Payload v4 admin. Theme brand colors, surfaces, radius, density and fonts on a live admin, then export clean CSS.',
   metadataBase: new URL(siteUrl),
   openGraph: {
     type: 'website',
     siteName: 'payloadtwist',
     title: 'payloadtwist — Visual Theme Editor for Payload CMS',
     description:
-      'Design your Payload admin panel visually. Tweak colors, typography, spacing and components with real-time preview, then export clean CSS.',
+      'Design your Payload v4 admin visually. Theme brand colors, surfaces, radius, density and fonts on a live admin, then export clean CSS.',
     url: siteUrl,
     images: [
       {
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'payloadtwist — Visual Theme Editor for Payload CMS',
     description:
-      'Design your Payload admin panel visually. Tweak colors, typography, spacing and components with real-time preview, then export clean CSS.',
+      'Design your Payload v4 admin visually. Theme brand colors, surfaces, radius, density and fonts on a live admin, then export clean CSS.',
     images: ['/og.png'],
   },
   robots: {
@@ -58,7 +58,9 @@ export const metadata: Metadata = {
     'CSS editor',
     'admin panel',
     'visual editor',
-    'custom.scss',
+    'Payload v4',
+    'custom.css',
+    'design tokens',
     'Payload theme',
     'dark mode',
   ],
