@@ -37,6 +37,7 @@ import { TypeSection } from '@/components/editor/sections/TypeSection'
 import { LogoMark } from '@/components/Logo'
 import { SavePresetDialog } from '@/components/presets/SavePresetDialog'
 import { getPresetById } from '@/lib/actions/presets'
+import type { ThemeConfig } from '@/payload-theme/theme'
 import { useSession } from '@/lib/auth-client'
 import { buildThemeCss } from '@/payload-theme/css'
 import { selectCanRedo, selectCanUndo, useEditorStore } from '@/store/editor-store'
@@ -123,27 +124,46 @@ function Editor() {
     setTimeout(() => setToast(null), 2200)
   }, [])
 
-  // ?preset=<id> opens a saved preset (validated by loadTheme)
+  // Saved presets open through one path (URL, the Presets tab, after saving); loadTheme validates
   const loadedPreset = useRef<string | null>(null)
+  const [presetsVersion, setPresetsVersion] = useState(0)
+  const openPreset = useCallback(
+    (id: string, { quiet = false } = {}) => {
+      loadedPreset.current = id
+      window.history.replaceState(null, '', `/editor?preset=${encodeURIComponent(id)}`)
+      getPresetById(id)
+        .then((preset) => {
+          if (!preset) return showToast('Preset not found')
+          setOwnPreset(preset.isOwner ? { id: preset.id, name: preset.name, description: preset.description, isPublic: preset.isPublic } : null)
+          if (quiet) return
+          // Someone else's custom CSS is never auto-applied: it would run inside a connected admin
+          const foreignCss = !preset.isOwner && !!preset.themeData.customCss?.trim()
+          loadTheme(foreignCss ? { ...preset.themeData, customCss: '' } : preset.themeData)
+          showToast(
+            foreignCss
+              ? `Loaded “${preset.name}” without its custom CSS (review it on the preset page)`
+              : `Loaded “${preset.name}”`,
+          )
+        })
+        .catch(() => showToast('This preset was made for an older Payload version'))
+    },
+    [loadTheme, showToast],
+  )
   useEffect(() => {
     const id = searchParams.get('preset')
-    if (!id || loadedPreset.current === id) return
-    loadedPreset.current = id
-    getPresetById(id)
-      .then((preset) => {
-        if (!preset) return showToast('Preset not found')
-        // Someone else's custom CSS is never auto-applied: it would run inside a connected admin
-        const foreignCss = !preset.isOwner && !!preset.themeData.customCss?.trim()
-        setOwnPreset(preset.isOwner ? { id: preset.id, name: preset.name, description: preset.description, isPublic: preset.isPublic } : null)
-        loadTheme(foreignCss ? { ...preset.themeData, customCss: '' } : preset.themeData)
-        showToast(
-          foreignCss
-            ? `Loaded “${preset.name}” without its custom CSS (review it on the preset page)`
-            : `Loaded “${preset.name}”`,
-        )
-      })
-      .catch(() => showToast('This preset was made for an older Payload version'))
-  }, [searchParams, loadTheme, showToast])
+    if (id && loadedPreset.current !== id) openPreset(id)
+  }, [searchParams, openPreset])
+
+  const loadBuiltin = useCallback(
+    (next: ThemeConfig) => {
+      loadTheme(next)
+      // A built-in theme is a fresh start: Save must not overwrite the preset that was open
+      setOwnPreset(null)
+      loadedPreset.current = null
+      window.history.replaceState(null, '', '/editor')
+    },
+    [loadTheme],
+  )
 
   // Keyboard: ⌘/Ctrl+Z undo, ⇧ for redo (ignored while typing)
   useEffect(() => {
@@ -278,7 +298,16 @@ function Editor() {
         </div>
 
         <div className="flex-1 min-h-0 overflow-y-auto panel-scroll p-4" role="tabpanel">
-          {tab === 'presets' && <PresetsSection />}
+          {tab === 'presets' && (
+            <PresetsSection
+              signedIn={!!session}
+              ownPreset={ownPreset}
+              refreshKey={presetsVersion}
+              onSave={() => setSaveOpen(true)}
+              onOpen={openPreset}
+              onLoadBuiltin={loadBuiltin}
+            />
+          )}
           {tab === 'colors' && <ColorsSection theme={theme} />}
           {tab === 'backgrounds' && <SurfacesSection theme={theme} />}
           {tab === 'shape' && <ShapeSection theme={theme} />}
@@ -323,7 +352,11 @@ function Editor() {
         onClose={() => setSaveOpen(false)}
         themeData={theme}
         existingPreset={ownPreset}
-        onSaved={() => showToast(ownPreset ? 'Preset updated' : 'Preset saved')}
+        onSaved={(id) => {
+          showToast(ownPreset ? 'Preset updated' : 'Preset saved')
+          setPresetsVersion((v) => v + 1)
+          openPreset(id, { quiet: true })
+        }}
       />
     </div>
   )
