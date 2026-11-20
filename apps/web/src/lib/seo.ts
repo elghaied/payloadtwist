@@ -7,10 +7,10 @@ export const SITE_DESCRIPTION =
 
 // ?v= busts social platforms' cache of the previous image
 const OG_IMAGE = {
-  url: '/og.png?v=2',
+  url: '/og.png?v=3',
   width: 1200,
   height: 630,
-  alt: 'payloadtwist: your Payload admin, dressed properly. A Payload v4 admin wearing two payloadtwist themes.',
+  alt: 'payloadtwist: your brand, all the way into the admin. A Payload v4 admin wearing two payloadtwist themes.',
 }
 
 /**

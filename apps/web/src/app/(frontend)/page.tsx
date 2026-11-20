@@ -155,8 +155,10 @@ export default function LandingPage() {
       {/* Hero: before and after */}
       <header className="mx-auto max-w-7xl px-6 pt-32 pb-24 lg:pt-40 lg:pb-32 grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
         <div className="lg:col-span-5">
-          <h1 className="lb-display text-[clamp(3rem,6vw,5.75rem)]">
-            Your Payload admin, <span className="text-gradient-shimmer">dressed properly.</span>
+          <h1 className="lb-display text-[clamp(2.75rem,5.5vw,5.25rem)]">
+            Your brand,
+            <br />
+            <span className="text-gradient-shimmer">all the way into the admin.</span>
           </h1>
           <p className="mt-8 max-w-md text-lg leading-relaxed lb-muted">
             payloadtwist is a visual theme editor for the Payload v4 admin. Start from a look, change anything on a
@@ -370,7 +372,7 @@ export default function LandingPage() {
       <section className="border-t border-[var(--lb-line)]">
         <div className="mx-auto max-w-7xl px-6 py-28 lg:py-36 flex flex-col items-center text-center">
           <LogoMark size={56} />
-          <h2 className="lb-display mt-8 text-[clamp(3rem,6vw,5.5rem)]">Dress your admin.</h2>
+          <h2 className="lb-display mt-8 text-[clamp(3rem,6vw,5.5rem)]">Bring your brand in.</h2>
           <p className="mt-6 text-lg lb-muted max-w-md">Free and open source, built for Payload v4. No plugin needed.</p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-6">
             <Link href="/editor" className="lb-button">
