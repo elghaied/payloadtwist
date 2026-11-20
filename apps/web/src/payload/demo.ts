@@ -30,27 +30,30 @@ export const demo = (config: CollectionConfig): CollectionConfig => ({
 })
 
 
-// Payload's internal collections (payload-preferences, payload-locked-documents, …) skip the hook
-// above, and the demo account is shared: writes over HTTP would leak between visitors and could fill
-// the in-memory DB. So REST writes may only target the demo's own collections (whose hook rejects
-// them, except login/logout/refresh). Payload's own server-side preference writes use the Local API.
+// Second line of defense, in the REST route, before Payload reads the request: nobody may change the
+// shared demo, so every write is refused at the door (uploads never get read). Only the shared
+// account's session calls and Payload's POST-as-GET searches (relationship/upload pickers) pass.
+// Payload's own server-side writes (preferences while rendering) use the Local API, not this route.
 const MAX_BODY_BYTES = 2 * 1024 * 1024
-const WRITABLE = new Set(['users', 'posts', 'pages', 'field-showcase', 'media', 'categories', 'folders', 'globals'])
+const SESSION_CALLS = new Set(['users/login', 'users/logout', 'users/refresh-token'])
 
 const reject = (status: number, message: string) => Response.json({ errors: [{ message }] }, { status })
 
 /** Guard for the demo's REST API: a Response to short-circuit with, or null to continue. */
 export function guardDemoRequest(request: Request): Response | null {
-  if (request.method === 'GET' || request.method === 'OPTIONS') return null
-  if (Number(request.headers.get('content-length') ?? 0) > MAX_BODY_BYTES) return reject(413, 'Request too large.')
-  let slug: string
+  if (request.method === 'GET' || request.method === 'HEAD' || request.method === 'OPTIONS') return null
+  let path: string
   try {
-    // Decoded, like the router sees it: `payload%2Dpreferences` must not slip past
-    slug = decodeURIComponent(new URL(request.url).pathname.split('/').filter(Boolean)[1] ?? '')
+    // Decoded, like the router sees it: `users%2Flogin` tricks must not change the outcome
+    path = new URL(request.url).pathname.split('/').filter(Boolean).slice(1, 3).map(decodeURIComponent).join('/')
   } catch {
     return reject(400, 'Bad request.')
   }
-  if (!WRITABLE.has(slug)) return reject(403, 'This is a read-only preview. Changes are not saved.')
+  const searchAsPost = request.headers.get('x-payload-http-method-override')?.toUpperCase() === 'GET'
+  if (request.method !== 'POST' || !(SESSION_CALLS.has(path) || searchAsPost)) {
+    return reject(403, 'This is a read-only preview. Changes are not saved.')
+  }
+  if (Number(request.headers.get('content-length') ?? 0) > MAX_BODY_BYTES) return reject(413, 'Request too large.')
   return null
 }
 

@@ -93,8 +93,9 @@ typed properties per component, emitted after the token blocks on Payload's BEM 
 
 - Public & shared → **write-protected**: a `beforeOperation` allowlist (`find*`, `read`, `count*`,
   `validate`, `login`, `refresh`); globals reject in `beforeChange`. Payload's internal collections
-  (`payload-preferences`, …) skip that hook, so `guardDemoRequest` in the REST route only lets writes reach
-  the demo's own collections (decoded slug allowlist) and `limitBody` caps bytes read at 2MB. Access functions return true
+  (`payload-preferences`, …) skip that hook, so `guardDemoRequest` in the REST route refuses every write
+  before the body is read (uploads included); only `users/login|logout|refresh-token` and Payload's
+  POST-as-GET searches (`X-Payload-HTTP-Method-Override: GET`) pass, capped at 2MB by `limitBody`. Access functions return true
   so fields look editable. `auth.maxLoginAttempts: 0` (shared account must not lock).
 - Dev pushes the schema; production has no push → after changing demo collections run
   `pnpm payload migrate:create` (prodMigrations), `pnpm generate:importmap`, `payload generate:types`.
