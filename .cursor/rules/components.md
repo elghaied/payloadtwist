@@ -555,7 +555,7 @@ export function MyClientComponent() {
 ### Using CSS Variables
 
 ```tsx
-import './styles.scss'
+import './styles.css'
 
 export function MyComponent() {
   return <div className="my-component">Custom Component</div>

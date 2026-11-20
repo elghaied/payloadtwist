@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-page-custom-font -- Pages Router rule; in the App Router the root layout loads fonts for every page */
 import type { ReactNode } from 'react'
 import type { Metadata, Viewport } from 'next'
 import { ThemeProvider } from '@/providers/theme-provider'

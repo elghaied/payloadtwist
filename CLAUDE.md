@@ -43,6 +43,7 @@ apps/web/src/
 ├── components/editor/       PreviewPanel, sections/*, ExportDialog, CustomPreviewSetup
 ├── store/editor-store.ts    zustand: theme + undo/redo + preview mode
 ├── lib/actions/presets.ts   server actions (client-callable — every one checks access)
+├── lib/seo.ts               pageMetadata(): share card + canonical for every page (Next replaces openGraph per page)
 └── proxy.ts                 route protection (Next 16 "proxy", formerly middleware)
 ```
 
@@ -91,7 +92,9 @@ typed properties per component, emitted after the token blocks on Payload's BEM 
 `@payloadcms/db-sqlite` on `:memory:`, re-seeded on every boot, `admin.autoLogin` as `DEMO_USER`.
 
 - Public & shared → **write-protected**: a `beforeOperation` allowlist (`find*`, `read`, `count*`,
-  `validate`, `login`, `refresh`); globals reject in `beforeChange`. Access functions return true
+  `validate`, `login`, `refresh`); globals reject in `beforeChange`. Payload's internal collections
+  (`payload-preferences`, …) skip that hook, so `guardDemoRequest` in the REST route only lets writes reach
+  the demo's own collections (decoded slug allowlist) and `limitBody` caps bytes read at 2MB. Access functions return true
   so fields look editable. `auth.maxLoginAttempts: 0` (shared account must not lock).
 - Dev pushes the schema; production has no push → after changing demo collections run
   `pnpm payload migrate:create` (prodMigrations), `pnpm generate:importmap`, `payload generate:types`.
@@ -111,6 +114,12 @@ same-origin only) and users' own admins (`PayloadTwistBridge`, generated with th
 baked in). Messages: `css`, `theme`, `contrast`, `navigate` → preview; `ready`, `route` ← preview.
 The editor re-sends everything on every `ready`. **Always check `event.origin` and `event.source`.**
 The iframe keeps `id="payload-preview"`.
+
+## Landing
+
+`/` is an editorial lookbook: each spread wears its preset's colors and heading font. Images in
+`public/lookbook/` are real captures of `/preview` with the plugin theme applied (`localStorage
+payload-admin-ui-theme:1`) — re-capture after preset changes. `public/og.png` is a static 1200×630 render.
 
 ## Security rules
 

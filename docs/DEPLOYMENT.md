@@ -90,7 +90,8 @@ Set these in the Coolify resource's **Environment Variables** section:
 |----------|-------|----------|
 | `AUTH_DATABASE_URL` | `postgresql://postgres:<pw>@<pg-host>:5432/payloadtwist_auth` | Yes |
 | `BETTER_AUTH_SECRET` | Random 32+ char string (`openssl rand -base64 32`) | Yes |
-| `NEXT_PUBLIC_APP_URL` | `https://your-domain.com` | Yes |
+| `NEXT_PUBLIC_APP_URL` | `https://your-domain.com` (also baked into the image at build time by `docker-publish.yml`) | Yes |
+| `PAYLOAD_SECRET` | Random 32+ char string for the embedded demo admin (`/preview`); falls back to `BETTER_AUTH_SECRET` | Recommended |
 | `GITHUB_CLIENT_ID` | Your GitHub OAuth app ID | Optional |
 | `GITHUB_CLIENT_SECRET` | Your GitHub OAuth app secret | Optional |
 | `GOOGLE_CLIENT_ID` | Your Google OAuth client ID | Optional |
@@ -103,6 +104,8 @@ Set these in the Coolify resource's **Environment Variables** section:
 - **Port**: `3000`
 - **Health check path**: `/api/health`
 - **Domain**: Set your domain in Coolify's proxy settings — it handles SSL via Traefik/Caddy automatically
+- **Request body limit**: cap request bodies at the proxy (for example 5 MB). The app already rejects writes to the
+  read-only demo admin and stops reading bodies past 2 MB, but a proxy limit stops oversized uploads before they reach Node.
 
 ### Auto-deploy on new tags
 

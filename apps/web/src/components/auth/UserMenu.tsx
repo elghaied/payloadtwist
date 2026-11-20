@@ -1,4 +1,5 @@
 'use client'
+/* eslint-disable @next/next/no-img-element -- 32px OAuth avatars from any provider host; next/image would need every host allowlisted */
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
@@ -87,6 +88,7 @@ export function UserMenu() {
               onClick={async () => {
                 await signOut()
                 setOpen(false)
+                // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- full reload clears the signed-in client state
                 window.location.href = '/'
               }}
               className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--lp-text-secondary)] hover:bg-[var(--lp-surface-2)] transition-colors w-full text-left"
@@ -184,6 +186,7 @@ export function EditorUserMenu() {
               onClick={async () => {
                 await signOut()
                 setOpen(false)
+                // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- full reload clears the signed-in client state
                 window.location.href = '/'
               }}
               className="flex items-center gap-2 px-3 py-1.5 text-xs text-[var(--pt-text-muted)] hover:bg-[var(--pt-surface-hover)] hover:text-[var(--pt-text)] transition-colors w-full text-left"

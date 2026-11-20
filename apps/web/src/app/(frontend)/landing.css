@@ -13,16 +13,12 @@
   --lp-nav-border: rgba(0, 0, 0, 0.06);
 
   --lp-text: #1a1a2e;
-  --lp-heading: #1a1a2e;
   --lp-text-secondary: rgba(26, 26, 46, 0.8);
   --lp-text-muted: rgba(26, 26, 46, 0.7);
   --lp-text-faint: rgba(26, 26, 46, 0.66);
-  --lp-text-ghost: rgba(26, 26, 46, 0.45);
 
   --lp-border: rgba(26, 26, 46, 0.08);
-  --lp-border-subtle: rgba(26, 26, 46, 0.04);
   --lp-border-medium: rgba(26, 26, 46, 0.1);
-  --lp-border-hover: rgba(26, 26, 46, 0.18);
 
   --lp-ghost-bg: rgba(26, 26, 46, 0.04);
   --lp-ghost-bg-hover: rgba(26, 26, 46, 0.08);
@@ -31,17 +27,6 @@
   --lp-input-border: rgba(26, 26, 46, 0.15);
 
   --lp-purple: #a855f7;
-  --lp-pink: #ec4899;
-  --lp-cyan: #06b6d4;
-  --lp-green: #22c55e;
-
-  --lp-badge-border: rgba(168, 85, 247, 0.25);
-  --lp-badge-bg: rgba(168, 85, 247, 0.08);
-  --lp-badge-text: #7c3aed;
-
-  --lp-section-label: rgba(6, 182, 212, 0.6);
-  --lp-section-label-alt: rgba(168, 85, 247, 0.6);
-  --lp-section-label-green: rgba(34, 197, 94, 0.6);
 
   --lp-code-comment: rgba(26, 26, 46, 0.6);
   --lp-code-selector: #6d28d9;
@@ -67,30 +52,18 @@
   --lp-nav-border: rgba(255, 255, 255, 0.04);
 
   --lp-text: #e2e2e8;
-  --lp-heading: rgba(255, 255, 255, 0.9);
   --lp-text-secondary: rgba(255, 255, 255, 0.78);
   --lp-text-muted: rgba(255, 255, 255, 0.66);
   --lp-text-faint: rgba(255, 255, 255, 0.6);
-  --lp-text-ghost: rgba(255, 255, 255, 0.4);
 
   --lp-border: rgba(255, 255, 255, 0.06);
-  --lp-border-subtle: rgba(255, 255, 255, 0.03);
   --lp-border-medium: rgba(255, 255, 255, 0.08);
-  --lp-border-hover: rgba(255, 255, 255, 0.14);
 
   --lp-ghost-bg: rgba(255, 255, 255, 0.06);
   --lp-ghost-bg-hover: rgba(255, 255, 255, 0.1);
 
   --lp-input-bg: rgba(255, 255, 255, 0.07);
   --lp-input-border: rgba(255, 255, 255, 0.12);
-
-  --lp-badge-border: rgba(168, 85, 247, 0.2);
-  --lp-badge-bg: rgba(168, 85, 247, 0.06);
-  --lp-badge-text: rgba(192, 160, 255, 0.8);
-
-  --lp-section-label: rgba(6, 182, 212, 0.5);
-  --lp-section-label-alt: rgba(168, 85, 247, 0.5);
-  --lp-section-label-green: rgba(34, 197, 94, 0.5);
 
   --lp-code-comment: rgba(255, 255, 255, 0.55);
   --lp-code-selector: #c4b5fd;
@@ -131,61 +104,9 @@
   .landing .text-gradient-shimmer { animation: none; }
 }
 
-/* ── Noise texture ── */
-.landing .noise::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none;
-  opacity: 0.4;
-  z-index: 1;
-}
-
-/* ── Logo animations ── */
-@keyframes lp-orbit {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-@keyframes lp-pulse-glow {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
-}
-
-.landing .logo-orbit {
-  animation: lp-orbit 20s linear infinite;
-  transform-origin: 100px 100px;
-}
-.landing .logo-core-pulse {
-  animation: lp-pulse-glow 4s ease-in-out infinite;
-}
-
-/* ── Page animations ── */
-@keyframes lp-fade-up {
-  from { opacity: 0; transform: translateY(28px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes lp-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
 @keyframes lp-shimmer {
   0% { background-position: -200% center; }
   100% { background-position: 200% center; }
-}
-
-.landing .anim-fade-up {
-  animation: lp-fade-up 0.8s ease-out forwards;
-  opacity: 0;
-}
-.landing .anim-delay-1 { animation-delay: 0.1s; }
-.landing .anim-delay-2 { animation-delay: 0.2s; }
-.landing .anim-delay-3 { animation-delay: 0.3s; }
-.landing .anim-delay-4 { animation-delay: 0.4s; }
-.landing .anim-delay-5 { animation-delay: 0.5s; }
-.landing .anim-delay-6 { animation-delay: 0.6s; }
-.landing .anim-float {
-  animation: lp-float 6s ease-in-out infinite;
 }
 
 /* ── Scrollbar ── */
@@ -194,23 +115,4 @@
 .landing ::-webkit-scrollbar-thumb {
   background: rgba(168, 85, 247, 0.2);
   border-radius: 3px;
-}
-
-/* ── Slide-up (uses lp-slide-up keyframes from globals.css) ── */
-.landing .anim-slide-up {
-  animation: lp-slide-up 0.3s ease-out forwards;
-}
-
-/* ── Step number circle ── */
-.landing .step-num {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 16px;
-  flex-shrink: 0;
 }

@@ -32,7 +32,6 @@
     "@payloadcms/ui": "4.0.0-beta.10",
     "@tailwindcss/postcss": "^4.3.5",
     "better-auth": "^1.7.26",
-    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cross-env": "^10.1.0",
     "dotenv": "16.4.7",
@@ -48,15 +47,12 @@
     "radix-ui": "^1.8.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "react-resizable-panels": "^4.24.1",
-    "simple-icons": "^16.38.0",
     "tailwind-merge": "^3.7.0",
     "tailwindcss": "^4.3.5",
     "zustand": "^5.1.0"
   },
   "devDependencies": {
     "@playwright/test": "1.65.1",
-    "@testing-library/react": "16.3.3",
     "@types/node": "24.12.3",
     "@types/pg": "^8.23.1",
     "@types/react": "19.3.0",

@@ -751,7 +751,7 @@ export const Posts: CollectionConfig = {
 ### Styling Components
 
 ```tsx
-import './styles.scss'
+import './styles.css'
 
 export function MyComponent() {
   return <div className="my-component">Content</div>

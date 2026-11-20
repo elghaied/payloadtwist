@@ -79,6 +79,7 @@ export function SettingsClient({
     try {
       await authClient.deleteUser()
       await signOut()
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- full reload clears the signed-in client state
       window.location.href = '/'
     } catch {
       alert('Failed to delete account. Please try again.')
