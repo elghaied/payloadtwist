@@ -1,6 +1,7 @@
 /* ── Landing page styles ── */
 
-.landing {
+.landing,
+.lp-tokens {
   --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
   --font-body: 'Geist', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
@@ -35,7 +36,10 @@
   --lp-code-punct: rgba(26, 26, 46, 0.65);
 
   --lp-logo-center: #f8f8fc;
+}
 
+/* .lp-tokens: the tokens alone, for UI rendered outside .landing (cookie banner) */
+.landing {
   font-family: var(--font-body);
   background: var(--lp-void);
   color: var(--lp-text);
@@ -44,7 +48,8 @@
 }
 
 /* ── Dark mode tokens ── */
-.dark .landing {
+.dark .landing,
+.dark .lp-tokens {
   --lp-void: #08080c;
   --lp-surface: #0d0d14;
   --lp-surface-2: #0a0a10;

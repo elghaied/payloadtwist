@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useConsent } from '@/providers/consent-provider'
+import '@/app/(frontend)/landing.css'
 
 const HIDDEN_PREFIXES = ['/editor', '/preview']
 
@@ -59,7 +60,7 @@ export function CookieConsent() {
     <div
       role="dialog"
       aria-label="Cookie consent"
-      className="fixed bottom-0 inset-x-0 z-50"
+      className="lp-tokens fixed bottom-0 inset-x-0 z-50"
       style={{
         background: 'var(--lp-surface)',
         backdropFilter: 'blur(24px)',
