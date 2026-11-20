@@ -39,6 +39,7 @@ html[data-admin-theme="sunset"] [data-theme='light'] {
   --ramp-grey-700: #533830;
   --ramp-grey-800: #412c26;
   --ramp-grey-900: #2c1e1a;
+  --color-bg-brand-secondary: var(--ramp-blue-400);
   --color-bg: #faf5f3;
   --color-bg-hover: #f4e9e6;
   --color-bg-pressed: #ead7d1;

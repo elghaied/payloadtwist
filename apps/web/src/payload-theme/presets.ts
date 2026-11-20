@@ -269,7 +269,7 @@ export const THEME_PRESETS: ThemePreset[] = [
     roundness: 6,
     fonts: { body: 'Inter', heading: 'Inter' },
     light: { '--color-text-onbrand': '#ffffff' },
-    dark: { '--color-bg-brand': '#fafafa', '--color-text-onbrand': '#09090b', '--color-text-brand': '#fafafa' },
+    dark: { '--color-bg-brand': '#fafafa', '--color-bg-brand-secondary': '#d4d4d8', '--color-text-onbrand': '#09090b', '--color-text-brand': '#fafafa' },
     components: {
       sidebarLinkActive: { light: { bg: '#18181b', text: '#ffffff' }, dark: { bg: '#fafafa', text: '#09090b' } },
       tableHeader: { light: { ...upperLabel } },

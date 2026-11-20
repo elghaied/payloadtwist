@@ -52,6 +52,7 @@ html[data-admin-theme="mono"] [data-theme='light'] {
 html[data-admin-theme="mono"][data-theme='dark'],
 html[data-admin-theme="mono"] [data-theme='dark'] {
   --color-bg-brand: #fafafa;
+  --color-bg-brand-secondary: #d4d4d8;
   --color-bg: #1d1d1d;
   --color-bg-hover: #292929;
   --color-bg-pressed: #353535;

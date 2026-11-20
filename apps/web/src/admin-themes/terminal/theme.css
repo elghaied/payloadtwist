@@ -65,6 +65,7 @@ html[data-admin-theme="terminal"] [data-theme='light'] {
   --ramp-pale-yellow-700: #765504;
   --ramp-pale-yellow-800: #593f03;
   --ramp-pale-yellow-900: #392911;
+  --color-bg-brand-secondary: var(--ramp-blue-400);
   --color-bg: #fcfcfc;
   --color-bg-hover: #f0f4f1;
   --color-bg-pressed: #dfe7e2;

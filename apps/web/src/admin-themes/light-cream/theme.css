@@ -39,6 +39,7 @@ html[data-admin-theme="light-cream"] [data-theme='light'] {
   --ramp-grey-700: #584c30;
   --ramp-grey-800: #453c25;
   --ramp-grey-900: #2f2919;
+  --color-bg-brand-secondary: var(--ramp-blue-400);
   --color-bg: #faf6ee;
   --color-bg-hover: #f5eede;
   --color-bg-pressed: #eee2c7;

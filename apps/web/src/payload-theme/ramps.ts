@@ -122,7 +122,13 @@ export function seedRampVars(key: SeedKey): string[] {
 const DARK_LABEL = '#111111'
 
 export const ON_COLOR_VARS: Partial<Record<SeedKey, string[]>> = {
-  brand: ['--color-text-onbrand', '--color-icon-onbrand', '--color-text-onbrand-secondary', '--color-icon-onbrand-secondary'],
+  brand: [
+    '--color-text-onbrand',
+    '--color-icon-onbrand',
+    '--color-text-onbrand-secondary',
+    '--color-icon-onbrand-secondary',
+    '--color-bg-brand-secondary',
+  ],
   accent: ['--color-text-oncomponent', '--color-icon-oncomponent'],
 }
 
@@ -131,7 +137,12 @@ export function onColorTokens(key: SeedKey, seedHex: string): Record<string, str
   if (!vars) return {}
   const hex = normalizeHex(seedHex)
   if (contrastRatio('#ffffff', hex) >= contrastRatio(DARK_LABEL, hex)) return {}
-  return Object.fromEntries(vars.map((v) => [v, v.endsWith('-secondary') ? 'rgba(17, 17, 17, 0.7)' : DARK_LABEL]))
+  const labels = Object.fromEntries(
+    vars.filter((v) => !v.startsWith('--color-bg')).map((v) => [v, v.endsWith('-secondary') ? 'rgba(17, 17, 17, 0.7)' : DARK_LABEL]),
+  )
+  // Payload also puts on-brand labels on the secondary brand fill (a darker step by default):
+  // with dark labels it moves to a lighter step so they stay readable
+  return key === 'brand' ? { ...labels, '--color-bg-brand-secondary': 'var(--ramp-blue-400)' } : labels
 }
 
 /** Payload component blocks that use any step of the scales a seed controls. */

@@ -33,6 +33,10 @@ describe('built-in presets', () => {
           if (!btn?.startsWith('linear-gradient') && preset.id !== 'payload') {
             expect(ratio(r['--color-text-onbrand'], r['--color-bg-brand'], page)).toBeGreaterThanOrEqual(4.5)
           }
+          // Payload also puts the on-brand label on the secondary brand fill (activity status pills)
+          if (preset.id !== 'payload') {
+            expect(ratio(r['--color-text-onbrand'], r['--color-bg-brand-secondary'], page), 'onbrand on brand-secondary').toBeGreaterThanOrEqual(4.5)
+          }
           // custom sidebar: link text vs sidebar background
           const side = theme.components.sidebar
           const sideBg = (mode === 'dark' ? side?.dark?.bg : undefined) ?? side?.light?.bg
