@@ -210,19 +210,19 @@ export function ArchitectureDiagram() {
         <div className="arch-row arch-row--3">
           <ArchNode
             title="Seed Colors"
-            description="Six seeds regenerate Payload&apos;s ramp families along its own lightness curve"
+            description="Seed colors regenerate Payload&apos;s color scales along its own lightness curve"
             accentColor="#a855f7"
             delay={150}
           />
           <ArchNode
             title="Typography"
-            description="Google Fonts for body, headings and code, plus a type-scale multiplier"
+            description="Google Fonts, a type scale, and size, line height, weight and spacing per text level"
             accentColor="#c084fc"
             delay={220}
           />
           <ArchNode
-            title="Surfaces &amp; Shape"
-            description="Light/dark semantic roles with contrast checks, roundness and density"
+            title="Surfaces, Shape &amp; Components"
+            description="Light/dark colors with contrast checks, corners, shadows, spacing, and per-component styles"
             accentColor="#e879f9"
             delay={290}
           />
@@ -240,7 +240,7 @@ export function ArchitectureDiagram() {
         <div className="arch-row arch-row--1">
           <ArchNode
             title="Zustand Store"
-            description="ThemeConfig v4 (seeds, ramps, light/dark tokens) on pure reducers, coalesced undo/redo, validated persistence"
+            description="ThemeConfig v4 (seeds, controls, ramps, light/dark tokens, components) on pure reducers, undo/redo, validated persistence"
             accentColor="#06b6d4"
             wide
             delay={500}
@@ -313,7 +313,7 @@ export function ArchitectureDiagram() {
           />
           <ArchNode
             title="CSS Export"
-            description="custom.css with only changed tokens, or a payload-admin-ui-themes theme package"
+            description="custom.css with only what changed, or a .zip payload-admin-ui-themes theme package"
             accentColor="#4ade80"
             delay={990}
           />

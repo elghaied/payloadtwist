@@ -14,10 +14,10 @@
 
   --lp-text: #1a1a2e;
   --lp-heading: #1a1a2e;
-  --lp-text-secondary: rgba(26, 26, 46, 0.65);
-  --lp-text-muted: rgba(26, 26, 46, 0.5);
-  --lp-text-faint: rgba(26, 26, 46, 0.35);
-  --lp-text-ghost: rgba(26, 26, 46, 0.18);
+  --lp-text-secondary: rgba(26, 26, 46, 0.8);
+  --lp-text-muted: rgba(26, 26, 46, 0.7);
+  --lp-text-faint: rgba(26, 26, 46, 0.66);
+  --lp-text-ghost: rgba(26, 26, 46, 0.45);
 
   --lp-border: rgba(26, 26, 46, 0.08);
   --lp-border-subtle: rgba(26, 26, 46, 0.04);
@@ -68,10 +68,10 @@
 
   --lp-text: #e2e2e8;
   --lp-heading: rgba(255, 255, 255, 0.9);
-  --lp-text-secondary: rgba(255, 255, 255, 0.6);
-  --lp-text-muted: rgba(255, 255, 255, 0.4);
-  --lp-text-faint: rgba(255, 255, 255, 0.3);
-  --lp-text-ghost: rgba(255, 255, 255, 0.15);
+  --lp-text-secondary: rgba(255, 255, 255, 0.78);
+  --lp-text-muted: rgba(255, 255, 255, 0.66);
+  --lp-text-faint: rgba(255, 255, 255, 0.6);
+  --lp-text-ghost: rgba(255, 255, 255, 0.4);
 
   --lp-border: rgba(255, 255, 255, 0.06);
   --lp-border-subtle: rgba(255, 255, 255, 0.03);

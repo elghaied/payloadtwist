@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { ArchitectureDiagram } from '@/components/architecture/ArchitectureDiagram'
@@ -11,11 +12,11 @@ import './landing.css'
 export const metadata: Metadata = {
   title: 'payloadtwist — Visual Theme Editor for Payload CMS',
   description:
-    'A visual theme editor for the Payload v4 admin. Pick brand colors, surfaces, radius, density and fonts on a live admin, then export clean custom.css or an installable theme.',
+    'A visual theme editor for the Payload v4 admin. Colors, backgrounds, shape, spacing, fonts and individual components on a live admin, then export clean custom.css or an installable theme.',
   openGraph: {
     title: 'payloadtwist — Visual Theme Editor for Payload CMS',
     description:
-      'Design your Payload v4 admin visually. Theme brand colors, surfaces, radius, density and fonts on a live admin, then export clean CSS.',
+      'Design your Payload v4 admin visually on a live admin, with every control explained, then export clean CSS or a theme package.',
   },
 }
 
@@ -137,44 +138,65 @@ const features = [
   {
     title: 'A Real Payload v4 Admin',
     description:
-      'The preview is a real Payload v4 admin with demo content — dashboard, lists, edit views, drawers. Or connect your own. Every tweak applies instantly.',
+      'The preview is a real Payload v4 admin: dashboard, lists, every field type, every rich-text node, drawers, media. Or connect your own admin. Every change shows up instantly.',
     gradient: 'from-purple-500/10 to-pink-500/10',
     border: 'border-purple-500/10',
   },
   {
     title: 'Seeds, Not 484 Pickers',
     description:
-      'Six seed colors regenerate Payload\'s ramp families along its own lightness curve. Brand, accent, neutral and status — one change rethemes everything.',
+      'A handful of seed colors regenerate Payload\'s color scales along its own lightness curve. Labels on brand colors switch between white and dark for contrast automatically.',
     gradient: 'from-cyan-500/10 to-green-500/10',
     border: 'border-cyan-500/10',
   },
   {
-    title: 'Light, Dark & Contrast',
+    title: 'Every Control Explained',
     description:
-      'Every semantic role has light and dark values, with WCAG contrast checks that blend Payload\'s translucent roles exactly like the browser. Preview enhanced contrast too.',
+      'Each setting says in plain words what it changes. Hover one and the parts of the admin it affects are outlined in the preview.',
     gradient: 'from-pink-500/10 to-orange-500/10',
     border: 'border-pink-500/10',
   },
   {
-    title: 'Google Fonts Picker',
+    title: 'Exact Control',
     description:
-      'Browse and preview Google Fonts with a live dropdown. Pick a body font, a heading font — see it applied instantly.',
+      'Start from a preset, then fine-tune with a slider or a typed value: every corner size, border widths, shadows per level, and size, line height, weight and letter spacing for each text level.',
     gradient: 'from-amber-500/10 to-yellow-500/10',
     border: 'border-amber-500/10',
   },
   {
-    title: 'Shape & Density',
+    title: 'Spacing, Padding & Margin',
     description:
-      'One roundness value drives every radius. Density and type scale resize fields, buttons and text together — the way Payload\'s tokens were designed.',
+      'Make the whole admin tighter or roomier with one scale, set the page padding and field gaps, then adjust padding and margin on buttons, cards, table cells or inputs.',
     gradient: 'from-green-500/10 to-emerald-500/10',
     border: 'border-green-500/10',
   },
   {
-    title: 'custom.css or a Theme Package',
+    title: 'Style One Element',
     description:
-      'Export a minimal custom.css — no !important, Payload v4 is layered — or a user-selectable theme for payload-admin-ui-themes.',
+      'Global settings change the whole admin; Components targets a single part: a navy sidebar, uppercase table headers, pill-shaped buttons. Light and dark values for each.',
     gradient: 'from-violet-500/10 to-indigo-500/10',
     border: 'border-violet-500/10',
+  },
+  {
+    title: 'Light, Dark & Contrast',
+    description:
+      'Every color has a light and a dark value, with WCAG readability checks that account for translucent colors. Preview enhanced-contrast mode and phone or tablet widths too.',
+    gradient: 'from-sky-500/10 to-blue-500/10',
+    border: 'border-sky-500/10',
+  },
+  {
+    title: 'Presets: Built-in, Yours, Shared',
+    description:
+      'Twelve built-in themes to start from. Save your own, keep editing them, share a link, and open themes the community shared, all from the editor.',
+    gradient: 'from-rose-500/10 to-pink-500/10',
+    border: 'border-rose-500/10',
+  },
+  {
+    title: 'custom.css or a Theme Package',
+    description:
+      'Export a minimal custom.css (no !important, since Payload v4 is layered) or a .zip theme package your editors can pick in payload-admin-ui-themes.',
+    gradient: 'from-fuchsia-500/10 to-purple-500/10',
+    border: 'border-fuchsia-500/10',
   },
 ]
 
@@ -187,12 +209,12 @@ const workflow = [
   {
     num: '2',
     title: 'Tweak visually',
-    description: 'Start from a preset, set seed colors, tune surfaces, roundness, density and fonts. Check contrast in light and dark.',
+    description: 'Start from a preset, pick seed colors, then fine-tune backgrounds, corners, spacing, fonts or single components. Hover any control to see what it changes.',
   },
   {
     num: '3',
     title: 'Export your theme',
-    description: 'Export custom.css for your Payload project, or a theme package your editors can pick from their settings.',
+    description: 'Download custom.css for your Payload project, or a theme package your editors can pick in their settings. Save it as a preset to come back or share.',
   },
 ]
 
@@ -284,8 +306,8 @@ export default function LandingPage() {
           </h1>
 
           <p className="anim-fade-up anim-delay-3 max-w-xl text-lg text-[var(--lp-text-faint)] leading-relaxed font-light">
-            Built for Payload v4&apos;s token system. Theme brand, surfaces, radius, density and type on a live admin,
-            then export clean CSS. No plugin required.
+            Built for Payload v4&apos;s token system. Change colors, backgrounds, corners, spacing, fonts or a single
+            component on a real admin, with every control explained. Export clean CSS or a theme package.
           </p>
 
           <div className="anim-fade-up anim-delay-4 flex flex-col sm:flex-row items-center gap-4 mt-2">
@@ -349,8 +371,7 @@ export default function LandingPage() {
             </h2>
           </div>
 
-          <div className="relative rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-surface)] overflow-hidden shadow-[0_0_80px_rgba(168,85,247,0.04)]">
-            {/* Browser chrome */}
+          <div className="relative rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-surface)] overflow-hidden shadow-[0_0_80px_rgba(168,85,247,0.06)]">
             <div className="flex items-center gap-2 px-5 py-3.5 border-b border-[var(--lp-border-subtle)] bg-[var(--lp-surface-2)]">
               <div className="flex gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-full bg-[var(--lp-ghost-bg)]" />
@@ -358,246 +379,24 @@ export default function LandingPage() {
                 <div className="w-2.5 h-2.5 rounded-full bg-[var(--lp-ghost-bg)]" />
               </div>
               <div className="ml-4 flex-1 h-6 rounded-md bg-[var(--lp-ghost-bg)] flex items-center justify-center">
-                <span className="text-[10px] text-[var(--lp-text-ghost)] font-mono">localhost:3000/editor</span>
+                <span className="text-[10px] text-[var(--lp-text-ghost)] font-mono">payloadtwist.com/editor</span>
               </div>
             </div>
-
-            <div className="flex min-h-[480px]">
-              {/* ── Editor panel (left) — dark theme ── */}
-              <div className="w-[300px] shrink-0 border-r border-white/[0.06] bg-[#141416] flex flex-col">
-                {/* Logo bar */}
-                <div className="px-4 py-2.5 border-b border-white/[0.06] flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    {/* DNA strand logo mark */}
-                    <svg width="18" height="18" viewBox="0 0 200 200" fill="none" aria-hidden="true">
-                      <defs>
-                        <linearGradient id="mock-s1" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="#a855f7" />
-                          <stop offset="100%" stopColor="#ec4899" />
-                        </linearGradient>
-                        <linearGradient id="mock-s2" x1="0%" y1="100%" x2="100%" y2="0%">
-                          <stop offset="0%" stopColor="#06b6d4" />
-                          <stop offset="100%" stopColor="#22c55e" />
-                        </linearGradient>
-                        <linearGradient id="mock-core" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="#a855f7" />
-                          <stop offset="33%" stopColor="#ec4899" />
-                          <stop offset="66%" stopColor="#06b6d4" />
-                          <stop offset="100%" stopColor="#22c55e" />
-                        </linearGradient>
-                      </defs>
-                      <path d="M 56 56 C 56 90, 90 95, 100 100 C 110 105, 144 110, 144 144" stroke="url(#mock-s2)" strokeWidth="16" strokeLinecap="round" fill="none" opacity="0.35" />
-                      <path d="M 144 56 C 144 90, 110 95, 100 100 C 90 105, 56 110, 56 144" stroke="url(#mock-s1)" strokeWidth="16" strokeLinecap="round" fill="none" />
-                      <path d="M 100 100 C 110 105, 144 110, 144 144" stroke="url(#mock-s2)" strokeWidth="16" strokeLinecap="round" fill="none" />
-                      <circle cx="100" cy="100" r="10" fill="#141416" />
-                      <circle cx="100" cy="100" r="7" fill="url(#mock-core)" />
-                      <circle cx="100" cy="100" r="3" fill="white" />
-                      <circle cx="144" cy="56" r="6" fill="#ec4899" />
-                      <circle cx="56" cy="56" r="6" fill="#06b6d4" />
-                      <circle cx="56" cy="144" r="6" fill="#a855f7" />
-                      <circle cx="144" cy="144" r="6" fill="#22c55e" />
-                    </svg>
-                    <span className="text-[12px] font-bold text-[#e4e4e7] tracking-tight">
-                      payload<span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">twist</span>
-                    </span>
-                    <span className="text-[8px] bg-white/[0.06] text-[#71717a] px-1.5 py-0.5 rounded font-mono">v1.0</span>
-                  </div>
-                  {/* Sun/Moon editor theme toggle */}
-                  <div className="flex items-center bg-white/[0.04] rounded-full p-0.5">
-                    <div className="p-1 rounded-full text-[#71717a]">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="12" cy="12" r="5" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2" /></svg>
-                    </div>
-                    <div className="p-1 rounded-full bg-purple-600 text-white">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action bar */}
-                <div className="px-3 py-1.5 border-b border-white/[0.06] flex items-center gap-1.5">
-                  {/* Gradient export pill */}
-                  <div className="flex items-center gap-1 bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 text-white rounded-full px-2.5 py-1 text-[10px] font-medium">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" /></svg>
-                    Export
-                    <span className="text-[8px] bg-white/20 px-1 rounded-full">12</span>
-                  </div>
-                  {/* Reset button */}
-                  <div className="w-5 h-5 rounded flex items-center justify-center text-[#71717a] hover:text-red-400">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 102.13-9.36L1 10" /></svg>
-                  </div>
-                  <div className="w-px h-3.5 bg-white/[0.06]" />
-                  <div className="flex gap-0.5">
-                    <div className="w-5 h-5 rounded flex items-center justify-center text-[#71717a]">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><polyline points="14 2 8 8 14 14" /></svg>
-                    </div>
-                    <div className="w-5 h-5 rounded flex items-center justify-center text-[#71717a]">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><polyline points="10 2 16 8 10 14" /></svg>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Tab bar — 6 tabs */}
-                <div className="flex gap-0.5 px-2 py-1.5 border-b border-white/[0.06] overflow-hidden">
-                  {['General', 'UI Elements', 'Fields', 'Views', 'Dashboard', 'Overlays'].map((tab, i) => (
-                    <div
-                      key={tab}
-                      className={`text-[8px] px-1.5 py-1 rounded font-medium whitespace-nowrap ${
-                        i === 0
-                          ? 'bg-purple-600 text-white'
-                          : 'text-[#71717a]'
-                      }`}
-                    >
-                      {tab}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Scrollable controls mockup */}
-                <div className="flex-1 p-3 flex flex-col gap-4 overflow-hidden">
-                  {/* Color scale section */}
-                  <div>
-                    <span className="text-[9px] uppercase tracking-wider text-[#71717a] font-medium">Brand ramp</span>
-                    <div className="mt-2 h-4 rounded-md overflow-hidden flex">
-                      {['#e5f4ff', '#bde3ff', '#80caff', '#0d99ff', '#007be5', '#0768cf', '#034ac1', '#093077', '#0d193f'].map((c, i) => (
-                        <div key={i} className="flex-1" style={{ backgroundColor: c }} />
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Theme colors */}
-                  <div>
-                    <span className="text-[9px] uppercase tracking-wider text-[#71717a] font-medium">Surfaces</span>
-                    <div className="mt-2 flex flex-col gap-2">
-                      {[
-                        { label: '--color-bg', color: '#ffffff' },
-                        { label: '--color-text', color: '#1c1917' },
-                        { label: '--color-bg-brand', color: '#0d99ff' },
-                      ].map((item) => (
-                        <div key={item.label} className="flex items-center justify-between">
-                          <span className="text-[9px] font-mono text-[#71717a]">{item.label}</span>
-                          <div className="w-5 h-5 rounded border border-white/[0.08]" style={{ backgroundColor: item.color }} />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Typography */}
-                  <div>
-                    <span className="text-[9px] uppercase tracking-wider text-[#71717a] font-medium">Typography</span>
-                    <div className="mt-2 rounded border border-white/[0.08] bg-white/[0.04] px-2.5 py-1.5 text-[10px] text-[#e4e4e7] flex items-center justify-between">
-                      <span>DM Sans</span>
-                      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2" aria-hidden="true"><polyline points="6 9 12 15 18 9" /></svg>
-                    </div>
-                  </div>
-
-                  {/* Layout */}
-                  <div>
-                    <span className="text-[9px] uppercase tracking-wider text-[#71717a] font-medium">Roundness</span>
-                    <div className="mt-2 flex items-center gap-2">
-                      <div className="flex-1 h-1.5 rounded-full bg-white/[0.06]">
-                        <div className="w-2/5 h-full rounded-full bg-gradient-to-r from-purple-500 to-pink-500" />
-                      </div>
-                      <span className="text-[9px] font-mono text-[#71717a]">8px</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* ── Resize handle ── */}
-              <div className="w-[5px] shrink-0 bg-white/[0.04] flex items-center justify-center">
-                <svg width="8" height="12" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2" opacity="0.5" aria-hidden="true"><line x1="9" y1="4" x2="9" y2="20" /><line x1="15" y1="4" x2="15" y2="20" /></svg>
-              </div>
-
-              {/* ── Iframe preview (right) ── */}
-              <div className="flex-1 flex flex-col">
-                {/* Preview tabs */}
-                <div className="flex items-center justify-between px-3 py-1.5 bg-[#141416] border-b border-white/[0.06]">
-                  <div className="flex gap-1">
-                    {['Admin', 'Showcase', 'Custom'].map((tab, i) => (
-                      <div
-                        key={tab}
-                        className={`text-[9px] px-2 py-0.5 rounded font-medium ${
-                          i === 0
-                            ? 'bg-white/[0.08] text-[#e4e4e7]'
-                            : 'text-[#71717a]'
-                        }`}
-                      >
-                        {tab}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Toolbar */}
-                <div className="flex items-center justify-between px-3 py-1.5 bg-[#141416] border-b border-white/[0.06]">
-                  <span className="text-[10px] font-mono text-[#71717a]">/admin</span>
-                  <div className="flex items-center gap-1">
-                    <div className="w-5 h-5 rounded flex items-center justify-center bg-purple-600">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" aria-hidden="true"><circle cx="12" cy="12" r="5" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2" /></svg>
-                    </div>
-                    <div className="w-5 h-5 rounded flex items-center justify-center text-[#71717a]">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
-                    </div>
-                    {/* Reload button */}
-                    <div className="w-5 h-5 rounded flex items-center justify-center text-[#71717a]">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 102.13-9.36L1 10" /></svg>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Payload admin mockup */}
-                <div className="flex-1 bg-white p-6">
-                  <div className="flex gap-5 h-full">
-                    {/* Payload nav */}
-                    <div className="w-[140px] shrink-0 flex flex-col gap-1">
-                      <div className="flex items-center gap-2 mb-4">
-                        <div className="w-6 h-6 rounded bg-[#0d1117]" />
-                        <span className="text-[11px] font-semibold text-[#1c1917]">My Project</span>
-                      </div>
-                      {['Dashboard', 'Posts', 'Media', 'Users', 'Settings'].map((item, i) => (
-                        <div
-                          key={item}
-                          className={`rounded px-2.5 py-1.5 text-[10px] ${
-                            i === 1
-                              ? 'bg-[#f0ede8] text-[#1c1917] font-medium'
-                              : 'text-[#78726c]'
-                          }`}
-                        >
-                          {item}
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Payload content area */}
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="text-sm font-semibold text-[#1c1917]">Posts</span>
-                        <div className="rounded bg-[#0d1117] px-3 py-1.5 text-[10px] font-medium text-white">
-                          Create New
-                        </div>
-                      </div>
-                      {['Getting Started with Payload', 'Customizing Your Dashboard', 'Working with Collections'].map(
-                        (title, i) => (
-                          <div
-                            key={title}
-                            className="flex items-center justify-between rounded border border-[#e5e2dc] px-4 py-3 mb-2"
-                          >
-                            <span className="text-[11px] text-[#1c1917]">{title}</span>
-                            <span className="text-[9px] text-[#78726c] font-mono">
-                              {['Published', 'Draft', 'Published'][i]}
-                            </span>
-                          </div>
-                        ),
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Link href="/editor" aria-label="Open the editor">
+              <Image
+                src="/editor-screenshot.png"
+                alt="The payloadtwist editor: the Components tab on the left giving the sidebar a navy background, and a real Payload v4 admin on the right showing it live"
+                width={2880}
+                height={1720}
+                sizes="(min-width: 1024px) 1024px, 100vw"
+                className="w-full h-auto"
+                priority
+              />
+            </Link>
           </div>
 
-          <p className="mt-6 text-center text-xs text-[var(--lp-text-ghost)]">
-            The editor runs alongside Payload in the same Next.js app — same-origin iframe, zero CORS issues
+          <p className="mt-6 text-center text-sm text-[var(--lp-text-faint)]">
+            Shown: the Corporate preset, with the Components tab turning only the sidebar navy. The preview is a real Payload v4 admin.
           </p>
         </div>
       </section>
