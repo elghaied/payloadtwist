@@ -29,3 +29,19 @@ export const demo = (config: CollectionConfig): CollectionConfig => ({
   hooks: { ...config.hooks, beforeOperation: [readOnly] },
 })
 
+
+// Payload's internal collections (payload-preferences, payload-locked-documents, …) skip the hook
+// above, and the demo account is shared: writes over HTTP would leak between visitors and could fill
+// the in-memory DB. Payload's own server-side preference writes use the Local API and stay allowed.
+const MAX_BODY_BYTES = 2 * 1024 * 1024
+
+const reject = (status: number, message: string) => Response.json({ errors: [{ message }] }, { status })
+
+/** Guard for the demo's REST API: a Response to short-circuit with, or null to continue. */
+export function guardDemoRequest(request: Request): Response | null {
+  if (request.method === 'GET' || request.method === 'OPTIONS') return null
+  if (Number(request.headers.get('content-length') ?? 0) > MAX_BODY_BYTES) return reject(413, 'Request too large.')
+  const slug = new URL(request.url).pathname.split('/').filter(Boolean)[1] ?? ''
+  if (slug.startsWith('payload-')) return reject(403, 'This is a read-only preview. Changes are not saved.')
+  return null
+}
