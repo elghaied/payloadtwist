@@ -1,8 +1,8 @@
 /* ── Landing page styles ── */
 
 .landing {
-  --font-display: 'Syne', sans-serif;
-  --font-body: 'Outfit', sans-serif;
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-body: 'Geist', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
   /* ── Light mode tokens (default) ── */
@@ -43,11 +43,11 @@
   --lp-section-label-alt: rgba(168, 85, 247, 0.6);
   --lp-section-label-green: rgba(34, 197, 94, 0.6);
 
-  --lp-code-comment: rgba(26, 26, 46, 0.3);
-  --lp-code-selector: rgba(126, 34, 206, 0.7);
-  --lp-code-prop: rgba(6, 132, 164, 0.8);
-  --lp-code-value: rgba(190, 50, 120, 0.7);
-  --lp-code-punct: rgba(26, 26, 46, 0.4);
+  --lp-code-comment: rgba(26, 26, 46, 0.6);
+  --lp-code-selector: #6d28d9;
+  --lp-code-prop: #0e7490;
+  --lp-code-value: #be185d;
+  --lp-code-punct: rgba(26, 26, 46, 0.65);
 
   --lp-logo-center: #f8f8fc;
 
@@ -92,17 +92,20 @@
   --lp-section-label-alt: rgba(168, 85, 247, 0.5);
   --lp-section-label-green: rgba(34, 197, 94, 0.5);
 
-  --lp-code-comment: rgba(255, 255, 255, 0.2);
-  --lp-code-selector: rgba(192, 160, 255, 0.6);
-  --lp-code-prop: rgba(103, 210, 223, 0.5);
-  --lp-code-value: rgba(236, 130, 180, 0.6);
-  --lp-code-punct: rgba(255, 255, 255, 0.3);
+  --lp-code-comment: rgba(255, 255, 255, 0.55);
+  --lp-code-selector: #c4b5fd;
+  --lp-code-prop: #67e8f9;
+  --lp-code-value: #f9a8d4;
+  --lp-code-punct: rgba(255, 255, 255, 0.6);
 
   --lp-logo-center: #08080c;
 }
 
 .landing .font-display {
   font-family: var(--font-display);
+  /* Instrument Serif has a single weight: never fake-bold it */
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
 .landing .font-mono {

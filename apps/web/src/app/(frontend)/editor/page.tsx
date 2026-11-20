@@ -37,6 +37,7 @@ import { TypeSection } from '@/components/editor/sections/TypeSection'
 import { LogoMark } from '@/components/Logo'
 import { SavePresetDialog } from '@/components/presets/SavePresetDialog'
 import { getPresetById } from '@/lib/actions/presets'
+import { presetTheme, THEME_PRESETS } from '@/payload-theme/presets'
 import type { ThemeConfig } from '@/payload-theme/theme'
 import { useSession } from '@/lib/auth-client'
 import { buildThemeCss } from '@/payload-theme/css'
@@ -165,6 +166,15 @@ function Editor() {
     [loadTheme],
   )
 
+  // ?theme=<built-in id> (links from the landing lookbook) starts from that built-in theme
+  useEffect(() => {
+    // No saved preset can be open on arrival, so only the store and the URL need updating
+    const preset = THEME_PRESETS.find((p) => p.id === searchParams.get('theme'))
+    if (!preset) return
+    loadTheme(presetTheme(preset))
+    window.history.replaceState(null, '', '/editor')
+  }, [searchParams, loadTheme])
+
   // Keyboard: ⌘/Ctrl+Z undo, ⇧ for redo (ignored while typing)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -214,7 +224,7 @@ function Editor() {
         <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--pt-border)]">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <LogoMark size={22} />
-            <span className="text-sm font-bold tracking-tight" style={{ fontFamily: "'Syne', sans-serif" }}>
+            <span className="text-sm font-semibold tracking-tight">
               payload
               <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">twist</span>
             </span>

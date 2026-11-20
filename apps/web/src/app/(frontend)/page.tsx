@@ -2,119 +2,97 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { ArchitectureDiagram } from '@/components/architecture/ArchitectureDiagram'
 import { UserMenu } from '@/components/auth/UserMenu'
 import { LogoMark, Wordmark } from '@/components/Logo'
+import { contrastRatio, flatten } from '@/payload-theme/color'
 import { buildThemeCss } from '@/payload-theme/css'
+import { presetTheme, THEME_PRESETS } from '@/payload-theme/presets'
+import { resolveAll } from '@/payload-theme/schema'
 import { defaultTheme, setFont, setRoundness, setToken } from '@/payload-theme/theme'
 import './landing.css'
+import './lookbook.css'
 
 export const metadata: Metadata = {
   title: 'payloadtwist — Visual Theme Editor for Payload CMS',
   description:
-    'A visual theme editor for the Payload v4 admin. Colors, backgrounds, shape, spacing, fonts and individual components on a live admin, then export clean custom.css or an installable theme.',
+    'A visual theme editor for the Payload v4 admin. Start from a look, change colors, shape, spacing, fonts or a single component on a live admin, and export custom.css or an installable theme.',
   openGraph: {
     title: 'payloadtwist — Visual Theme Editor for Payload CMS',
-    description:
-      'Design your Payload v4 admin visually on a live admin, with every control explained, then export clean CSS or a theme package.',
+    description: 'Your Payload admin, dressed properly. A visual theme editor for Payload v4.',
   },
 }
 
-/* ─────────────────────────────────────────────────
-   Animated Logo with orbit ring + pulsing core
-   ───────────────────────────────────────────────── */
+// ─── Lookbook data: real exports of the built-in presets ─────────────────────
 
-function AnimatedLogo({ size = 180 }: { size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 200 200"
-      fill="none"
-      aria-hidden="true"
-      style={{ filter: 'drop-shadow(0 0 60px rgba(168, 85, 247, 0.2))' }}
-    >
-      <defs>
-        <linearGradient id="hero-strand1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#a855f7" />
-          <stop offset="100%" stopColor="#ec4899" />
-        </linearGradient>
-        <linearGradient id="hero-strand2" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#06b6d4" />
-          <stop offset="100%" stopColor="#22c55e" />
-        </linearGradient>
-        <linearGradient id="hero-core" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#a855f7" />
-          <stop offset="33%" stopColor="#ec4899" />
-          <stop offset="66%" stopColor="#06b6d4" />
-          <stop offset="100%" stopColor="#22c55e" />
-        </linearGradient>
-        <linearGradient id="hero-ring" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#a855f7" stopOpacity="0.6" />
-          <stop offset="50%" stopColor="#ec4899" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="#06b6d4" stopOpacity="0.6" />
-        </linearGradient>
-        <filter id="hero-glow">
-          <feGaussianBlur stdDeviation="3" result="b" />
-          <feMerge>
-            <feMergeNode in="b" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-        <filter id="hero-soft-glow">
-          <feGaussianBlur stdDeviation="6" result="b" />
-          <feMerge>
-            <feMergeNode in="b" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
+const INK = '#17141f'
 
-      {/* Orbiting ring */}
-      <g className="logo-orbit">
-        <circle cx="100" cy="100" r="88" stroke="url(#hero-ring)" strokeWidth="1" fill="none" opacity="0.4" />
-        <circle cx="100" cy="12" r="3" fill="#a855f7" opacity="0.8" />
-        <circle cx="188" cy="100" r="2.5" fill="#ec4899" opacity="0.6" />
-        <circle cx="100" cy="188" r="2" fill="#06b6d4" opacity="0.7" />
-      </g>
-
-      {/* Back strand */}
-      <path d="M 56 56 C 56 90, 90 95, 100 100 C 110 105, 144 110, 144 144" stroke="url(#hero-strand2)" strokeWidth="14" strokeLinecap="round" fill="none" opacity="0.35" />
-      {/* Front strand */}
-      <path d="M 144 56 C 144 90, 110 95, 100 100 C 90 105, 56 110, 56 144" stroke="url(#hero-strand1)" strokeWidth="14" strokeLinecap="round" fill="none" filter="url(#hero-glow)" />
-      {/* Crossover */}
-      <path d="M 100 100 C 110 105, 144 110, 144 144" stroke="url(#hero-strand2)" strokeWidth="14" strokeLinecap="round" fill="none" filter="url(#hero-glow)" />
-
-      {/* Connecting lines */}
-      <line x1="56" y1="56" x2="93" y2="93" stroke="#06b6d4" strokeWidth="1" opacity="0.2" />
-      <line x1="144" y1="56" x2="107" y2="93" stroke="#ec4899" strokeWidth="1" opacity="0.2" />
-      <line x1="56" y1="144" x2="93" y2="107" stroke="#a855f7" strokeWidth="1" opacity="0.2" />
-      <line x1="144" y1="144" x2="107" y2="107" stroke="#22c55e" strokeWidth="1" opacity="0.2" />
-
-      {/* Center nexus */}
-      <circle cx="100" cy="100" r="10" style={{ fill: 'var(--lp-logo-center)' }} />
-      <circle cx="100" cy="100" r="7" fill="url(#hero-core)" filter="url(#hero-soft-glow)" className="logo-core-pulse" />
-      <circle cx="100" cy="100" r="3" fill="white" opacity="0.9" />
-
-      {/* Terminal nodes */}
-      <circle cx="144" cy="56" r="7" fill="#ec4899" filter="url(#hero-glow)" />
-      <circle cx="144" cy="56" r="3" fill="white" opacity="0.8" />
-      <circle cx="56" cy="56" r="7" fill="#06b6d4" filter="url(#hero-glow)" />
-      <circle cx="56" cy="56" r="3" fill="white" opacity="0.8" />
-      <circle cx="56" cy="144" r="7" fill="#a855f7" filter="url(#hero-glow)" />
-      <circle cx="56" cy="144" r="3" fill="white" opacity="0.8" />
-      <circle cx="144" cy="144" r="7" fill="#22c55e" filter="url(#hero-glow)" />
-      <circle cx="144" cy="144" r="3" fill="white" opacity="0.8" />
-    </svg>
-  )
+interface Spread {
+  id: string
+  mode: 'light' | 'dark'
+  shows: string
 }
 
+const SPREADS: Spread[] = [
+  { id: 'midnight', mode: 'dark', shows: 'The dashboard in dark mode' },
+  { id: 'light-cream', mode: 'light', shows: 'The posts list' },
+  { id: 'paper', mode: 'light', shows: 'Editing a post' },
+  { id: 'brutal', mode: 'light', shows: 'The dashboard' },
+  { id: 'sunset', mode: 'light', shows: 'The dashboard' },
+  { id: 'terminal', mode: 'dark', shows: 'The posts list in dark mode' },
+  { id: 'forest', mode: 'light', shows: 'Editing a post' },
+  { id: 'nord', mode: 'light', shows: 'The dashboard' },
+]
 
-/* ─────────────────────────────────────────────────
-   Data
-   ───────────────────────────────────────────────── */
+const MORE = ['candy', 'mono', 'payload']
 
-// Real output of the exporter for a small sample theme — the landing never drifts from the product
+/** A spread wears its theme: sidebar (or page) color, a readable ink, and the theme's heading font. */
+function dress({ id, mode }: Spread) {
+  const preset = THEME_PRESETS.find((p) => p.id === id)!
+  const theme = presetTheme(preset)
+  const r = resolveAll(mode, theme)
+  const side = theme.components.sidebar
+  const sideBg = mode === 'dark' ? (side?.dark?.bg ?? side?.light?.bg) : side?.light?.bg
+  const bg = sideBg ?? r['--color-bg']
+  const solid = bg.match(/#[0-9a-f]{6}/i)?.[0] ?? flatten(bg, mode === 'dark' ? '#000000' : '#ffffff') ?? '#ffffff'
+  const ink = contrastRatio('#ffffff', solid) >= contrastRatio(INK, solid) ? '#ffffff' : INK
+  return { preset, bg, ink, font: preset.fonts?.heading ?? 'Inter' }
+}
+
+const DRESSED = SPREADS.map((s) => ({ ...s, ...dress(s) }))
+
+const THEME_FONTS_URL = `https://fonts.googleapis.com/css2?${[...new Set(DRESSED.map((d) => d.font))]
+  .map((f) => `family=${f.replace(/ /g, '+')}:wght@600`)
+  .join('&')}&display=swap`
+
+const STEPS = [
+  {
+    title: 'Set your colors',
+    text: 'Pick a brand color and a few others. payloadtwist builds every shade Payload needs, for light and dark mode, and keeps labels readable on top.',
+    image: 'ch-colors',
+  },
+  {
+    title: 'Shape it',
+    text: 'Corners, borders and shadows. Choose a style, or set exact values: each corner size, each shadow level’s offset, blur and color.',
+    image: 'ch-shape',
+  },
+  {
+    title: 'Set the type',
+    text: 'Any Google Font for text, headings and code, then size, line height, weight and letter spacing for every text level.',
+    image: 'ch-fonts',
+  },
+  {
+    title: 'Style one element',
+    text: 'A navy sidebar, uppercase table headers, airier table rows. Change one part of the admin without touching the rest.',
+    image: 'ch-components',
+  },
+  {
+    title: 'Take it home',
+    text: 'Download a custom.css to paste into your project, or a theme package your editors can pick in their account settings.',
+    image: 'ch-export',
+  },
+]
+
+// Real output of the exporter for a small sample theme — the page never drifts from the product
 const SAMPLE_CSS = buildThemeCss(
   setToken(
     setToken(setRoundness(setFont(defaultTheme(), 'body', 'DM Sans'), 8), '--color-bg', '#faf7ed', 'light'),
@@ -134,97 +112,14 @@ function cssLineClass(line: string): string {
   return 'text-[var(--lp-code-selector)]'
 }
 
-const features = [
-  {
-    title: 'A Real Payload v4 Admin',
-    description:
-      'The preview is a real Payload v4 admin: dashboard, lists, every field type, every rich-text node, drawers, media. Or connect your own admin. Every change shows up instantly.',
-    gradient: 'from-purple-500/10 to-pink-500/10',
-    border: 'border-purple-500/10',
-  },
-  {
-    title: 'Seeds, Not 484 Pickers',
-    description:
-      'A handful of seed colors regenerate Payload\'s color scales along its own lightness curve. Labels on brand colors switch between white and dark for contrast automatically.',
-    gradient: 'from-cyan-500/10 to-green-500/10',
-    border: 'border-cyan-500/10',
-  },
-  {
-    title: 'Every Control Explained',
-    description:
-      'Each setting says in plain words what it changes. Hover one and the parts of the admin it affects are outlined in the preview.',
-    gradient: 'from-pink-500/10 to-orange-500/10',
-    border: 'border-pink-500/10',
-  },
-  {
-    title: 'Exact Control',
-    description:
-      'Start from a preset, then fine-tune with a slider or a typed value: every corner size, border widths, shadows per level, and size, line height, weight and letter spacing for each text level.',
-    gradient: 'from-amber-500/10 to-yellow-500/10',
-    border: 'border-amber-500/10',
-  },
-  {
-    title: 'Spacing, Padding & Margin',
-    description:
-      'Make the whole admin tighter or roomier with one scale, set the page padding and field gaps, then adjust padding and margin on buttons, cards, table cells or inputs.',
-    gradient: 'from-green-500/10 to-emerald-500/10',
-    border: 'border-green-500/10',
-  },
-  {
-    title: 'Style One Element',
-    description:
-      'Global settings change the whole admin; Components targets a single part: a navy sidebar, uppercase table headers, pill-shaped buttons. Light and dark values for each.',
-    gradient: 'from-violet-500/10 to-indigo-500/10',
-    border: 'border-violet-500/10',
-  },
-  {
-    title: 'Light, Dark & Contrast',
-    description:
-      'Every color has a light and a dark value, with WCAG readability checks that account for translucent colors. Preview enhanced-contrast mode and phone or tablet widths too.',
-    gradient: 'from-sky-500/10 to-blue-500/10',
-    border: 'border-sky-500/10',
-  },
-  {
-    title: 'Presets: Built-in, Yours, Shared',
-    description:
-      'Twelve built-in themes to start from. Save your own, keep editing them, share a link, and open themes the community shared, all from the editor.',
-    gradient: 'from-rose-500/10 to-pink-500/10',
-    border: 'border-rose-500/10',
-  },
-  {
-    title: 'custom.css or a Theme Package',
-    description:
-      'Export a minimal custom.css (no !important, since Payload v4 is layered) or a .zip theme package your editors can pick in payload-admin-ui-themes.',
-    gradient: 'from-fuchsia-500/10 to-purple-500/10',
-    border: 'border-fuchsia-500/10',
-  },
-]
+const shot = (name: string) => `/lookbook/${name}.webp`
 
-const workflow = [
-  {
-    num: '1',
-    title: 'Open the editor',
-    description: 'Visit /editor. A real Payload v4 admin loads next to the controls — or connect your own.',
-  },
-  {
-    num: '2',
-    title: 'Tweak visually',
-    description: 'Start from a preset, pick seed colors, then fine-tune backgrounds, corners, spacing, fonts or single components. Hover any control to see what it changes.',
-  },
-  {
-    num: '3',
-    title: 'Export your theme',
-    description: 'Download custom.css for your Payload project, or a theme package your editors can pick in their settings. Save it as a preset to come back or share.',
-  },
-]
-
-/* ─────────────────────────────────────────────────
-   Page
-   ───────────────────────────────────────────────── */
+// ─── Page ───────────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
   return (
-    <div id="main-content" className="landing">
+    <div id="main-content" className="landing lookbook">
+      <link rel="stylesheet" href={THEME_FONTS_URL} precedence="default" />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -233,224 +128,236 @@ export default function LandingPage() {
             '@type': 'WebApplication',
             name: 'payloadtwist',
             url: 'https://payloadtwist.com',
-            description: 'A visual CSS theme editor for the Payload CMS admin panel.',
+            description: 'A visual theme editor for the Payload CMS v4 admin panel.',
             applicationCategory: 'DeveloperApplication',
             operatingSystem: 'Web',
-            offers: {
-              '@type': 'Offer',
-              price: '0',
-              priceCurrency: 'USD',
-            },
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
           }),
         }}
       />
 
-      {/* ═══ Nav ═══ */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--lp-nav-border)] bg-[var(--lp-nav-bg)] backdrop-blur-xl">
-        <div className="mx-auto max-w-6xl flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <LogoMark size={28} />
+      {/* Nav */}
+      <nav className="fixed top-0 inset-x-0 z-50 border-b border-[var(--lb-line)] bg-[var(--lb-paper)]/85 backdrop-blur-xl">
+        <div className="mx-auto max-w-7xl flex items-center justify-between gap-4 px-6 py-3.5">
+          <Link href="/" className="flex items-center gap-2.5" aria-label="payloadtwist home">
+            <LogoMark size={26} />
             <Wordmark className="text-lg" />
-          </div>
-          <div className="hidden md:flex items-center gap-8 text-sm text-[var(--lp-text-muted)]">
-            <a href="#how-it-works" className="hover:text-[var(--lp-text)] transition-colors">How it works</a>
-            <a href="#features" className="hover:text-[var(--lp-text)] transition-colors">Features</a>
-            <a href="#preview" className="hover:text-[var(--lp-text)] transition-colors">Preview</a>
-            <Link href="/presets" className="hover:text-[var(--lp-text)] transition-colors">Themes</Link>
+          </Link>
+          <div className="hidden md:flex items-center gap-8 text-[15px] lb-muted">
+            <a href="#lookbook" className="hover:text-[var(--lb-ink)]">Lookbook</a>
+            <a href="#how" className="hover:text-[var(--lb-ink)]">How it works</a>
+            <Link href="/presets" className="hover:text-[var(--lb-ink)]">Shared themes</Link>
           </div>
           <div className="flex items-center gap-3">
             <UserMenu />
             <ThemeToggle />
-            <Link
-              href="/editor"
-              className="rounded-full bg-[var(--lp-ghost-bg)] border border-[var(--lp-border-medium)] px-5 py-2 text-sm font-medium text-[var(--lp-text-secondary)] hover:bg-[var(--lp-ghost-bg-hover)] hover:border-[var(--lp-border-hover)] transition-all"
-            >
-              Open Editor
+            <Link href="/editor" className="lb-button !py-2 !px-4 text-sm !hidden sm:!inline-flex">
+              Open the editor
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* ═══ Hero ═══ */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-24 noise">
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute top-[15%] left-[20%] w-[600px] h-[400px] rounded-full bg-purple-500/[0.04] blur-[120px]" />
-          <div className="absolute top-[25%] right-[15%] w-[500px] h-[350px] rounded-full bg-pink-500/[0.03] blur-[120px]" />
-          <div className="absolute bottom-[20%] left-[40%] w-[400px] h-[300px] rounded-full bg-cyan-500/[0.025] blur-[120px]" />
-        </div>
-
-        <div className="relative z-10 flex flex-col items-center text-center max-w-4xl gap-8">
-          {/* Animated logo */}
-          <div className="anim-fade-up">
-            <div className="anim-float">
-              <AnimatedLogo size={160} />
-            </div>
-          </div>
-
-          <div className="anim-fade-up anim-delay-1 inline-flex items-center gap-2 rounded-full border border-[var(--lp-badge-border)] bg-[var(--lp-badge-bg)] px-4 py-1.5 text-xs font-medium tracking-wide text-[var(--lp-badge-text)] uppercase">
-            <span className="h-1.5 w-1.5 rounded-full bg-purple-400 animate-pulse" />
-            Theme editor for Payload v4
-          </div>
-
-          {/* Wordmark */}
-          <div className="anim-fade-up anim-delay-1">
-            <span className="font-display font-extrabold text-[44px] tracking-[-2px]">
-              payload<span className="text-gradient-shimmer">twist</span>
-            </span>
-          </div>
-
-          <h1 className="anim-fade-up anim-delay-2 font-display font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-7xl tracking-[-0.03em] leading-[0.9]">
-            Design your Payload
-            <br />
-            <span className="text-gradient-shimmer">admin panel</span> visually
-          </h1>
-
-          <p className="anim-fade-up anim-delay-3 max-w-xl text-lg text-[var(--lp-text-faint)] leading-relaxed font-light">
-            Built for Payload v4&apos;s token system. Change colors, backgrounds, corners, spacing, fonts or a single
-            component on a real admin, with every control explained. Export clean CSS or a theme package.
+      {/* Hero: before and after */}
+      <header className="mx-auto max-w-7xl px-6 pt-32 pb-24 lg:pt-40 lg:pb-32 grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <div className="lg:col-span-5">
+          <h1 className="lb-display text-[clamp(3.25rem,7vw,6.5rem)]">Your Payload admin, dressed properly.</h1>
+          <p className="mt-8 max-w-md text-lg leading-relaxed lb-muted">
+            payloadtwist is a visual theme editor for the Payload v4 admin. Start from a look, change anything on a
+            live admin, and take home a custom.css.
           </p>
-
-          <div className="anim-fade-up anim-delay-4 flex flex-col sm:flex-row items-center gap-4 mt-2">
-            <Link
-              href="/editor"
-              className="group relative inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-sm font-semibold text-white overflow-hidden transition-all hover:shadow-[0_0_40px_rgba(168,85,247,0.15)]"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 opacity-90 transition-opacity group-hover:opacity-100" />
-              <span className="relative z-10">Open the Editor</span>
-              <svg className="relative z-10 w-4 h-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <line x1="5" y1="12" x2="19" y2="12" />
-                <polyline points="12 5 19 12 12 19" />
-              </svg>
+          <div className="mt-10 flex flex-wrap items-center gap-6">
+            <Link href="/editor" className="lb-button">
+              Open the editor
             </Link>
-            <a
-              href="#how-it-works"
-              className="inline-flex items-center gap-2.5 rounded-full border border-[var(--lp-border-medium)] bg-[var(--lp-ghost-bg)] px-7 py-3.5 text-sm font-medium text-[var(--lp-text-secondary)] hover:text-[var(--lp-text)] hover:border-[var(--lp-border-hover)] hover:bg-[var(--lp-ghost-bg-hover)] transition-all"
-            >
-              See how it works
+            <a href="#lookbook" className="lb-link text-[15px]">
+              See the lookbook
             </a>
           </div>
         </div>
 
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[var(--lp-text-ghost)] anim-fade-up anim-delay-6">
-          <span className="text-[10px] uppercase tracking-[3px] font-light">Scroll</span>
-          <div className="w-px h-8 bg-gradient-to-b from-[var(--lp-text-ghost)] to-transparent" />
+        <div className="lg:col-span-7 relative lg:aspect-[16/12]">
+          <figure className="lg:absolute lg:top-0 lg:left-0 lg:w-[80%]">
+            <figcaption className="mb-3 text-sm lb-muted">Payload, as installed</figcaption>
+            <Image
+              src={shot('stock')}
+              alt="A stock Payload v4 admin dashboard"
+              width={2880}
+              height={1800}
+              sizes="(min-width: 1024px) 45vw, 100vw"
+              className="lb-shot opacity-90"
+              priority
+            />
+          </figure>
+          <figure className="lb-after mt-10 lg:mt-0 lg:absolute lg:bottom-0 lg:right-0 lg:w-[82%]">
+            <Image
+              src={shot('corporate')}
+              alt="The same dashboard wearing the Corporate theme: a navy sidebar and a crisp white workspace"
+              width={2880}
+              height={1800}
+              sizes="(min-width: 1024px) 48vw, 100vw"
+              className="lb-shot"
+              priority
+            />
+            <figcaption className="mt-3 text-sm lb-muted text-right">The same admin, wearing Corporate</figcaption>
+          </figure>
         </div>
-      </section>
+      </header>
 
-      {/* ═══ How it works ═══ */}
-      <section id="how-it-works" className="relative py-32 px-6">
-        <div className="mx-auto max-w-4xl">
-          <div className="text-center mb-20">
-            <span className="text-[10px] uppercase tracking-[4px] text-[var(--lp-section-label)] font-medium">How it works</span>
-            <h2 className="mt-4 font-display font-extrabold text-4xl sm:text-5xl tracking-[-0.02em] text-[var(--lp-heading)]">
-              Three steps to a <span className="text-gradient">custom admin</span>
-            </h2>
-          </div>
+      {/* Lookbook */}
+      <section id="lookbook" aria-labelledby="lookbook-title">
+        <div className="mx-auto max-w-7xl px-6 pb-20">
+          <h2 id="lookbook-title" className="lb-display text-[clamp(2.75rem,5vw,4.5rem)]">
+            The lookbook
+          </h2>
+          <p className="mt-5 max-w-xl text-lg leading-relaxed lb-muted">
+            Twelve built-in themes to start from. Every picture is a real Payload v4 admin wearing a theme that
+            payloadtwist exported.
+          </p>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {workflow.map((step) => (
-              <div key={step.num} className="flex flex-col items-center text-center gap-5">
-                <div className="step-num bg-gradient-to-br from-purple-600/80 to-pink-600/80 text-white">
-                  {step.num}
+        {DRESSED.map((d, i) => {
+          const flip = i % 2 === 1
+          return (
+            <article
+              key={d.id}
+              className="overflow-hidden py-20 lg:py-28"
+              style={{ background: d.bg, color: d.ink }}
+              aria-label={d.preset.name}
+            >
+              <div className="mx-auto max-w-7xl px-6 grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+                <div className={`lg:col-span-4 ${flip ? 'lg:order-2' : ''}`}>
+                  <h3
+                    className="text-[clamp(3rem,6vw,5.5rem)] leading-none tracking-tight"
+                    style={{ fontFamily: `'${d.font}', sans-serif`, fontWeight: 600 }}
+                  >
+                    {d.preset.name}
+                  </h3>
+                  <p className="mt-6 text-lg leading-relaxed" style={{ opacity: 0.85 }}>
+                    {d.preset.description}.
+                  </p>
+                  <p className="mt-2 text-[15px]" style={{ opacity: 0.75 }}>
+                    {d.shows}.
+                  </p>
+                  <Link href={`/editor?theme=${d.id}`} className="lb-link mt-8 inline-block text-[15px] font-medium">
+                    Try {d.preset.name} in the editor
+                  </Link>
                 </div>
-                <h3 className="font-display font-bold text-xl text-[var(--lp-heading)]">{step.title}</h3>
-                <p className="text-sm text-[var(--lp-text-faint)] leading-relaxed">{step.description}</p>
+                <div className={`lg:col-span-8 ${flip ? 'lg:order-1 lg:-ml-[6vw]' : 'lg:-mr-[6vw]'}`}>
+                  <Image
+                    src={shot(d.id)}
+                    alt={`${d.shows} of a Payload v4 admin wearing the ${d.preset.name} theme`}
+                    width={2880}
+                    height={1800}
+                    sizes="(min-width: 1024px) 66vw, 100vw"
+                    className="lb-shot"
+                  />
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </article>
+          )
+        })}
 
-      {/* ═══ Editor Preview Mockup ═══ */}
-      <section id="preview" className="relative py-32 px-6">
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center mb-16">
-            <span className="text-[10px] uppercase tracking-[4px] text-[var(--lp-section-label-alt)] font-medium">The Editor</span>
-            <h2 className="mt-4 font-display font-extrabold text-4xl tracking-[-0.02em] text-[var(--lp-heading)]">
-              Controls on the left. <span className="text-gradient">Live preview</span> on the right.
-            </h2>
+        <div className="mx-auto max-w-7xl px-6 py-20 lg:py-24">
+          <h3 className="lb-display text-[clamp(2rem,3.5vw,3rem)]">And a few more</h3>
+          <div className="mt-10 grid sm:grid-cols-3 gap-8">
+            {MORE.map((id) => {
+              const preset = THEME_PRESETS.find((p) => p.id === id)!
+              return (
+                <Link key={id} href={`/editor?theme=${id}`} className="group block">
+                  <Image
+                    src={shot(id === 'payload' ? 'stock' : id)}
+                    alt={`A Payload v4 admin wearing the ${preset.name} theme`}
+                    width={2880}
+                    height={1800}
+                    sizes="(min-width: 640px) 33vw, 100vw"
+                    className="lb-shot transition-transform group-hover:-translate-y-1"
+                  />
+                  <p className="mt-4 text-lg font-medium">{preset.name}</p>
+                  <p className="text-[15px] lb-muted">{preset.description}.</p>
+                </Link>
+              )
+            })}
           </div>
-
-          <div className="relative rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-surface)] overflow-hidden shadow-[0_0_80px_rgba(168,85,247,0.06)]">
-            <div className="flex items-center gap-2 px-5 py-3.5 border-b border-[var(--lp-border-subtle)] bg-[var(--lp-surface-2)]">
-              <div className="flex gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-[var(--lp-ghost-bg)]" />
-                <div className="w-2.5 h-2.5 rounded-full bg-[var(--lp-ghost-bg)]" />
-                <div className="w-2.5 h-2.5 rounded-full bg-[var(--lp-ghost-bg)]" />
-              </div>
-              <div className="ml-4 flex-1 h-6 rounded-md bg-[var(--lp-ghost-bg)] flex items-center justify-center">
-                <span className="text-[10px] text-[var(--lp-text-ghost)] font-mono">payloadtwist.com/editor</span>
-              </div>
-            </div>
-            <Link href="/editor" aria-label="Open the editor">
-              <Image
-                src="/editor-screenshot.png"
-                alt="The payloadtwist editor: the Components tab on the left giving the sidebar a navy background, and a real Payload v4 admin on the right showing it live"
-                width={2880}
-                height={1720}
-                sizes="(min-width: 1024px) 1024px, 100vw"
-                className="w-full h-auto"
-                priority
-              />
+          <p className="mt-12 text-[15px] lb-muted">
+            People share their own themes too.{' '}
+            <Link href="/presets" className="lb-link text-[var(--lb-ink)]">
+              Browse shared themes
             </Link>
-          </div>
-
-          <p className="mt-6 text-center text-sm text-[var(--lp-text-faint)]">
-            Shown: the Corporate preset, with the Components tab turning only the sidebar navy. The preview is a real Payload v4 admin.
           </p>
         </div>
       </section>
 
-      {/* ═══ Features ═══ */}
-      <section id="features" className="relative py-32 px-6">
-        <div className="mx-auto max-w-6xl">
-          <div className="text-center mb-20">
-            <span className="text-[10px] uppercase tracking-[4px] text-[var(--lp-section-label-alt)] font-medium">Features</span>
-            <h2 className="mt-4 font-display font-extrabold text-4xl sm:text-5xl tracking-[-0.02em] text-[var(--lp-heading)]">
-              Built for Payload v4&apos;s <span className="text-gradient">design tokens</span>
+      {/* Every control explained */}
+      <section className="border-t border-[var(--lb-line)]" aria-labelledby="explained-title">
+        <div className="mx-auto max-w-7xl px-6 py-24 lg:py-32">
+          <div className="max-w-2xl">
+            <h2 id="explained-title" className="lb-display text-[clamp(2.5rem,4.5vw,4rem)]">
+              Every control says what it changes
             </h2>
-            <p className="mt-4 max-w-lg mx-auto text-sm text-[var(--lp-text-faint)] leading-relaxed">
-              Payload v4 styles every component from raw color ramps and semantic roles with explicit light and dark values. payloadtwist edits exactly those tokens, so your theme survives upgrades.
+            <p className="mt-6 text-lg leading-relaxed lb-muted">
+              Each setting has a plain description. Hover one and the editor outlines everything it touches in the live
+              admin. Here, the brand color reaches buttons, checkboxes, pills and the selected tab.
             </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {features.map((f) => (
-              <div
-                key={f.title}
-                className={`group rounded-2xl border ${f.border} bg-gradient-to-br ${f.gradient} p-7 transition-all hover:border-[var(--lp-border-hover)] hover:shadow-[0_0_40px_rgba(168,85,247,0.04)]`}
-              >
-                <h3 className="font-display font-bold text-lg text-[var(--lp-heading)] mb-3">{f.title}</h3>
-                <p className="text-sm text-[var(--lp-text-faint)] leading-relaxed">{f.description}</p>
-              </div>
-            ))}
-          </div>
+          <Image
+            src={shot('ch-explained')}
+            alt="The editor with the Brand color hovered: every component it affects is outlined in the live admin preview"
+            width={2880}
+            height={1800}
+            sizes="(min-width: 1280px) 1232px, 100vw"
+            className="lb-shot mt-14"
+          />
         </div>
       </section>
 
-      {/* ═══ Architecture ═══ */}
-      <ArchitectureDiagram />
+      {/* How it works: a real sequence, so numbered */}
+      <section id="how" className="border-t border-[var(--lb-line)]" aria-labelledby="how-title">
+        <div className="mx-auto max-w-7xl px-6 py-24 lg:py-32">
+          <h2 id="how-title" className="lb-display text-[clamp(2.5rem,4.5vw,4rem)] max-w-2xl">
+            From a look to your custom.css
+          </h2>
+          <ol className="mt-16 space-y-20 lg:space-y-24">
+            {STEPS.map((step, i) => (
+              <li key={step.title} className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+                <span className="lb-display lg:col-span-1 text-6xl lb-muted" aria-hidden>
+                  {i + 1}
+                </span>
+                <div className="lg:col-span-5 lg:pt-3">
+                  <h3 className="text-2xl font-semibold tracking-tight">{step.title}</h3>
+                  <p className="mt-3 text-lg leading-relaxed lb-muted max-w-md">{step.text}</p>
+                </div>
+                <div className="lg:col-span-6">
+                  <Image
+                    src={shot(step.image)}
+                    alt={`The editor: ${step.title.toLowerCase()}`}
+                    width={step.image === 'ch-export' ? 1792 : 856}
+                    height={step.image === 'ch-export' ? 996 : 1200}
+                    sizes="(min-width: 1024px) 40vw, 100vw"
+                    className={`lb-shot bg-[var(--lb-panel)] ${step.image === 'ch-export' ? 'w-full' : 'w-full max-w-sm max-h-[420px] object-cover object-top'}`}
+                  />
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
 
-      {/* ═══ The Output ═══ */}
-      <section className="relative py-32 px-6">
-        <div className="mx-auto max-w-3xl">
-          <div className="text-center mb-16">
-            <span className="text-[10px] uppercase tracking-[4px] text-[var(--lp-section-label-green)] font-medium">The Output</span>
-            <h2 className="mt-4 font-display font-extrabold text-4xl tracking-[-0.02em] text-[var(--lp-heading)]">
-              Clean CSS you <span className="text-gradient">own</span>
+      {/* Output */}
+      <section className="border-t border-[var(--lb-line)]" aria-labelledby="output-title">
+        <div className="mx-auto max-w-7xl px-6 py-24 lg:py-32 grid lg:grid-cols-12 gap-12">
+          <div className="lg:col-span-5">
+            <h2 id="output-title" className="lb-display text-[clamp(2.5rem,4.5vw,4rem)]">
+              Plain CSS you own
             </h2>
-            <p className="mt-4 max-w-md mx-auto text-sm text-[var(--lp-text-faint)] leading-relaxed">
-              Only the tokens you changed, scoped so portaled menus and dark mode stay correct. Paste it into custom.css and you&apos;re done.
+            <p className="mt-6 text-lg leading-relaxed lb-muted max-w-md">
+              Only what you changed, with light and dark mode handled and no !important. Paste it into custom.css, or
+              download a theme package for payload-admin-ui-themes so your editors can switch themes themselves.
             </p>
           </div>
-
-          <div className="rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-surface)] overflow-hidden">
-            <div className="flex items-center gap-3 px-6 py-3 border-b border-[var(--lp-border-subtle)]">
-              <span className="text-[10px] uppercase tracking-[2px] text-[var(--lp-text-ghost)] font-medium">custom.css</span>
-              <div className="flex-1" />
-              <span className="text-[9px] text-[var(--lp-text-ghost)] font-mono">generated by payloadtwist</span>
-            </div>
-            <pre className="p-6 overflow-x-auto">
+          <div className="lg:col-span-7 rounded-[10px] border border-[var(--lb-line)] bg-[var(--lb-panel)] overflow-hidden">
+            <div className="px-5 py-3 border-b border-[var(--lb-line)] text-sm lb-muted">custom.css</div>
+            <pre className="p-5 overflow-x-auto max-h-[440px]">
               <code className="text-[13px] font-mono leading-relaxed whitespace-pre">
                 {SAMPLE_CSS.split('\n').map((line, i) => (
                   <span key={i} className={cssLineClass(line)}>
@@ -463,34 +370,22 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══ CTA ═══ */}
-      <section className="relative py-32 px-6 noise">
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute bottom-0 left-[30%] w-[700px] h-[400px] rounded-full bg-purple-500/[0.03] blur-[120px]" />
-        </div>
-        <div className="relative z-10 mx-auto max-w-2xl text-center flex flex-col items-center gap-8">
-          <LogoMark size={60} />
-          <h2 className="font-display font-extrabold text-4xl sm:text-5xl tracking-[-0.02em]">
-            Ready to <span className="text-gradient">twist</span>?
-          </h2>
-          <p className="text-[var(--lp-text-faint)] text-lg font-light max-w-md">
-            Stop guessing CSS variable names. Open the editor, design your admin panel visually, and export clean overrides.
-          </p>
-          <Link
-            href="/editor"
-            className="group relative inline-flex items-center gap-2.5 rounded-full px-8 py-4 text-sm font-semibold text-white overflow-hidden transition-all hover:shadow-[0_0_40px_rgba(168,85,247,0.15)]"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 opacity-90 transition-opacity group-hover:opacity-100" />
-            <span className="relative z-10">Open the Editor</span>
-            <svg className="relative z-10 w-4 h-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <line x1="5" y1="12" x2="19" y2="12" />
-              <polyline points="12 5 19 12 12 19" />
-            </svg>
-          </Link>
+      {/* Close */}
+      <section className="border-t border-[var(--lb-line)]">
+        <div className="mx-auto max-w-7xl px-6 py-28 lg:py-36 flex flex-col items-center text-center">
+          <LogoMark size={56} />
+          <h2 className="lb-display mt-8 text-[clamp(3rem,6vw,5.5rem)]">Dress your admin.</h2>
+          <p className="mt-6 text-lg lb-muted max-w-md">Free and open source, built for Payload v4. No plugin needed.</p>
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-6">
+            <Link href="/editor" className="lb-button">
+              Open the editor
+            </Link>
+            <a href="https://github.com/elghaied/payloadtwist" className="lb-link text-[15px]">
+              Source on GitHub
+            </a>
+          </div>
         </div>
       </section>
-
-      {/* Footer is rendered by (frontend)/layout.tsx */}
     </div>
   )
 }

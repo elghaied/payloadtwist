@@ -6,7 +6,7 @@ export default function GlobalNotFound() {
       <body style={{ margin: 0 }}>
         <div
           style={{
-            fontFamily: "'Outfit', sans-serif",
+            fontFamily: "'Geist', system-ui, sans-serif",
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

@@ -61,7 +61,7 @@ export function PresetDetailClient({
 
       <h1
         className="text-2xl font-bold text-[var(--lp-text)] mb-2"
-        style={{ fontFamily: "'Syne', sans-serif" }}
+        style={{ fontFamily: "'Instrument Serif', Georgia, serif", fontWeight: 400 }}
       >
         {preset.name}
       </h1>

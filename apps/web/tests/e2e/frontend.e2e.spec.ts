@@ -14,6 +14,13 @@ test.describe('Landing page', () => {
     await expect(page.getByRole('link', { name: /editor/i }).first()).toBeVisible()
     await expect(page.getByText("html [data-theme='dark'] {")).toBeVisible()
   })
+
+  test('lookbook spreads open their theme in the editor', async ({ page }) => {
+    await page.goto('/')
+    await page.getByRole('link', { name: 'Try Brutal in the editor' }).click()
+    await expect(page).toHaveURL(/\/editor$/)
+    await expect(page.getByRole('button', { name: /Export/ })).toContainText(/\d+/)
+  })
 })
 
 test.describe('Embedded Payload v4 admin', () => {

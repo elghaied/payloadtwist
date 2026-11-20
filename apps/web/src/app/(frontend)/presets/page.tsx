@@ -23,7 +23,7 @@ export default async function PresetsGalleryPage() {
         <div className="mb-8">
           <h1
             className="text-2xl font-bold text-[var(--lp-text)]"
-            style={{ fontFamily: "'Syne', sans-serif" }}
+            style={{ fontFamily: "'Instrument Serif', Georgia, serif", fontWeight: 400 }}
           >
             Theme Gallery
           </h1>

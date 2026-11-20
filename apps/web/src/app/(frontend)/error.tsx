@@ -14,7 +14,7 @@ export default function GlobalError({
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '100vh',
-        fontFamily: "'Outfit', sans-serif",
+        fontFamily: "'Geist', system-ui, sans-serif",
       }}
     >
       <div style={{ textAlign: 'center' }}>

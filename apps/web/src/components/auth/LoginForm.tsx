@@ -57,7 +57,7 @@ export function LoginForm({ callbackUrl = '/dashboard' }: { callbackUrl?: string
   return (
     <div className="w-full max-w-sm mx-auto">
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-[var(--lp-text)]" style={{ fontFamily: "'Syne', sans-serif" }}>
+        <h1 className="text-2xl font-bold text-[var(--lp-text)]" style={{ fontFamily: "'Instrument Serif', Georgia, serif", fontWeight: 400 }}>
           Sign in
         </h1>
         <p className="text-sm text-[var(--lp-text-muted)] mt-1">

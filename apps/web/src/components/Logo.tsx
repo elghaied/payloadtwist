@@ -34,7 +34,7 @@ export function LogoMark({ size = 32 }: { size?: number }) {
 
 export function Wordmark({ className = '' }: { className?: string }) {
   return (
-    <span className={`font-display font-bold tracking-tight ${className}`}>
+    <span className={`font-semibold tracking-tight ${className}`}>
       payload<span className="text-gradient">twist</span>
     </span>
   )

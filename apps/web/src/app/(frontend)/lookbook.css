@@ -1,0 +1,89 @@
+/* Landing lookbook. Base paper is cool violet-grey (the logo's world); each spread instead wears
+   the colors and heading typeface of the theme it shows. */
+
+.lookbook {
+  --lb-paper: #f2f1f6;
+  --lb-ink: #1a1625;
+  --lb-muted: #5b5670;
+  --lb-line: #dcd9e4;
+  --lb-panel: #ffffff;
+  --lb-shadow: 0 1px 0 rgba(26, 22, 37, 0.04), 0 30px 70px -28px rgba(26, 22, 37, 0.45);
+  background: var(--lb-paper);
+  color: var(--lb-ink);
+  font-family: var(--font-body);
+}
+
+.dark .lookbook {
+  --lb-paper: #121019;
+  --lb-ink: #eeebf5;
+  --lb-muted: #a7a2b8;
+  --lb-line: #2a2635;
+  --lb-panel: #1b1824;
+  --lb-shadow: 0 30px 70px -28px rgba(0, 0, 0, 0.8);
+}
+
+.lookbook .lb-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 0.98;
+}
+
+.lookbook .lb-muted {
+  color: var(--lb-muted);
+}
+
+.lookbook .lb-shot {
+  display: block;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--lb-shadow);
+}
+
+.lookbook .lb-link {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+}
+.lookbook .lb-link:hover {
+  text-decoration-thickness: 2px;
+}
+
+.lookbook .lb-button {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.85rem 1.6rem;
+  font-weight: 500;
+  background: var(--lb-ink);
+  color: var(--lb-paper);
+  transition: transform 0.15s ease;
+}
+.lookbook .lb-button:hover {
+  transform: translateY(-1px);
+}
+
+.lookbook :focus-visible {
+  outline: 2px solid #a855f7;
+  outline-offset: 3px;
+}
+
+/* The one orchestrated moment: the themed admin slides over the stock one */
+@keyframes lb-dress {
+  from {
+    transform: translate(48px, 24px) rotate(1.5deg);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+.lookbook .lb-after {
+  animation: lb-dress 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.25s both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lookbook .lb-after {
+    animation: none;
+  }
+}

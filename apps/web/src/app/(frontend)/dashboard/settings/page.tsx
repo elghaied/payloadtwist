@@ -20,7 +20,7 @@ export default async function SettingsPage() {
       <div id="main-content" className="mx-auto max-w-2xl px-6 pt-24 pb-16">
         <h1
           className="text-2xl font-bold text-[var(--lp-text)] mb-8"
-          style={{ fontFamily: "'Syne', sans-serif" }}
+          style={{ fontFamily: "'Instrument Serif', Georgia, serif", fontWeight: 400 }}
         >
           Account Settings
         </h1>
