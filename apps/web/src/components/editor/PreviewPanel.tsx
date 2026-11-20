@@ -52,11 +52,13 @@ const langStore = {
   },
 }
 
-/** Adds the content locale to a demo admin path (English is Payload's default). */
+/**
+ * Adds the content locale to a demo admin path. Always explicit: Payload remembers the last
+ * locale on the (shared) demo account, so leaving it out would inherit another visitor's choice.
+ */
 function withLocale(path: string, lang: Lang): string {
   const url = new URL(path, 'http://x')
-  if (lang === 'en') url.searchParams.delete('locale')
-  else url.searchParams.set('locale', lang)
+  url.searchParams.set('locale', lang)
   return url.pathname + url.search
 }
 
@@ -140,16 +142,15 @@ export function PreviewPanel({ css, theme, enhancedContrast, onThemeChange, onCo
   const [reloadKey, setReloadKey] = useState(0)
 
   const navigate = (to: string) => {
-    const target = withLocale(to, lang)
-    if (ready) send({ type: 'navigate', path: target })
-    else setDemoSrc(target)
+    if (ready) send({ type: 'navigate', path: withLocale(to, lang) })
+    else setDemoSrc(to)
   }
 
   const switchLanguage = (next: Lang) => {
     langStore.set(next)
     // the interface language is rendered on the server: reload the admin on the same page
     setReady(false)
-    setDemoSrc(withLocale(path, next))
+    setDemoSrc(path)
     setReloadKey((k) => k + 1)
   }
 
@@ -177,7 +178,7 @@ export function PreviewPanel({ css, theme, enhancedContrast, onThemeChange, onCo
     setCustomSrc(customUrl)
   }
 
-  const iframeSrc = source === 'demo' ? demoSrc : customSrc
+  const iframeSrc = source === 'demo' ? withLocale(demoSrc, lang) : customSrc
   // Longest route the current path falls under (so an edit view doesn't also light up "List")
   const activeRoute = DEMO_ROUTES.map((r) => r.path)
     .filter((p) => path === p || (p !== '/preview' && path.startsWith(p + '/')))
@@ -278,7 +279,7 @@ export function PreviewPanel({ css, theme, enhancedContrast, onThemeChange, onCo
             <Contrast size={14} />
           </button>
           {iframeSrc && (
-            <a href={source === 'demo' ? path : iframeSrc} target="_blank" rel="noreferrer" className={iconBtn(false)} aria-label="Open preview in a new tab">
+            <a href={source === 'demo' ? withLocale(path, lang) : iframeSrc} target="_blank" rel="noreferrer" className={iconBtn(false)} aria-label="Open preview in a new tab">
               <ExternalLink size={14} />
             </a>
           )}

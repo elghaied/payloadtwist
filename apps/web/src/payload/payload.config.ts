@@ -11,6 +11,7 @@ import { stockTheme } from 'payload-admin-ui-themes/themes/stock'
 import { payloadtwistAdminThemes } from '../admin-themes'
 import { demo } from './demo'
 import { L } from './labels'
+import { translateCollection, translateGlobal } from './translate'
 import { fullEditor } from './lexical'
 import { FieldShowcase } from './field-showcase'
 import { migrations } from './migrations'
@@ -262,8 +263,8 @@ export default buildConfig({
     },
   },
   routes: { admin: '/preview', api: '/preview-api' },
-  collections: [Posts, Pages, FieldShowcase, Media, Categories, Folders, Users],
-  globals: [SiteSettings],
+  collections: [Posts, Pages, FieldShowcase, Media, Categories, Folders, Users].map(translateCollection),
+  globals: [SiteSettings].map(translateGlobal),
   editor: fullEditor,
   // Admin interface languages (the user menu's language switch). Arabic turns the whole admin
   // right-to-left, which is how themes get checked in RTL; content locales are configured below.

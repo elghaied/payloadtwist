@@ -11,6 +11,7 @@ import {
   TreeViewFeature,
   UploadFeature,
 } from '@payloadcms/richtext-lexical'
+import { translateBlock } from './translate'
 import type { Block } from 'payload'
 
 // Every Lexical feature Payload v4 ships, so themes are judged against all rich-text UI:
@@ -84,7 +85,7 @@ const features = () =>
       }),
       FixedToolbarFeature(),
       TableFeature(),
-      BlocksFeature({ blocks: [calloutBlock, codeBlock], inlineBlocks: [mentionInline, badgeInline] }),
+      BlocksFeature({ blocks: [calloutBlock, codeBlock].map(translateBlock), inlineBlocks: [mentionInline, badgeInline].map(translateBlock) }),
       TextStateFeature({
         state: {
           color: { ...defaultColors.text, ...defaultColors.background },
