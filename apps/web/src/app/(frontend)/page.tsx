@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { UserMenu } from '@/components/auth/UserMenu'
 import { LogoMark, Wordmark } from '@/components/Logo'
+import { pageMetadata, SITE_DESCRIPTION, SITE_URL } from '@/lib/seo'
 import { contrastRatio, flatten } from '@/payload-theme/color'
 import { buildThemeCss } from '@/payload-theme/css'
 import { presetTheme, THEME_PRESETS } from '@/payload-theme/presets'
@@ -12,15 +13,7 @@ import { defaultTheme, setFont, setRoundness, setToken } from '@/payload-theme/t
 import './landing.css'
 import './lookbook.css'
 
-export const metadata: Metadata = {
-  title: 'payloadtwist — Visual Theme Editor for Payload CMS',
-  description:
-    'A visual theme editor for the Payload v4 admin. Start from a look, change colors, shape, spacing, fonts or a single component on a live admin, and export custom.css or an installable theme.',
-  openGraph: {
-    title: 'payloadtwist — Visual Theme Editor for Payload CMS',
-    description: 'Your Payload admin, dressed properly. A visual theme editor for Payload v4.',
-  },
-}
+export const metadata: Metadata = pageMetadata({ path: '/' })
 
 // ─── Lookbook data: real exports of the built-in presets ─────────────────────
 
@@ -127,8 +120,9 @@ export default function LandingPage() {
             '@context': 'https://schema.org',
             '@type': 'WebApplication',
             name: 'payloadtwist',
-            url: 'https://payloadtwist.com',
-            description: 'A visual theme editor for the Payload CMS v4 admin panel.',
+            url: SITE_URL,
+            description: SITE_DESCRIPTION,
+            sameAs: ['https://github.com/elghaied/payloadtwist'],
             applicationCategory: 'DeveloperApplication',
             operatingSystem: 'Web',
             offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },

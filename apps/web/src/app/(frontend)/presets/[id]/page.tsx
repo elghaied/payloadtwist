@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { pageMetadata } from '@/lib/seo'
 import { getPresetById, getUserRating } from '@/lib/actions/presets'
 import { PresetDetailClient } from './preset-detail-client'
 import { AppNavbar } from '@/components/AppNavbar'
@@ -9,14 +10,15 @@ export const dynamic = 'force-dynamic'
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const preset = await getPresetById(id)
-  if (!preset) return { title: 'Preset not found' }
+  if (!preset) return { title: 'Preset not found', robots: { index: false } }
   return {
-    title: preset.name,
-    description: preset.description || `${preset.name} — a Payload CMS theme preset on payloadtwist.`,
-    openGraph: {
-      title: `${preset.name} | payloadtwist`,
-      description: preset.description || `${preset.name} — a Payload CMS theme preset.`,
-    },
+    ...pageMetadata({
+      title: preset.name,
+      description: preset.description || `${preset.name}: a Payload v4 admin theme shared on payloadtwist.`,
+      path: `/presets/${preset.id}`,
+    }),
+    // a private preset is only visible to its owner
+    ...(preset.isPublic ? {} : { robots: { index: false } }),
   }
 }
 

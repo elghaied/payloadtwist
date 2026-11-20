@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { pageMetadata } from '@/lib/seo'
 import { getPublicPresets } from '@/lib/actions/presets'
 import { PresetCard } from '@/components/presets/PresetCard'
 import { PresetGrid } from '@/components/presets/PresetGrid'
@@ -7,11 +8,12 @@ import '../landing.css'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: 'Theme Gallery',
   description:
-    'Browse community-created Payload CMS themes. Preview color scales, typography and component styles, then load them into the editor.',
-}
+    'Payload v4 admin themes shared by the community. Preview their colors, then open any of them in the editor.',
+  path: '/presets',
+})
 
 export default async function PresetsGalleryPage() {
   const presets = await getPublicPresets()

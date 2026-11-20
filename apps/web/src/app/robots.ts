@@ -1,16 +1,16 @@
 import type { MetadataRoute } from 'next'
+import { SITE_URL } from '@/lib/seo'
 
 export default function robots(): MetadataRoute.Robots {
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://payloadtwist.com'
-
   return {
     rules: [
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin/', '/cms-api/', '/api/', '/preview/', '/dashboard/'],
+        // the demo admin and its API, auth endpoints, and signed-in pages
+        disallow: ['/preview/', '/preview-api/', '/api/', '/dashboard/'],
       },
     ],
-    sitemap: `${siteUrl}/sitemap.xml`,
+    sitemap: `${SITE_URL}/sitemap.xml`,
   }
 }

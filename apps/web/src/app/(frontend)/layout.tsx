@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/providers/theme-provider'
 import { ConsentProvider } from '@/providers/consent-provider'
 import { Footer } from '@/components/Footer'
 import { CookieConsent } from '@/components/CookieConsent'
+import { pageMetadata, SITE_DESCRIPTION, SITE_URL } from '@/lib/seo'
 import './globals.css'
 
 export const viewport: Viewport = {
@@ -15,39 +16,18 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://payloadtwist.com'
+// Share cards for pages without their own; canonical URLs are set per page
+const shared = pageMetadata({ path: '/' })
 
 export const metadata: Metadata = {
   title: {
     default: 'payloadtwist — Visual Theme Editor for Payload CMS',
     template: '%s | payloadtwist',
   },
-  description:
-    'A visual theme editor for the Payload v4 admin. Theme brand colors, surfaces, radius, density and fonts on a live admin, then export clean CSS.',
-  metadataBase: new URL(siteUrl),
-  openGraph: {
-    type: 'website',
-    siteName: 'payloadtwist',
-    title: 'payloadtwist — Visual Theme Editor for Payload CMS',
-    description:
-      'Design your Payload v4 admin visually. Theme brand colors, surfaces, radius, density and fonts on a live admin, then export clean CSS.',
-    url: siteUrl,
-    images: [
-      {
-        url: '/og.png',
-        width: 1200,
-        height: 630,
-        alt: 'payloadtwist — Visual Theme Editor for Payload CMS',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'payloadtwist — Visual Theme Editor for Payload CMS',
-    description:
-      'Design your Payload v4 admin visually. Theme brand colors, surfaces, radius, density and fonts on a live admin, then export clean CSS.',
-    images: ['/og.png'],
-  },
+  description: SITE_DESCRIPTION,
+  metadataBase: new URL(SITE_URL),
+  openGraph: shared.openGraph,
+  twitter: shared.twitter,
   robots: {
     index: true,
     follow: true,
