@@ -29,34 +29,6 @@ export const demo = (config: CollectionConfig): CollectionConfig => ({
   hooks: { ...config.hooks, beforeOperation: [readOnly] },
 })
 
-
-// Second line of defense, in the REST route, before Payload reads the request: nobody may change the
-// shared demo, so every write is refused at the door (uploads never get read). Only the shared
-// account's session calls and Payload's POST-as-GET searches (relationship/upload pickers) pass.
-// Payload's own server-side writes (preferences while rendering) use the Local API, not this route.
-const MAX_BODY_BYTES = 2 * 1024 * 1024
-const SESSION_CALLS = new Set(['users/login', 'users/logout', 'users/refresh-token'])
-
-const reject = (status: number, message: string) => Response.json({ errors: [{ message }] }, { status })
-
-/** Guard for the demo's REST API: a Response to short-circuit with, or null to continue. */
-export function guardDemoRequest(request: Request): Response | null {
-  if (request.method === 'GET' || request.method === 'HEAD' || request.method === 'OPTIONS') return null
-  let path: string
-  try {
-    // Decoded, like the router sees it: `users%2Flogin` tricks must not change the outcome
-    path = new URL(request.url).pathname.split('/').filter(Boolean).slice(1, 3).map(decodeURIComponent).join('/')
-  } catch {
-    return reject(400, 'Bad request.')
-  }
-  const searchAsPost = request.headers.get('x-payload-http-method-override')?.toUpperCase() === 'GET'
-  if (request.method !== 'POST' || !(SESSION_CALLS.has(path) || searchAsPost)) {
-    return reject(403, 'This is a read-only preview. Changes are not saved.')
-  }
-  if (Number(request.headers.get('content-length') ?? 0) > MAX_BODY_BYTES) return reject(413, 'Request too large.')
-  return null
-}
-
 /** Caps the bytes actually read, for bodies without (or lying about) Content-Length. */
 export function limitBody(request: Request, max = MAX_BODY_BYTES): Request {
   if (!request.body) return request
@@ -72,4 +44,52 @@ export function limitBody(request: Request, max = MAX_BODY_BYTES): Request {
   )
   // Rebuilt from parts: Next's request class can't be passed to the global Request constructor
   return new Request(request.url, { method: request.method, headers: request.headers, body, duplex: 'half' } as RequestInit)
+}
+
+// Second line of defense, in the REST route, before Payload reads the request: nobody may change the
+// shared demo, so every write is refused at the door (uploads never get read). Only the shared
+// account's session calls and the admin's POST searches (relationship/upload pickers) pass, and
+// those searches are rebuilt as real GET requests so Payload can never treat them as writes.
+// Payload's own server-side writes (preferences while rendering) use the Local API, not this route.
+const MAX_BODY_BYTES = 2 * 1024 * 1024
+const SESSION_CALLS = new Set(['users/login', 'users/logout', 'users/refresh-token'])
+
+const reject = (status: number, message: string) => Response.json({ errors: [{ message }] }, { status })
+const READ_ONLY = () => reject(403, 'This is a read-only preview. Changes are not saved.')
+
+/**
+ * Guard for the demo's REST API: a Response to short-circuit with, or the request to hand to Payload
+ * (a GET for searches sent as POST).
+ */
+export async function guardDemoRequest(request: Request): Promise<Response | Request> {
+  if (request.method === 'GET' || request.method === 'HEAD' || request.method === 'OPTIONS') return request
+  let segments: string[]
+  try {
+    // Decoded, like the router sees it
+    segments = new URL(request.url).pathname.split('/').filter(Boolean).slice(1).map(decodeURIComponent)
+  } catch {
+    return reject(400, 'Bad request.')
+  }
+  if (request.method !== 'POST') return READ_ONLY()
+  if (Number(request.headers.get('content-length') ?? 0) > MAX_BODY_BYTES) return reject(413, 'Request too large.')
+  if (SESSION_CALLS.has(segments.slice(0, 2).join('/'))) return limitBody(request)
+
+  // Payload's POST-as-GET: exactly the form the admin UI sends, never on internal collections
+  const isSearch =
+    request.headers.get('x-payload-http-method-override') === 'GET' &&
+    request.headers.get('content-type') === 'application/x-www-form-urlencoded' &&
+    segments.length === 1 &&
+    !segments[0].startsWith('payload-')
+  if (!isSearch) return READ_ONLY()
+  let search: string
+  try {
+    search = await limitBody(request).text()
+  } catch {
+    return reject(413, 'Request too large.')
+  }
+  const url = new URL(request.url)
+  for (const [k, v] of new URLSearchParams(search)) url.searchParams.append(k, v)
+  const headers = new Headers(request.headers)
+  for (const h of ['x-payload-http-method-override', 'x-http-method-override', 'content-type', 'content-length']) headers.delete(h)
+  return new Request(url, { method: 'GET', headers })
 }
