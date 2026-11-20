@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { BorderStyle, Density, FontRole, ShadowStyle, SurfaceOptions } from '@/payload-theme/controls'
+import type { BorderStyle, Density, FontRole, ShadowLayer, ShadowStyle, SurfaceOptions } from '@/payload-theme/controls'
 import type { PropKey } from '@/payload-theme/components'
 import type { SeedKey } from '@/payload-theme/ramps'
 import {
@@ -17,6 +17,9 @@ import {
   setSeed,
   setToken,
   setTypeScale,
+  setSpacing,
+  setShadowLevel,
+  setTokens,
   type Mode,
   type ThemeConfig,
 } from '@/payload-theme/theme'
@@ -44,6 +47,9 @@ interface EditorState {
   setRoundness(px: number | null): void
   setDensity(density: Density): void
   setTypeScale(scale: number): void
+  setSpacing(scale: number): void
+  setShadowLevel(varName: string, layer: ShadowLayer | null): void
+  setTokens(values: Record<string, string | null>, mode: Mode): void
   setFont(role: FontRole, family: string | null): void
   setSurfaces(opts: SurfaceOptions | null): void
   setShadows(style: ShadowStyle): void
@@ -93,6 +99,9 @@ export const useEditorStore = create<EditorState>()(
         setRoundness: (px) => commit((t) => setRoundness(t, px)),
         setDensity: (d) => commit((t) => setDensity(t, d)),
         setTypeScale: (s) => commit((t) => setTypeScale(t, s)),
+        setSpacing: (s) => commit((t) => setSpacing(t, s)),
+        setShadowLevel: (v, layer) => commit((t) => setShadowLevel(t, v, layer)),
+        setTokens: (values, mode) => commit((t) => setTokens(t, values, mode)),
         setFont: (role, family) => commit((t) => setFont(t, role, family)),
         setSurfaces: (opts) => commit((t) => setSurfaces(t, opts)),
         setShadows: (style) => commit((t) => setShadows(t, style)),

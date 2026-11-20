@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { ChevronRight, RotateCcw } from 'lucide-react'
 import { ColorPopover } from '@/components/controls'
-import { ScrubberInput } from '@/components/editor/ScrubberInput'
+import { NumberInput, SliderInput } from '@/components/editor/SliderInput'
 import { COMPONENTS, isColorProp, PROPS, type ComponentDef, type PropKey } from '@/payload-theme/components'
 import type { Mode, ThemeConfig } from '@/payload-theme/theme'
 import { useEditorStore } from '@/store/editor-store'
@@ -42,7 +42,7 @@ function Choice({ options, value, onChange }: { options: { label: string; value:
   )
 }
 
-const pxOf = (v?: string) => (v ? (v.endsWith('rem') ? parseFloat(v) * 16 : parseFloat(v)) : undefined)
+const pxOf = (v?: string) => (v ? (v.endsWith('rem') ? parseFloat(v) * 16 : parseFloat(v)) || 0 : 0)
 
 function PropRow({ def, prop, theme, fallback }: { def: ComponentDef; prop: PropKey; theme: ThemeConfig; fallback: Record<Mode, string> }) {
   const set = useEditorStore((s) => s.setComponentProp)
@@ -88,7 +88,7 @@ function PropRow({ def, prop, theme, fallback }: { def: ComponentDef; prop: Prop
       </select>
     )
   } else if (p.kind === 'radius') {
-    control = <ScrubberInput value={pxOf(light) ?? 0} min={0} max={32} step={1} unit="px" onChange={(n) => set(def.id, prop, `${n}px`, 'light')} />
+    control = <SliderInput value={pxOf(light)} min={0} max={32} step={1} unit="px" label={`${def.label} radius`} onChange={(n) => set(def.id, prop, `${n}px`, 'light')} />
   } else if (p.kind === 'weight') {
     control = <Choice options={WEIGHTS.map((w) => ({ label: w, value: w }))} value={light} onChange={(v) => set(def.id, prop, v, 'light')} />
   } else if (p.kind === 'scheme') {
@@ -102,17 +102,28 @@ function PropRow({ def, prop, theme, fallback }: { def: ComponentDef; prop: Prop
         onChange={(v) => set(def.id, prop, v || null, 'light')}
       />
     )
+  } else if (p.kind === 'spacing') {
+    // "vertical horizontal", like CSS shorthand
+    const [v = 0, h = v] = (light ?? '').split(' ').map(pxOf)
+    const write = (nv: number, nh: number) => set(def.id, prop, `${nv}px ${nh}px`, 'light')
+    control = (
+      <span className="flex items-center gap-1.5 text-xs text-[var(--pt-text-faint)]">
+        ↕<NumberInput value={v} min={-64} max={96} unit="px" label={`${def.label} ${p.label} vertical`} onChange={(n) => write(n, h)} />
+        ↔<NumberInput value={h} min={-64} max={96} unit="px" label={`${def.label} ${p.label} horizontal`} onChange={(n) => write(v, n)} />
+      </span>
+    )
   } else if (p.kind === 'case') {
     control = <Choice options={CASES} value={light} onChange={(v) => set(def.id, prop, v, 'light')} />
   } else {
     control = (
-      <ScrubberInput
-        value={light ? Math.round(parseFloat(light) * 100) : 0}
-        min={-5}
-        max={20}
-        step={1}
-        unit="/100em"
-        onChange={(n) => set(def.id, prop, `${n / 100}em`, 'light')}
+      <SliderInput
+        value={light ? parseFloat(light) || 0 : 0}
+        min={-0.05}
+        max={0.2}
+        step={0.005}
+        unit="em"
+        label={`${def.label} letter spacing`}
+        onChange={(n) => set(def.id, prop, `${+n.toFixed(3)}em`, 'light')}
       />
     )
   }

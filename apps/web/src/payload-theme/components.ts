@@ -2,7 +2,7 @@
 // table headers…) as a small, typed set of properties on Payload v4's stable BEM classes.
 // Payload's own CSS is layered, so these unlayered rules win without !important.
 
-export type PropKind = 'color' | 'shadow' | 'radius' | 'weight' | 'case' | 'tracking' | 'scheme'
+export type PropKind = 'color' | 'shadow' | 'radius' | 'weight' | 'case' | 'tracking' | 'scheme' | 'spacing'
 
 export interface PropDef {
   label: string
@@ -42,6 +42,8 @@ export const PROPS = {
   accent: { label: 'Accent bar', kind: 'color', decl: 'box-shadow: inset 3px 0 0 $' },
   shadow: { label: 'Shadow', kind: 'shadow', decl: 'box-shadow: $' },
   radius: { label: 'Radius', kind: 'radius', decl: 'border-radius: $' },
+  padding: { label: 'Padding (inside)', kind: 'spacing', decl: 'padding: $' },
+  margin: { label: 'Margin (outside)', kind: 'spacing', decl: 'margin: $' },
   weight: { label: 'Weight', kind: 'weight', decl: 'font-weight: $' },
   case: { label: 'Case', kind: 'case', decl: 'text-transform: $' },
   tracking: { label: 'Letter spacing', kind: 'tracking', decl: 'letter-spacing: $' },
@@ -76,7 +78,7 @@ export const COMPONENTS: ComponentDef[] = [
     hint: 'Each collection / global link in the sidebar.',
     group: 'Navigation',
     selectors: ['.nav__link'],
-    props: ['text', 'bgHover', 'textHover', 'radius', 'weight'],
+    props: ['text', 'bgHover', 'textHover', 'radius', 'weight', 'padding'],
   },
   {
     id: 'sidebarLinkActive',
@@ -122,7 +124,7 @@ export const COMPONENTS: ComponentDef[] = [
     hint: 'Main actions: Publish, Save, Create New.',
     group: 'Actions',
     selectors: ['.btn--style-primary'],
-    props: ['bg', 'bgHover', 'text', 'radius', 'shadow', 'weight', 'case', 'tracking'],
+    props: ['bg', 'bgHover', 'text', 'radius', 'shadow', 'weight', 'case', 'tracking', 'padding'],
   },
   {
     id: 'buttonSecondary',
@@ -130,7 +132,7 @@ export const COMPONENTS: ComponentDef[] = [
     hint: 'Secondary actions next to primary ones (Save Draft, Filters, Columns).',
     group: 'Actions',
     selectors: ['.btn--style-secondary'],
-    props: ['bg', 'bgHover', 'text', 'outline', 'radius', 'weight'],
+    props: ['bg', 'bgHover', 'text', 'outline', 'radius', 'weight', 'padding'],
   },
   {
     id: 'pill',
@@ -138,7 +140,7 @@ export const COMPONENTS: ComponentDef[] = [
     hint: 'Status labels like Draft and Published, counts and tags.',
     group: 'Actions',
     selectors: ['.pill'],
-    props: ['radius', 'weight', 'case', 'tracking'],
+    props: ['radius', 'weight', 'case', 'tracking', 'padding'],
   },
 
   {
@@ -147,7 +149,7 @@ export const COMPONENTS: ComponentDef[] = [
     hint: 'Collection cards on the dashboard and cards in custom views.',
     group: 'Surfaces',
     selectors: ['.card'],
-    props: ['bg', 'bgHover', 'border', 'radius', 'shadow'],
+    props: ['bg', 'bgHover', 'border', 'radius', 'shadow', 'padding', 'margin'],
   },
   {
     id: 'widget',
@@ -155,7 +157,7 @@ export const COMPONENTS: ComponentDef[] = [
     hint: 'The boxes on the dashboard.',
     group: 'Surfaces',
     selectors: ['.widget-card', '.widget'],
-    props: ['bg', 'border', 'radius', 'shadow'],
+    props: ['bg', 'border', 'radius', 'shadow', 'padding'],
   },
   {
     id: 'panel',
@@ -163,7 +165,7 @@ export const COMPONENTS: ComponentDef[] = [
     hint: 'Repeating rows in array and block fields, and collapsible sections.',
     group: 'Surfaces',
     selectors: ['.collapsible'],
-    props: ['bg', 'border', 'radius', 'shadow'],
+    props: ['bg', 'border', 'radius', 'shadow', 'margin'],
   },
   {
     id: 'drawer',
@@ -179,7 +181,7 @@ export const COMPONENTS: ComponentDef[] = [
     hint: 'Inline messages (info, success, warning, error).',
     group: 'Surfaces',
     selectors: ['.banner'],
-    props: ['radius', 'weight'],
+    props: ['radius', 'weight', 'padding'],
   },
   {
     id: 'toast',
@@ -196,7 +198,15 @@ export const COMPONENTS: ComponentDef[] = [
     hint: 'The column header row in list views.',
     group: 'Data',
     selectors: ['.table thead th'],
-    props: ['bg', 'text', 'weight', 'case', 'tracking'],
+    props: ['bg', 'text', 'weight', 'case', 'tracking', 'padding'],
+  },
+  {
+    id: 'tableCell',
+    label: 'Table cells',
+    hint: 'Every cell in list views — padding sets how airy rows are.',
+    group: 'Data',
+    selectors: ['.table tbody td'],
+    props: ['padding'],
   },
   {
     id: 'tableRow',
@@ -213,7 +223,7 @@ export const COMPONENTS: ComponentDef[] = [
     hint: 'Text inputs and select dropdowns.',
     group: 'Forms',
     selectors: ['.form-input', '.rs__control'],
-    props: ['bg', 'border', 'radius', 'shadow'],
+    props: ['bg', 'border', 'radius', 'shadow', 'padding'],
   },
   {
     id: 'fieldLabel',
@@ -260,6 +270,8 @@ const VALID: Record<PropKind, (v: string) => boolean> = {
   case: (v) => ['none', 'uppercase', 'lowercase', 'capitalize'].includes(v),
   tracking: (v) => /^-?\d+(\.\d+)?(em|px)$|^0$|^normal$/.test(v),
   scheme: (v) => v === 'dark',
+  // one to four lengths, like CSS padding/margin
+  spacing: (v) => /^(-?\d+(\.\d+)?(px|rem|em)|0)( (-?\d+(\.\d+)?(px|rem|em)|0)){0,3}$/.test(v),
 }
 
 export function isValidComponentValue(prop: PropKey, value: string): boolean {

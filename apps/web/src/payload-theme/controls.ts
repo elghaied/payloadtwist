@@ -1,4 +1,4 @@
-import { hexToHsl, hexToRgb, hslToHex } from './color'
+import { hexToHsl, hexToRgb, hslToHex, parseColor, rgbToHex } from './color'
 import { schema, TOKENS } from './schema'
 
 // High-level editor controls. Each maps one input onto the group of Payload tokens it drives;
@@ -56,6 +56,32 @@ export function densityTokens(density: Density): Record<string, string> {
 
 export const DENSITY_VARS = Object.keys(DENSITY_TOKENS.spacious)
 
+// ─── Spacing scale ──────────────────────────────────────────────────────────
+
+/** Literal `--spacer-*` steps; gutters, gaps and paddings reference these. */
+const SPACER_TOKENS = schema.tokens.filter((t) => /^--spacer-/.test(t.var) && /rem$/.test(t.light))
+
+/** Follows var() aliases to Payload's literal default. */
+function literal(v: string): string {
+  const value = TOKENS[v].light
+  const ref = value.match(/^var\((--[\w-]+)\)$/)
+  return ref ? literal(ref[1]) : value
+}
+
+// Control heights are spacer aliases; pinned so the spacing scale leaves them to Control size
+const HEIGHT_VARS = ['--field-min-height-large', '--field-min-height-medium', '--button-height', '--control-height']
+
+export const SPACING_VARS = [...SPACER_TOKENS.map((t) => t.var), ...HEIGHT_VARS]
+
+/** Multiplies Payload's spacing steps (1 = default) without resizing controls. */
+export function spacingTokens(scale: number): Record<string, string> {
+  if (scale === 1) return {}
+  return {
+    ...Object.fromEntries(SPACER_TOKENS.map((t) => [t.var, px(Math.round(remToPx(t.light) * scale * 4) / 4)])),
+    ...Object.fromEntries(HEIGHT_VARS.map((v) => [v, literal(v)])),
+  }
+}
+
 // ─── Type scale ─────────────────────────────────────────────────────────────
 
 /** Every literal `--text-*-font-size` / `-line-height` Payload defines (aliases follow them). */
@@ -64,6 +90,44 @@ const TYPE_SIZE_TOKENS = schema.tokens.filter(
 )
 
 export const TYPE_SCALE_VARS = TYPE_SIZE_TOKENS.map((t) => t.var)
+
+export type TypeProp = 'font-size' | 'line-height' | 'font-weight' | 'letter-spacing'
+
+export const TYPE_LEVELS: { id: string; label: string; group: 'Body text' | 'Headings' | 'Code' }[] = [
+  ...['small', 'medium', 'large', 'xl', '2xl'].map((s) => ({ id: `body-${s}`, label: s, group: 'Body text' as const })),
+  ...['small', 'medium', 'large', 'xl', '2xl', '3xl', '4xl'].map((s) => ({ id: `heading-${s}`, label: s, group: 'Headings' as const })),
+  ...['small', 'medium', 'large', 'xl'].map((s) => ({ id: `mono-${s}`, label: s, group: 'Code' as const })),
+]
+
+/** Token holding one property of a type level (Payload names the mono weight `-weight`). */
+export const typeVar = (level: string, prop: TypeProp) =>
+  `--text-${level}-${level.startsWith('mono') && prop === 'font-weight' ? 'weight' : prop}`
+
+/**
+ * Tokens for one property of a type level, in px (unitless for weight). Body levels also have
+ * bold and paragraph variants: size and spacing follow, paragraphs keep their extra line height,
+ * and bold keeps its own weight (see `boldWeightTokens`).
+ */
+export function typeLevelTokens(level: string, prop: TypeProp, value: number): Record<string, string> {
+  const css = prop === 'font-weight' ? String(value) : prop === 'letter-spacing' ? `${value}px` : px(value)
+  if (!level.startsWith('body')) return { [typeVar(level, prop)]: css }
+  const out: Record<string, string> = { [typeVar(level, prop)]: css }
+  if (prop !== 'font-weight') out[typeVar(`${level}-bold`, prop)] = css
+  if (prop === 'line-height') {
+    const extra = remToPx(TOKENS[typeVar(`${level}-paragraph`, prop)].light) - remToPx(TOKENS[typeVar(level, prop)].light)
+    out[typeVar(`${level}-paragraph`, prop)] = px(value + extra)
+  } else {
+    out[typeVar(`${level}-paragraph`, prop)] = css
+  }
+  return out
+}
+
+/** Weight of every bold body variant. */
+export function boldWeightTokens(weight: number): Record<string, string> {
+  return Object.fromEntries(
+    schema.tokens.filter((t) => /^--text-body-[a-z0-9]+-bold-font-weight$/.test(t.var)).map((t) => [t.var, String(weight)]),
+  )
+}
 
 /** Multiplies Payload's type scale (1 = default; Payload's body text is 12px). */
 export function typeScaleTokens(scale: number): Record<string, string> {
@@ -202,6 +266,57 @@ export function shadowTokens(style: ShadowStyle, glowHex: string): { light: Reco
   const c = (alpha: number) => rgba(color, alpha)
   const zip = (vals: string[]) => Object.fromEntries(SHADOW_VARS.map((v, i) => [v, vals[i]]))
   return { light: zip(shadowSet(style, c, false)), dark: zip(shadowSet(style, c, true)) }
+}
+
+export interface ShadowLayer {
+  x: number
+  y: number
+  blur: number
+  spread: number
+  /** #rrggbb */
+  color: string
+  /** 0–1 */
+  opacity: number
+}
+
+/** Splits a box-shadow on top-level commas. */
+const layersOf = (v: string) => v.split(/,(?![^(]*\))/).map((l) => l.trim()).filter(Boolean)
+
+/** The most visible (largest blur) outer layer of a box-shadow, or null for none / unparseable. */
+export function parseShadow(value: string): ShadowLayer | null {
+  let best: ShadowLayer | null = null
+  for (const layer of layersOf(value)) {
+    if (/\binset\b/.test(layer)) continue
+    const color = layer.match(/(rgba?\([^)]*\)|#[0-9a-f]{3,8})/i)?.[0]
+    const nums = layer.replace(color ?? '', '').trim().split(/\s+/).map((n) => parseFloat(n))
+    if (nums.length < 2 || nums.some((n) => Number.isNaN(n))) continue
+    const c = parseColor(color ?? '#000000')
+    if (!c) continue
+    const [x, y, blur = 0, spread = 0] = nums
+    if (!best || blur >= best.blur) best = { x, y, blur, spread, color: rgbToHex(c.r, c.g, c.b), opacity: +c.a.toFixed(3) }
+  }
+  return best
+}
+
+/** A custom shadow level; dark mode gets the same shape, stronger, like the presets. */
+export function shadowLayerTokens(l: ShadowLayer): { light: string; dark: string } {
+  const at = (a: number) => `${l.x}px ${l.y}px ${l.blur}px ${l.spread}px ${rgba(l.color, +a.toFixed(3))}`
+  return { light: at(l.opacity), dark: at(Math.min(0.9, l.opacity * 2.2)) }
+}
+
+export function isValidShadowLayer(l: unknown): l is ShadowLayer {
+  if (!l || typeof l !== 'object') return false
+  const s = l as ShadowLayer
+  const inRange = (n: unknown, min: number, max: number) => typeof n === 'number' && Number.isFinite(n) && n >= min && n <= max
+  return (
+    inRange(s.x, -100, 100) &&
+    inRange(s.y, -100, 100) &&
+    inRange(s.blur, 0, 200) &&
+    inRange(s.spread, -100, 100) &&
+    inRange(s.opacity, 0, 1) &&
+    typeof s.color === 'string' &&
+    /^#[0-9a-f]{6}$/i.test(s.color)
+  )
 }
 
 // ─── Borders ────────────────────────────────────────────────────────────────

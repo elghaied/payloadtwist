@@ -12,8 +12,13 @@ import {
   roundnessTokens,
   TYPE_SCALE_VARS,
   typeScaleTokens,
+  isValidShadowLayer,
   SHADOW_STYLES,
   SHADOW_VARS,
+  shadowLayerTokens,
+  SPACING_VARS,
+  spacingTokens,
+  type ShadowLayer,
   shadowTokens,
   SURFACE_VARS,
   surfaceTokens,
@@ -40,9 +45,13 @@ export interface ThemeConfig {
     roundness?: number
     density?: Density
     typeScale?: number
+    /** Multiplier for Payload's spacing steps */
+    spacing?: number
     fonts?: Partial<Record<FontRole, string>>
     surfaces?: SurfaceOptions
     shadows?: ShadowStyle
+    /** Hand-made shadow per elevation token, applied over the preset */
+    shadowLevels?: Record<string, ShadowLayer>
     borders?: BorderStyle
   }
   /** `--ramp-*` overrides — mode-independent palette */
@@ -99,10 +108,17 @@ function applySurfaces(theme: ThemeConfig): ThemeConfig {
   return mergeModes(theme, SURFACE_VARS, surfaceTokens(surfaceSource(theme), opts))
 }
 
-function applyShadows(theme: ThemeConfig): ThemeConfig {
-  const style = theme.controls.shadows
-  if (!style) return theme
-  return mergeModes(theme, SHADOW_VARS, shadowTokens(style, theme.seeds.brand ?? defaultSeed('brand')))
+/** Preset shadows, then hand-made levels on top. `force` also clears when neither is set. */
+function applyShadows(theme: ThemeConfig, force = false): ThemeConfig {
+  const { shadows: style, shadowLevels: levels } = theme.controls
+  if (!style && !levels && !force) return theme
+  const tokens = style ? shadowTokens(style, theme.seeds.brand ?? defaultSeed('brand')) : { light: {}, dark: {} }
+  for (const [v, layer] of Object.entries(levels ?? {})) {
+    const t = shadowLayerTokens(layer)
+    tokens.light[v] = t.light
+    tokens.dark[v] = t.dark
+  }
+  return mergeModes(theme, SHADOW_VARS, tokens)
 }
 
 /** Surface tint (0–1) and dark depth (-1–1); both 0 restores Payload's surfaces. */
@@ -116,13 +132,24 @@ export function setSurfaces(theme: ThemeConfig, opts: SurfaceOptions | null): Th
   return applySurfaces({ ...theme, controls })
 }
 
+/** Picking a shadow style replaces any hand-made levels. */
 export function setShadows(theme: ThemeConfig, style: ShadowStyle): ThemeConfig {
   const controls: ThemeConfig['controls'] = { ...theme.controls, shadows: style }
-  if (style === 'default') {
-    delete controls.shadows
-    return mergeModes({ ...theme, controls }, SHADOW_VARS, { light: {}, dark: {} })
-  }
-  return applyShadows({ ...theme, controls })
+  delete controls.shadowLevels
+  if (style === 'default') delete controls.shadows
+  return applyShadows({ ...theme, controls }, true)
+}
+
+/** Sets (or with `null` resets) a hand-made shadow for one elevation token. */
+export function setShadowLevel(theme: ThemeConfig, varName: string, layer: ShadowLayer | null): ThemeConfig {
+  if (!SHADOW_VARS.includes(varName)) throw new Error(`Not a shadow token: ${varName}`)
+  if (layer !== null && !isValidShadowLayer(layer)) throw new Error('Invalid shadow')
+  const levels = { ...theme.controls.shadowLevels }
+  if (layer === null) delete levels[varName]
+  else levels[varName] = layer
+  const controls: ThemeConfig['controls'] = { ...theme.controls, shadowLevels: levels }
+  if (!Object.keys(levels).length) delete controls.shadowLevels
+  return applyShadows({ ...theme, controls }, true)
 }
 
 export function setBorders(theme: ThemeConfig, style: BorderStyle): ThemeConfig {
@@ -144,6 +171,11 @@ export function setToken(theme: ThemeConfig, varName: string, value: string | nu
   return { ...theme, [mode]: value === null ? map : { ...map, [varName]: value } }
 }
 
+/** Several token overrides for one mode in one step (`null` resets). */
+export function setTokens(theme: ThemeConfig, values: Record<string, string | null>, mode: Mode): ThemeConfig {
+  return Object.entries(values).reduce((t, [v, value]) => setToken(t, v, value, mode), theme)
+}
+
 export function setRoundness(theme: ThemeConfig, mediumPx: number | null): ThemeConfig {
   const light = without(theme.light, Object.keys(roundnessTokens(DEFAULT_ROUNDNESS)))
   const controls = { ...theme.controls }
@@ -155,10 +187,23 @@ export function setRoundness(theme: ThemeConfig, mediumPx: number | null): Theme
   return { ...theme, controls, light: { ...light, ...roundnessTokens(mediumPx) } }
 }
 
+// Spacing pins control heights and density sets them, so both are rebuilt together
+function applySizing(theme: ThemeConfig): ThemeConfig {
+  const light = without(theme.light, [...SPACING_VARS, ...DENSITY_VARS])
+  return { ...theme, light: { ...light, ...spacingTokens(theme.controls.spacing ?? 1), ...densityTokens(theme.controls.density ?? 'compact') } }
+}
+
 export function setDensity(theme: ThemeConfig, density: Density): ThemeConfig {
   const controls: ThemeConfig['controls'] = { ...theme.controls, density }
   if (density === 'compact') delete controls.density
-  return { ...theme, controls, light: { ...without(theme.light, DENSITY_VARS), ...densityTokens(density) } }
+  return applySizing({ ...theme, controls })
+}
+
+/** Multiplies every spacing step (gutters, gaps, paddings); 1 restores Payload's. */
+export function setSpacing(theme: ThemeConfig, scale: number): ThemeConfig {
+  const controls: ThemeConfig['controls'] = { ...theme.controls, spacing: scale }
+  if (scale === 1) delete controls.spacing
+  return applySizing({ ...theme, controls })
 }
 
 export function setTypeScale(theme: ThemeConfig, scale: number): ThemeConfig {
@@ -238,6 +283,19 @@ export function parseTheme(input: unknown): ThemeConfig {
   if (c.density !== undefined) {
     if (!DENSITIES.includes(c.density)) throw new Error('controls.density invalid')
     controls.density = c.density
+  }
+  if (c.spacing !== undefined) {
+    if (typeof c.spacing !== 'number' || c.spacing < 0.5 || c.spacing > 2) throw new Error('controls.spacing out of range')
+    controls.spacing = c.spacing
+  }
+  if (c.shadowLevels !== undefined) {
+    if (!c.shadowLevels || typeof c.shadowLevels !== 'object') throw new Error('controls.shadowLevels invalid')
+    controls.shadowLevels = {}
+    for (const [v, layer] of Object.entries(c.shadowLevels)) {
+      if (!SHADOW_VARS.includes(v) || !isValidShadowLayer(layer)) throw new Error(`controls.shadowLevels: invalid entry ${v}`)
+      const { x, y, blur, spread, color, opacity } = layer
+      controls.shadowLevels[v] = { x, y, blur, spread, color, opacity }
+    }
   }
   if (c.typeScale !== undefined) {
     if (typeof c.typeScale !== 'number' || c.typeScale < 0.5 || c.typeScale > 2) throw new Error('controls.typeScale out of range')

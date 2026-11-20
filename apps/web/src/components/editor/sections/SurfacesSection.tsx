@@ -1,7 +1,7 @@
 'use client'
 
 import { RotateCcw } from 'lucide-react'
-import { ScrubberInput } from '@/components/editor/ScrubberInput'
+import { SliderInput } from '@/components/editor/SliderInput'
 import { flatten } from '@/payload-theme/color'
 import { surfaceSource, type ThemeConfig } from '@/payload-theme/theme'
 import { useEditorStore } from '@/store/editor-store'
@@ -18,13 +18,13 @@ function SurfaceFeel({ theme }: { theme: ThemeConfig }) {
       <div className="flex items-center gap-2 py-0.5">
         <span className="w-4 h-4 rounded-full border border-[var(--pt-border)]" style={{ background: surfaceSource(theme) }} />
         <span className="flex-1 text-[13px] text-[var(--pt-text-label)]" title="Uses the hue of your Neutral color (or Brand when Neutral is plain grey)">Tint backgrounds</span>
-        <ScrubberInput value={Math.round(tint * 100)} min={0} max={100} step={1} unit="%" onChange={(n) => setSurfaces({ tint: n / 100, depth })} />
+        <SliderInput value={Math.round(tint * 100)} min={0} max={100} step={1} unit="%" onChange={(n) => setSurfaces({ tint: n / 100, depth })} />
       </div>
       <div className="flex items-center gap-2 py-0.5">
         <span className="w-4" />
         <span className="flex-1 text-[13px] text-[var(--pt-text-label)]">Dark mode depth</span>
         <span className="text-xs text-[var(--pt-text-faint)]">deep</span>
-        <ScrubberInput value={Math.round(depth * 100)} min={-100} max={100} step={1} onChange={(n) => setSurfaces({ tint, depth: n / 100 })} />
+        <SliderInput value={Math.round(depth * 100)} min={-100} max={100} step={1} onChange={(n) => setSurfaces({ tint, depth: n / 100 })} />
         <span className="text-xs text-[var(--pt-text-faint)]">dim</span>
       </div>
       {theme.controls.surfaces && (
