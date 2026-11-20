@@ -50,7 +50,7 @@ function ValueInput({ value, onCommit }: { value: string; onCommit: (v: string) 
       onChange={(e) => setDraft(e.target.value)}
       onBlur={commit}
       onKeyDown={(e) => e.key === 'Enter' && (e.currentTarget as HTMLInputElement).blur()}
-      className="w-40 min-w-0 text-[11px] font-mono bg-[var(--pt-bg)] border border-[var(--pt-border)] rounded px-1.5 py-0.5 text-[var(--pt-text)] focus:outline-none focus:border-[var(--pt-accent)]"
+      className="w-40 min-w-0 text-[13px] font-mono bg-[var(--pt-bg)] border border-[var(--pt-border)] rounded px-1.5 py-0.5 text-[var(--pt-text)] focus:outline-none focus:border-[var(--pt-accent)]"
       spellCheck={false}
     />
   )
@@ -63,7 +63,7 @@ function TokenRow({ varName, mode, theme, resolved }: { varName: string; mode: M
   const raw = theme[mode][varName] ?? (mode === 'dark' ? (token.dark ?? theme.light[varName] ?? token.light) : token.light)
   return (
     <div className="flex items-center gap-1.5 py-0.5 min-h-[26px]" title={raw}>
-      <code className="flex-1 min-w-0 truncate text-[10.5px] text-[var(--pt-text-label)]">{varName}</code>
+      <code className="flex-1 min-w-0 truncate text-xs text-[var(--pt-text-label)]">{varName}</code>
       {overridden && (
         <button onClick={() => setToken(varName, null, mode)} className="p-0.5 text-[var(--pt-text-faint)] hover:text-[var(--pt-text)]" aria-label={`Reset ${varName}`}>
           <RotateCcw size={10} />
@@ -97,7 +97,7 @@ export function AdvancedSection({ theme }: { theme: ThemeConfig }) {
 
   return (
     <div className="space-y-3">
-      <p className="text-[11px] text-[var(--pt-text-faint)]">
+      <p className="text-[13px] text-[var(--pt-text-faint)]">
         Every Payload v4 token. Values can reference others, e.g. <code>var(--ramp-blue-600)</code>.
       </p>
       <div className="flex items-center gap-1.5">
@@ -118,14 +118,14 @@ export function AdvancedSection({ theme }: { theme: ThemeConfig }) {
               role="radio"
               aria-checked={mode === m}
               onClick={() => setMode(m)}
-              className={`px-2 py-1 rounded text-[11px] capitalize ${mode === m ? 'bg-[var(--pt-accent)] text-white' : 'text-[var(--pt-text-muted)]'}`}
+              className={`px-2 py-1 rounded text-[13px] capitalize ${mode === m ? 'bg-[var(--pt-accent)] text-white' : 'text-[var(--pt-text-muted)]'}`}
             >
               {m}
             </button>
           ))}
         </div>
       </div>
-      <label className="flex items-center gap-2 text-[11px] text-[var(--pt-text-muted)]">
+      <label className="flex items-center gap-2 text-[13px] text-[var(--pt-text-muted)]">
         <input type="checkbox" checked={onlyOverridden} onChange={(e) => setOnlyOverridden(e.target.checked)} />
         Only overridden ({count})
       </label>
@@ -137,12 +137,12 @@ export function AdvancedSection({ theme }: { theme: ThemeConfig }) {
             <div key={name}>
               <button
                 onClick={() => setOpen((o) => ({ ...o, [name]: !o[name] }))}
-                className="w-full flex items-center gap-1.5 py-2 text-left text-[11px] font-medium text-[var(--pt-text)]"
+                className="w-full flex items-center gap-1.5 py-2 text-left text-[13px] font-medium text-[var(--pt-text)]"
                 aria-expanded={!!isOpen}
               >
                 <ChevronRight size={12} className={`transition-transform ${isOpen ? 'rotate-90' : ''}`} />
                 {name}
-                <span className="ml-auto text-[10px] text-[var(--pt-text-faint)]">{vars.length}</span>
+                <span className="ml-auto text-xs text-[var(--pt-text-faint)]">{vars.length}</span>
               </button>
               {isOpen && (
                 <div className="pb-2 pl-4">

@@ -119,7 +119,7 @@ export function ScrubberInput({
     return (
       <div className={`inline-flex items-center ${className}`}>
         {label && (
-          <span className="text-[10px] uppercase tracking-wider text-[var(--pt-text-muted)] mr-2">{label}</span>
+          <span className="text-xs uppercase tracking-wider text-[var(--pt-text-muted)] mr-2">{label}</span>
         )}
         <input
           ref={inputRef}
@@ -131,7 +131,7 @@ export function ScrubberInput({
           className="w-16 text-xs bg-[var(--pt-surface)] border border-[var(--pt-accent)] rounded px-2 py-1 text-[var(--pt-text)] font-mono text-right focus:outline-none"
           style={{ fontFamily: mono }}
         />
-        {unit && <span className="text-[10px] text-[var(--pt-text-muted)] ml-1">{unit}</span>}
+        {unit && <span className="text-xs text-[var(--pt-text-muted)] ml-1">{unit}</span>}
       </div>
     )
   }
@@ -139,7 +139,7 @@ export function ScrubberInput({
   return (
     <div className={`inline-flex items-center ${className}`}>
       {label && (
-        <span className="text-[10px] uppercase tracking-wider text-[var(--pt-text-muted)] mr-2">{label}</span>
+        <span className="text-xs uppercase tracking-wider text-[var(--pt-text-muted)] mr-2">{label}</span>
       )}
       <div
         ref={containerRef}

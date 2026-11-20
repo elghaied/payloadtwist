@@ -46,7 +46,7 @@ export function TypeSection({ theme }: { theme: ThemeConfig }) {
       <Group title="Type scale" hint="Multiplies every Payload text size. Payload's body text is 12px; 117% gives 14px.">
         <div className="flex items-center gap-3">
           <ScrubberInput value={Math.round(scale * 100)} min={85} max={150} step={1} unit="%" onChange={(n) => setTypeScale(n / 100)} />
-          <span className="text-[11px] text-[var(--pt-text-faint)]">Body {Math.round(12 * scale * 4) / 4}px</span>
+          <span className="text-[13px] text-[var(--pt-text-faint)]">Body {Math.round(12 * scale * 4) / 4}px</span>
           {scale !== 1 && (
             <button onClick={() => setTypeScale(1)} className="p-1 text-[var(--pt-text-faint)] hover:text-[var(--pt-text)]" aria-label="Reset type scale">
               <RotateCcw size={11} />

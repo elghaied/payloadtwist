@@ -16,7 +16,7 @@ function RampStrip({ family, theme }: { family: string; theme: ThemeConfig }) {
   const setRamp = useEditorStore((s) => s.setRamp)
   return (
     <div className="flex items-center gap-2">
-      <code className="w-20 text-[10px] text-[var(--pt-text-faint)] truncate">{family}</code>
+      <code className="w-20 text-xs text-[var(--pt-text-faint)] truncate">{family}</code>
       <div className="flex flex-1 gap-px rounded overflow-hidden">
         {steps(family).map((step) => {
           const v = rampVar(family, step)
@@ -47,7 +47,7 @@ function SeedRow({ seed, theme }: { seed: SeedKey; theme: ThemeConfig }) {
         <ColorPopover value={value ?? defaultSeed(seed)} onChange={(hex) => setSeed(seed, hex)} hasOverride={!!value} label={spec.label} swatchSize="lg" />
         <div className="flex-1 min-w-0">
           <p className="text-xs font-medium text-[var(--pt-text)]">{spec.label}</p>
-          <p className="text-[11px] text-[var(--pt-text-faint)] truncate">{spec.description}</p>
+          <p className="text-[13px] text-[var(--pt-text-faint)] truncate">{spec.description}</p>
         </div>
         {value && (
           <button
@@ -106,7 +106,7 @@ function PresetGrid() {
     <div className="space-y-3">
       {PRESET_GROUPS.map((g) => (
         <div key={g.id}>
-          <p className="text-[10px] text-[var(--pt-text-faint)] mb-1">{g.label}</p>
+          <p className="text-xs text-[var(--pt-text-faint)] mb-1">{g.label}</p>
           <div className="grid grid-cols-2 gap-2">
             {previews
               .filter((p) => p.preset.group === g.id)
@@ -123,8 +123,8 @@ function PresetGrid() {
                     <MiniAdmin theme={theme} mode="dark" />
                   </div>
                   <div className="px-2 py-1.5 bg-[var(--pt-bg)]">
-                    <p className="text-[11px] font-medium text-[var(--pt-text)] truncate">{preset.name}</p>
-                    <p className="text-[9.5px] text-[var(--pt-text-faint)] truncate">{preset.description}</p>
+                    <p className="text-[13px] font-medium text-[var(--pt-text)] truncate">{preset.name}</p>
+                    <p className="text-xs text-[var(--pt-text-faint)] truncate">{preset.description}</p>
                   </div>
                 </button>
               ))}

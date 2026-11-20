@@ -31,12 +31,12 @@ export function CssSection({ theme, css }: { theme: ThemeConfig; css: string }) 
           spellCheck={false}
           placeholder={'.nav__link {\n  font-weight: 600;\n}'}
           aria-invalid={invalid}
-          className="w-full font-mono text-[11px] leading-relaxed bg-[var(--pt-code-bg)] text-[var(--pt-code-text)] border border-[var(--pt-border)] rounded p-2 focus:outline-none focus:border-[var(--pt-accent)] resize-y"
+          className="w-full font-mono text-[13px] leading-relaxed bg-[var(--pt-code-bg)] text-[var(--pt-code-text)] border border-[var(--pt-border)] rounded p-2 focus:outline-none focus:border-[var(--pt-accent)] resize-y"
         />
-        {invalid && <p className="text-[11px] text-[var(--pt-danger)]">Custom CSS cannot contain {'</style>'}.</p>}
+        {invalid && <p className="text-[13px] text-[var(--pt-danger)]">Custom CSS cannot contain {'</style>'}.</p>}
       </Group>
       <Group title="Generated output" hint="Exactly what Export gives you.">
-        <pre className="font-mono text-[11px] leading-relaxed bg-[var(--pt-code-bg)] text-[var(--pt-code-text)] border border-[var(--pt-border)] rounded p-2 overflow-auto max-h-[28rem] whitespace-pre">
+        <pre className="font-mono text-[13px] leading-relaxed bg-[var(--pt-code-bg)] text-[var(--pt-code-text)] border border-[var(--pt-border)] rounded p-2 overflow-auto max-h-[28rem] whitespace-pre">
           {css}
         </pre>
       </Group>

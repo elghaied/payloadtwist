@@ -35,8 +35,8 @@ function Segmented<T extends string>({ label, options, value, info, onChange }: 
             value === o ? 'border-[var(--pt-accent)] bg-[var(--pt-accent-soft)]' : 'border-[var(--pt-border)] hover:border-[var(--pt-border-strong)]'
           }`}
         >
-          <span className="block text-[11px] font-medium capitalize text-[var(--pt-text)]">{o}</span>
-          {info?.[o] && <span className="block text-[9.5px] text-[var(--pt-text-faint)] leading-tight mt-0.5">{info[o]}</span>}
+          <span className="block text-[13px] font-medium capitalize text-[var(--pt-text)]">{o}</span>
+          {info?.[o] && <span className="block text-xs text-[var(--pt-text-faint)] leading-tight mt-0.5">{info[o]}</span>}
         </button>
       ))}
     </div>
@@ -51,7 +51,7 @@ function PxTokenRow({ varName, label, min, max, theme }: { varName: string; labe
   const overridden = varName in theme.light
   return (
     <div className="flex items-center gap-2 py-0.5">
-      <span className="flex-1 text-[11px] text-[var(--pt-text-label)]">{label}</span>
+      <span className="flex-1 text-[13px] text-[var(--pt-text-label)]">{label}</span>
       {overridden && (
         <button onClick={() => setToken(varName, null, 'light')} className="p-0.5 text-[var(--pt-text-faint)] hover:text-[var(--pt-text)]" aria-label={`Reset ${label}`}>
           <RotateCcw size={10} />
@@ -103,8 +103,8 @@ export function ShapeSection({ theme }: { theme: ThemeConfig }) {
                   : 'border-[var(--pt-border)] hover:border-[var(--pt-border-strong)]'
               }`}
             >
-              <span className="block text-[11px] font-medium capitalize text-[var(--pt-text)]">{d}</span>
-              <span className="block text-[10px] text-[var(--pt-text-faint)] leading-tight mt-0.5">{DENSITY_INFO[d]}</span>
+              <span className="block text-[13px] font-medium capitalize text-[var(--pt-text)]">{d}</span>
+              <span className="block text-xs text-[var(--pt-text-faint)] leading-tight mt-0.5">{DENSITY_INFO[d]}</span>
             </button>
           ))}
         </div>

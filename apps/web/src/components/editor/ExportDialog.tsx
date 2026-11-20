@@ -21,25 +21,25 @@ function FileBlock({ name, content, mime }: { name: string; content: string; mim
   return (
     <div className="rounded-lg border border-[var(--pt-border)] overflow-hidden">
       <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--pt-surface-alt)] border-b border-[var(--pt-border)]">
-        <code className="text-[11px] text-[var(--pt-text)] flex-1">{name}</code>
+        <code className="text-[13px] text-[var(--pt-text)] flex-1">{name}</code>
         <button
           onClick={async () => {
             await navigator.clipboard.writeText(content)
             setCopied(true)
             setTimeout(() => setCopied(false), 1500)
           }}
-          className="flex items-center gap-1 text-[11px] text-[var(--pt-text-muted)] hover:text-[var(--pt-text)]"
+          className="flex items-center gap-1 text-[13px] text-[var(--pt-text-muted)] hover:text-[var(--pt-text)]"
         >
           {copied ? <Check size={12} /> : <Copy size={12} />} {copied ? 'Copied' : 'Copy'}
         </button>
         <button
           onClick={() => download(name.split('/').pop()!, content, mime)}
-          className="flex items-center gap-1 text-[11px] text-[var(--pt-text-muted)] hover:text-[var(--pt-text)]"
+          className="flex items-center gap-1 text-[13px] text-[var(--pt-text-muted)] hover:text-[var(--pt-text)]"
         >
           <Download size={12} /> Download
         </button>
       </div>
-      <pre className="text-[11px] leading-relaxed p-3 overflow-auto max-h-72 bg-[var(--pt-code-bg)] text-[var(--pt-code-text)] font-mono whitespace-pre">
+      <pre className="text-[13px] leading-relaxed p-3 overflow-auto max-h-72 bg-[var(--pt-code-bg)] text-[var(--pt-code-text)] font-mono whitespace-pre">
         {content}
       </pre>
     </div>
@@ -47,7 +47,7 @@ function FileBlock({ name, content, mime }: { name: string; content: string; mim
 }
 
 const Code = ({ children }: { children: string }) => (
-  <code className="text-[11px] bg-[var(--pt-surface-alt)] px-1 py-0.5 rounded">{children}</code>
+  <code className="text-[13px] bg-[var(--pt-surface-alt)] px-1 py-0.5 rounded">{children}</code>
 )
 
 export function ExportDialog({ open, onClose, theme, css }: { open: boolean; onClose: () => void; theme: ThemeConfig; css: string }) {
@@ -191,7 +191,7 @@ export function ExportDialog({ open, onClose, theme, css }: { open: boolean; onC
                 onChange={(e) => setImportText(e.target.value)}
                 rows={5}
                 placeholder="Paste a payloadtwist theme JSON…"
-                className="w-full font-mono text-[11px] bg-[var(--pt-code-bg)] text-[var(--pt-code-text)] border border-[var(--pt-border)] rounded p-2 focus:outline-none focus:border-[var(--pt-accent)]"
+                className="w-full font-mono text-[13px] bg-[var(--pt-code-bg)] text-[var(--pt-code-text)] border border-[var(--pt-border)] rounded p-2 focus:outline-none focus:border-[var(--pt-accent)]"
               />
               {importError && <p className="text-[var(--pt-danger)]">{importError}</p>}
               <button

@@ -17,18 +17,18 @@ function SurfaceFeel({ theme }: { theme: ThemeConfig }) {
     >
       <div className="flex items-center gap-2 py-0.5">
         <span className="w-4 h-4 rounded-full border border-[var(--pt-border)]" style={{ background: surfaceSource(theme) }} />
-        <span className="flex-1 text-[11px] text-[var(--pt-text-label)]">Surface tint</span>
+        <span className="flex-1 text-[13px] text-[var(--pt-text-label)]">Surface tint</span>
         <ScrubberInput value={Math.round(tint * 100)} min={0} max={100} step={1} unit="%" onChange={(n) => setSurfaces({ tint: n / 100, depth })} />
       </div>
       <div className="flex items-center gap-2 py-0.5">
         <span className="w-4" />
-        <span className="flex-1 text-[11px] text-[var(--pt-text-label)]">Dark mode depth</span>
-        <span className="text-[10px] text-[var(--pt-text-faint)]">deep</span>
+        <span className="flex-1 text-[13px] text-[var(--pt-text-label)]">Dark mode depth</span>
+        <span className="text-xs text-[var(--pt-text-faint)]">deep</span>
         <ScrubberInput value={Math.round(depth * 100)} min={-100} max={100} step={1} onChange={(n) => setSurfaces({ tint, depth: n / 100 })} />
-        <span className="text-[10px] text-[var(--pt-text-faint)]">dim</span>
+        <span className="text-xs text-[var(--pt-text-faint)]">dim</span>
       </div>
       {theme.controls.surfaces && (
-        <button onClick={() => setSurfaces(null)} className="flex items-center gap-1 text-[11px] text-[var(--pt-text-faint)] hover:text-[var(--pt-text)]">
+        <button onClick={() => setSurfaces(null)} className="flex items-center gap-1 text-[13px] text-[var(--pt-text-faint)] hover:text-[var(--pt-text)]">
           <RotateCcw size={10} /> Payload surfaces
         </button>
       )}
@@ -111,10 +111,10 @@ export function SurfacesSection({ theme }: { theme: ThemeConfig }) {
     <div className="space-y-6">
       <SurfaceFeel theme={theme} />
       <Group title="Contrast" hint="WCAG AA for body text. Translucent roles are blended over their background, as the browser does.">
-        <div className="grid grid-cols-[1fr_auto_auto] gap-x-3 gap-y-1 items-center text-[11px]">
+        <div className="grid grid-cols-[1fr_auto_auto] gap-x-3 gap-y-1 items-center text-[13px]">
           <span />
-          <span className="text-[10px] uppercase tracking-wider text-[var(--pt-text-faint)]">Light</span>
-          <span className="text-[10px] uppercase tracking-wider text-[var(--pt-text-faint)]">Dark</span>
+          <span className="text-xs uppercase tracking-wider text-[var(--pt-text-faint)]">Light</span>
+          <span className="text-xs uppercase tracking-wider text-[var(--pt-text-faint)]">Dark</span>
           {CONTRAST_PAIRS.map((p) => (
             <div key={p.label} className="contents">
               <span className="text-[var(--pt-text-label)]">{p.label}</span>

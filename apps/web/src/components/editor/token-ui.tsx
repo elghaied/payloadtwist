@@ -27,8 +27,8 @@ export function Group({ title, hint, children }: { title: string; hint?: string;
   return (
     <section className="space-y-1.5">
       <header>
-        <h3 className="text-[10px] uppercase tracking-wider font-semibold text-[var(--pt-text-muted)]">{title}</h3>
-        {hint && <p className="text-[11px] text-[var(--pt-text-faint)] mt-0.5">{hint}</p>}
+        <h3 className="text-xs uppercase tracking-wider font-semibold text-[var(--pt-text-muted)]">{title}</h3>
+        {hint && <p className="text-[13px] text-[var(--pt-text-faint)] mt-0.5">{hint}</p>}
       </header>
       {children}
     </section>
@@ -82,7 +82,7 @@ export function TokenColorRow({
   return (
     <div className="flex items-center gap-2 py-0.5 min-h-[28px]">
       <div className="flex-1 min-w-0">
-        <span className="text-[11px] text-[var(--pt-text-label)] block truncate" title={varName}>
+        <span className="text-[13px] text-[var(--pt-text-label)] block truncate" title={varName}>
           {label ?? tokenLabel(varName)}
         </span>
       </div>
@@ -94,7 +94,7 @@ export function TokenColorRow({
 
 export function ModeHeader() {
   return (
-    <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-[var(--pt-text-faint)]">
+    <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-[var(--pt-text-faint)]">
       <span className="flex-1" />
       <span className="w-[54px] text-right">Light</span>
       <span className="w-[54px] text-right">Dark</span>
@@ -107,12 +107,12 @@ export function ContrastBadge({ fg, bg, page, large = false }: { fg: string; bg:
   // Payload's text and surface roles are often translucent: composite them the way the browser does
   const bgFlat = flatten(bg, page)
   const fgFlat = bgFlat ? flatten(fg, bgFlat) : null
-  if (!bgFlat || !fgFlat) return <span className="text-[10px] text-[var(--pt-text-faint)]">n/a</span>
+  if (!bgFlat || !fgFlat) return <span className="text-xs text-[var(--pt-text-faint)]">n/a</span>
   const ratio = contrastRatio(fgFlat, bgFlat)
   const pass = ratio >= (large ? 3 : 4.5)
   return (
     <span
-      className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
+      className={`text-xs font-mono px-1.5 py-0.5 rounded ${
         pass ? 'text-[var(--pt-success)] bg-[var(--pt-success)]/10' : 'text-[var(--pt-danger)] bg-[var(--pt-danger)]/10'
       }`}
       title={`Contrast ${ratio.toFixed(2)}:1 — WCAG AA needs ${large ? '3' : '4.5'}:1`}

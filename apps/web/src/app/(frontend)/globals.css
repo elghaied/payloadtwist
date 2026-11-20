@@ -48,17 +48,17 @@
 :root {
     --radius: 0.625rem;
 
-    /* ── Payloadtwist editor design tokens — always dark ── */
+    /* ── Payloadtwist editor design tokens (dark; light below). Text tokens are AA on every surface — see tests/int/editor-contrast ── */
     --pt-bg: #08080c;
     --pt-surface: #0d0d14;
     --pt-surface-alt: #0a0a10;
     --pt-surface-hover: #16161e;
     --pt-surface-active: #1e1e28;
     --pt-text: #e2e2e8;
-    --pt-text-muted: #7a7a8a;
-    --pt-text-label: #8a8a9a;
-    --pt-text-subtle: #606078;
-    --pt-text-faint: #505060;
+    --pt-text-muted: #a1a1b0;
+    --pt-text-label: #b4b4c2;
+    --pt-text-subtle: #9494a6;
+    --pt-text-faint: #8a8a9c;
     --pt-border: #1e1e28;
     --pt-border-strong: #2a2a35;
     --pt-accent: #a855f7;
@@ -113,10 +113,10 @@
     --pt-surface-hover: #ededf0;
     --pt-surface-active: #e2e2e6;
     --pt-text: #1a1a2e;
-    --pt-text-muted: #6b6b80;
-    --pt-text-label: #5a5a70;
-    --pt-text-subtle: #8888a0;
-    --pt-text-faint: #a0a0b0;
+    --pt-text-muted: #55556a;
+    --pt-text-label: #45455a;
+    --pt-text-subtle: #5d5d72;
+    --pt-text-faint: #66667a;
     --pt-border: #dddde3;
     --pt-border-strong: #ccccda;
     --pt-accent: #9333ea;

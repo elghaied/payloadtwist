@@ -133,7 +133,7 @@ export function PreviewPanel({ css, theme, enhancedContrast, onThemeChange, onCo
     .filter((p) => path === p || (p !== '/preview' && path.startsWith(p + '/')))
     .sort((a, b) => b.length - a.length)[0]
   const btn = (active: boolean) =>
-    `px-2.5 py-1 rounded text-[11px] font-medium transition-colors ${
+    `px-2.5 py-1 rounded text-[13px] font-medium transition-colors ${
       active ? 'bg-[var(--pt-accent)] text-white' : 'text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] hover:bg-[var(--pt-surface-hover)]'
     }`
   const iconBtn = (active: boolean) =>

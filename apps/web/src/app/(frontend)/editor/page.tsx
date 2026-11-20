@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Download, GripVertical, Moon, Redo2, RotateCcw, Save, Sun, Undo2 } from 'lucide-react'
@@ -32,6 +32,37 @@ const TABS = [
 ] as const
 type Tab = (typeof TABS)[number]['key']
 
+const CHROME_KEY = 'payloadtwist-editor-chrome'
+const chromeListeners = new Set<() => void>()
+
+/** Editor chrome theme: light by default, the user's choice remembered across visits. */
+function useEditorChromeDark(): [boolean, (update: (dark: boolean) => boolean) => void] {
+  const stored = useSyncExternalStore(
+    (cb) => {
+      chromeListeners.add(cb)
+      return () => chromeListeners.delete(cb)
+    },
+    () => {
+      try {
+        return localStorage.getItem(CHROME_KEY)
+      } catch {
+        return null
+      }
+    },
+    () => null,
+  )
+  const dark = stored === 'dark'
+  const set = (update: (dark: boolean) => boolean) => {
+    try {
+      localStorage.setItem(CHROME_KEY, update(dark) ? 'dark' : 'light')
+    } catch {
+      // storage unavailable: the toggle still can't persist, but nothing breaks
+    }
+    chromeListeners.forEach((cb) => cb())
+  }
+  return [dark, set]
+}
+
 export default function EditorPage() {
   return (
     <Suspense>
@@ -49,7 +80,7 @@ function Editor() {
   const { undo, redo, resetTheme, loadTheme, setPreviewTheme, setEnhancedContrast } = useEditorStore.getState()
 
   const [tab, setTab] = useState<Tab>('palette')
-  const [editorDark, setEditorDark] = useState(true)
+  const [editorDark, setEditorDark] = useEditorChromeDark()
   const [exportOpen, setExportOpen] = useState(false)
   const [saveOpen, setSaveOpen] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
@@ -145,13 +176,13 @@ function Editor() {
               payload
               <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">twist</span>
             </span>
-            <span className="text-[9px] font-mono text-[var(--pt-text-muted)] bg-[var(--pt-surface-hover)] px-1.5 py-0.5 rounded">
+            <span className="text-xs font-mono text-[var(--pt-text-muted)] bg-[var(--pt-surface-hover)] px-1.5 py-0.5 rounded">
               Payload v4
             </span>
           </Link>
           <div className="flex items-center gap-2">
             <EditorUserMenu />
-            <button className={iconBtn} onClick={() => setEditorDark((d) => !d)} aria-label="Toggle editor theme">
+            <button className={iconBtn} onClick={() => setEditorDark((d) => !d)} aria-label={editorDark ? 'Switch editor to light' : 'Switch editor to dark'} title="Editor theme (does not affect your Payload theme)">
               {editorDark ? <Sun size={13} /> : <Moon size={13} />}
             </button>
           </div>
@@ -164,7 +195,7 @@ function Editor() {
           >
             <Download size={12} />
             Export
-            {overrideCount > 0 && <span className="text-[9px] font-mono bg-white/20 px-1.5 rounded-full">{overrideCount}</span>}
+            {overrideCount > 0 && <span className="text-xs font-mono bg-white/20 px-1.5 rounded-full">{overrideCount}</span>}
           </button>
           {session ? (
             <button
@@ -209,7 +240,7 @@ function Editor() {
               role="tab"
               aria-selected={tab === t.key}
               onClick={() => setTab(t.key)}
-              className={`text-[11px] px-2 py-1 rounded font-medium whitespace-nowrap transition-colors ${
+              className={`text-[13px] px-2 py-1 rounded font-medium whitespace-nowrap transition-colors ${
                 tab === t.key
                   ? 'bg-[var(--pt-accent)] text-white'
                   : 'text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] hover:bg-[var(--pt-surface-hover)]'

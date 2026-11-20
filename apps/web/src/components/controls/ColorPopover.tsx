@@ -379,7 +379,7 @@ export function ColorPopover({
       >
         <div className="flex flex-col gap-3" style={{ width: 220 }}>
           {label && (
-            <p className="text-[10px] text-[var(--pt-text-muted)] font-mono truncate">{label}</p>
+            <p className="text-xs text-[var(--pt-text-muted)] font-mono truncate">{label}</p>
           )}
 
           {/* SV Canvas */}
@@ -399,7 +399,7 @@ export function ColorPopover({
               <button
                 key={mode}
                 onClick={() => setInputMode(mode)}
-                className={`flex-1 text-[10px] uppercase tracking-wider py-1 rounded transition-colors font-medium ${
+                className={`flex-1 text-xs uppercase tracking-wider py-1 rounded transition-colors font-medium ${
                   inputMode === mode
                     ? 'bg-[var(--pt-surface-hover)] text-[var(--pt-text)]'
                     : 'text-[var(--pt-text-muted)] hover:text-[var(--pt-text)]'
@@ -426,7 +426,7 @@ export function ColorPopover({
             <div className="grid grid-cols-3 gap-1.5">
               {(['R', 'G', 'B'] as const).map((ch, i) => (
                 <div key={ch} className="flex flex-col gap-0.5">
-                  <span className="text-[9px] text-[var(--pt-text-muted)] text-center">{ch}</span>
+                  <span className="text-xs text-[var(--pt-text-muted)] text-center">{ch}</span>
                   <input
                     type="number"
                     min={0}
@@ -450,7 +450,7 @@ export function ColorPopover({
             <div className="grid grid-cols-3 gap-1.5">
               {(['H', 'S', 'L'] as const).map((ch, i) => (
                 <div key={ch} className="flex flex-col gap-0.5">
-                  <span className="text-[9px] text-[var(--pt-text-muted)] text-center">
+                  <span className="text-xs text-[var(--pt-text-muted)] text-center">
                     {ch}{i > 0 ? '%' : '\u00B0'}
                   </span>
                   <input
@@ -481,7 +481,7 @@ export function ColorPopover({
           {defaultValue && toHex(value) !== toHex(defaultValue) && (
             <button
               onClick={handleReset}
-              className="text-[10px] text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] transition-colors text-left"
+              className="text-xs text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] transition-colors text-left"
             >
               Reset to default
             </button>

@@ -33,7 +33,7 @@ function Choice({ options, value, onChange }: { options: { label: string; value:
           key={o.value}
           onClick={() => onChange(o.value)}
           aria-pressed={value === o.value}
-          className={`px-1.5 py-0.5 rounded text-[10.5px] ${value === o.value ? 'bg-[var(--pt-accent)] text-white' : 'text-[var(--pt-text-muted)] hover:text-[var(--pt-text)]'}`}
+          className={`px-1.5 py-0.5 rounded text-xs ${value === o.value ? 'bg-[var(--pt-accent)] text-white' : 'text-[var(--pt-text-muted)] hover:text-[var(--pt-text)]'}`}
         >
           {o.label}
         </button>
@@ -76,7 +76,7 @@ function PropRow({ def, prop, theme, fallback }: { def: ComponentDef; prop: Prop
       <select
         value={light ?? ''}
         onChange={(e) => set(def.id, prop, e.target.value || null, 'light')}
-        className="text-[11px] bg-[var(--pt-bg)] border border-[var(--pt-border)] rounded px-1.5 py-0.5 text-[var(--pt-text)]"
+        className="text-[13px] bg-[var(--pt-bg)] border border-[var(--pt-border)] rounded px-1.5 py-0.5 text-[var(--pt-text)]"
         aria-label={`${def.label} shadow`}
       >
         <option value="">Payload</option>
@@ -119,7 +119,7 @@ function PropRow({ def, prop, theme, fallback }: { def: ComponentDef; prop: Prop
 
   return (
     <div className="flex items-center gap-2 py-0.5 min-h-[28px]">
-      <span className="flex-1 text-[11px] text-[var(--pt-text-label)]">{p.label}</span>
+      <span className="flex-1 text-[13px] text-[var(--pt-text-label)]">{p.label}</span>
       {overridden && (
         <button onClick={reset} className="p-0.5 text-[var(--pt-text-faint)] hover:text-[var(--pt-text)]" aria-label={`Reset ${def.label} ${p.label}`}>
           <RotateCcw size={10} />
@@ -152,7 +152,7 @@ export function ComponentsSection({ theme }: { theme: ThemeConfig }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-[11px] text-[var(--pt-text-faint)]">
+      <p className="text-[13px] text-[var(--pt-text-faint)]">
         Styles tokens can&apos;t express — a branded sidebar, card shadows, uppercase table headers — on Payload&apos;s stable
         component classes. Colors have light and dark values; everything else applies to both modes.
       </p>
@@ -167,11 +167,11 @@ export function ComponentsSection({ theme }: { theme: ThemeConfig }) {
                   <button
                     onClick={() => setOpen((o) => ({ ...o, [def.id]: !o[def.id] }))}
                     aria-expanded={!!isOpen}
-                    className="w-full flex items-center gap-1.5 py-2 text-left text-[11.5px] font-medium text-[var(--pt-text)]"
+                    className="w-full flex items-center gap-1.5 py-2 text-left text-[13px] font-medium text-[var(--pt-text)]"
                   >
                     <ChevronRight size={12} className={`transition-transform ${isOpen ? 'rotate-90' : ''}`} />
                     {def.label}
-                    {count > 0 && <span className="ml-auto text-[9px] font-mono bg-[var(--pt-accent-soft)] text-[var(--pt-accent)] px-1.5 rounded-full">{count}</span>}
+                    {count > 0 && <span className="ml-auto text-xs font-mono bg-[var(--pt-accent-soft)] text-[var(--pt-accent)] px-1.5 rounded-full">{count}</span>}
                   </button>
                   {isOpen && (
                     <div className="pb-2 pl-4">

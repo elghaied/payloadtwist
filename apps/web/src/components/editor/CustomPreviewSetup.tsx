@@ -17,20 +17,20 @@ function CodeBlock({ title, code }: { title: string; code: string }) {
   return (
     <div className="rounded-lg border border-[var(--pt-border)] overflow-hidden">
       <div className="flex items-center justify-between px-3 py-1.5 bg-[var(--pt-surface)] border-b border-[var(--pt-border)]">
-        <span className="text-[11px] font-medium text-[var(--pt-text-muted)]">{title}</span>
+        <span className="text-[13px] font-medium text-[var(--pt-text-muted)]">{title}</span>
         <button
           onClick={async () => {
             await navigator.clipboard.writeText(code)
             setCopied(true)
             setTimeout(() => setCopied(false), 1500)
           }}
-          className="flex items-center gap-1 text-[11px] text-[var(--pt-text-muted)] hover:text-[var(--pt-text)]"
+          className="flex items-center gap-1 text-[13px] text-[var(--pt-text-muted)] hover:text-[var(--pt-text)]"
         >
           {copied ? <Check size={12} /> : <Copy size={12} />}
           {copied ? 'Copied' : 'Copy'}
         </button>
       </div>
-      <pre className="text-[11px] leading-relaxed p-3 overflow-x-auto max-h-64 bg-[var(--pt-code-bg)] text-[var(--pt-code-text)] font-mono">
+      <pre className="text-[13px] leading-relaxed p-3 overflow-x-auto max-h-64 bg-[var(--pt-code-bg)] text-[var(--pt-code-text)] font-mono">
         {code}
       </pre>
     </div>
