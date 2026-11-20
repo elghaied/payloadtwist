@@ -10,6 +10,7 @@ import { payloadAdminUIThemes } from 'payload-admin-ui-themes'
 import { stockTheme } from 'payload-admin-ui-themes/themes/stock'
 import { payloadtwistAdminThemes } from '../admin-themes'
 import { demo } from './demo'
+import { L } from './labels'
 import { fullEditor } from './lexical'
 import { FieldShowcase } from './field-showcase'
 import { migrations } from './migrations'
@@ -19,9 +20,10 @@ const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const Users = demo({
   slug: 'users',
+  labels: L.collections.users,
   // Everyone shares the auto-login account, so failed logins must never lock it.
   auth: { maxLoginAttempts: 0, useAPIKey: true },
-  admin: { useAsTitle: 'name', group: 'Settings', defaultColumns: ['name', 'email', 'role'] },
+  admin: { useAsTitle: 'name', group: L.groups.settings, defaultColumns: ['name', 'email', 'role'] },
   fields: [
     { name: 'name', type: 'text', required: true },
     {
@@ -39,7 +41,8 @@ const Users = demo({
 
 const Media = demo({
   slug: 'media',
-  admin: { group: 'Content' },
+  labels: L.collections.media,
+  admin: { group: L.groups.content },
   upload: {
     staticDir: MEDIA_DIR,
     mimeTypes: ['image/*'],
@@ -54,7 +57,8 @@ const Media = demo({
 
 const Categories = demo({
   slug: 'categories',
-  admin: { useAsTitle: 'title', group: 'Content' },
+  labels: L.collections.categories,
+  admin: { useAsTitle: 'title', group: L.groups.content },
   fields: [
     { name: 'title', type: 'text', required: true },
     { name: 'description', type: 'textarea' },
@@ -64,8 +68,9 @@ const Categories = demo({
 
 const Folders = demo({
   slug: 'folders',
+  labels: L.collections.folders,
   folders: true,
-  admin: { useAsTitle: 'name', group: 'Content' },
+  admin: { useAsTitle: 'name', group: L.groups.content },
   fields: [{ name: 'name', type: 'text', required: true }],
 })
 
@@ -111,9 +116,10 @@ const layoutBlocks: Field = {
 
 const Posts = demo({
   slug: 'posts',
+  labels: L.collections.posts,
   admin: {
     useAsTitle: 'title',
-    group: 'Content',
+    group: L.groups.content,
     defaultColumns: ['title', 'author', 'categories', '_status', 'publishedAt'],
   },
   versions: { drafts: true },
@@ -122,7 +128,7 @@ const Posts = demo({
       type: 'tabs',
       tabs: [
         {
-          label: 'Content',
+          label: L.tabs.content,
           fields: [
             { name: 'title', type: 'text', required: true, localized: true },
             { name: 'excerpt', type: 'textarea', localized: true },
@@ -131,7 +137,7 @@ const Posts = demo({
           ],
         },
         {
-          label: 'Details',
+          label: L.tabs.details,
           fields: [
             {
               type: 'row',
@@ -155,7 +161,7 @@ const Posts = demo({
             },
             {
               type: 'collapsible',
-              label: 'SEO',
+              label: L.tabs.seo,
               fields: [
                 { name: 'metaTitle', type: 'text' },
                 { name: 'metaDescription', type: 'textarea' },
@@ -182,7 +188,8 @@ const Posts = demo({
 
 const Pages = demo({
   slug: 'pages',
-  admin: { useAsTitle: 'title', group: 'Content', defaultColumns: ['title', 'slug', '_status'] },
+  labels: L.collections.pages,
+  admin: { useAsTitle: 'title', group: L.groups.content, defaultColumns: ['title', 'slug', '_status'] },
   versions: { drafts: { autosave: true } },
   fields: [
     { name: 'title', type: 'text', required: true },
@@ -194,7 +201,8 @@ const Pages = demo({
 
 const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
-  admin: { group: 'Settings' },
+  label: L.siteSettings,
+  admin: { group: L.groups.settings },
   access: { read: () => true, update: () => true },
   hooks: {
     beforeChange: [
@@ -245,7 +253,7 @@ export default buildConfig({
       widgets: [
         {
           slug: 'editorial',
-          label: 'Editorial overview',
+          label: L.editorialWidget,
           Component: '@/payload/components/EditorialWidget#EditorialWidget',
           minWidth: 'small',
           maxWidth: 'full',

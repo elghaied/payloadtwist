@@ -1,5 +1,6 @@
 import type { Block, CollectionConfig } from 'payload'
 import { demo } from './demo'
+import { L } from './labels'
 import { debugEditor } from './lexical'
 
 // Every Payload v4 field type, variant and state in one document, so a theme can be judged
@@ -46,10 +47,10 @@ const galleryBlock: Block = {
 
 export const FieldShowcase: CollectionConfig = demo({
   slug: 'field-showcase',
-  labels: { singular: 'Field showcase', plural: 'Field showcase' },
+  labels: L.collections.fieldShowcase,
   admin: {
     useAsTitle: 'title',
-    group: 'Showcase',
+    group: L.groups.showcase,
     description: 'Every Payload v4 field type and state — use it to judge a theme against real editing UI.',
     defaultColumns: ['title', 'status', 'body', 'priority', 'rating', 'updatedAt'],
   },
@@ -60,7 +61,7 @@ export const FieldShowcase: CollectionConfig = demo({
       type: 'tabs',
       tabs: [
         {
-          label: 'Content',
+          label: L.tabs.content,
           fields: [
             { name: 'body', type: 'richText', localized: true, admin: { description: 'Every Lexical feature, seeded with every node type.' } },
             {
@@ -74,7 +75,7 @@ export const FieldShowcase: CollectionConfig = demo({
           ],
         },
         {
-          label: 'Basics',
+          label: L.tabs.basics,
           description: 'Text-like inputs and their states.',
           fields: [
             { name: 'title', type: 'text', required: true, localized: true, admin: { placeholder: 'A clear, short title' } },
@@ -109,7 +110,7 @@ export const FieldShowcase: CollectionConfig = demo({
           ],
         },
         {
-          label: 'Choices',
+          label: L.tabs.choices,
           fields: [
             {
               name: 'status',
@@ -151,7 +152,7 @@ export const FieldShowcase: CollectionConfig = demo({
           ],
         },
         {
-          label: 'Dates & data',
+          label: L.tabs.datesData,
           fields: [
             {
               type: 'row',
@@ -174,7 +175,7 @@ export const FieldShowcase: CollectionConfig = demo({
           ],
         },
         {
-          label: 'Relations',
+          label: L.tabs.relations,
           fields: [
             { name: 'owner', type: 'relationship', relationTo: 'users' },
             { name: 'relatedPosts', type: 'relationship', relationTo: 'posts', hasMany: true },
@@ -191,7 +192,7 @@ export const FieldShowcase: CollectionConfig = demo({
         },
         {
           name: 'structure',
-          label: 'Layout fields',
+          label: L.tabs.layout,
           description: 'Named tab: its fields are stored under `structure`.',
           fields: [
             {
