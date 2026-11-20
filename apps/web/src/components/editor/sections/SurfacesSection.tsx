@@ -12,12 +12,12 @@ function SurfaceFeel({ theme }: { theme: ThemeConfig }) {
   const { tint = 0, depth = 0 } = theme.controls.surfaces ?? {}
   return (
     <Group
-      title="Surface feel"
-      hint="Tints every background, panel and border with the neutral seed (or the brand seed when the neutral is grey), and sets how deep dark mode goes."
+      title="Tint & depth"
+      hint="Quick global changes: give every background a color cast, and choose how dark dark mode gets."
     >
       <div className="flex items-center gap-2 py-0.5">
         <span className="w-4 h-4 rounded-full border border-[var(--pt-border)]" style={{ background: surfaceSource(theme) }} />
-        <span className="flex-1 text-[13px] text-[var(--pt-text-label)]">Surface tint</span>
+        <span className="flex-1 text-[13px] text-[var(--pt-text-label)]" title="Uses the hue of your Neutral color (or Brand when Neutral is plain grey)">Tint backgrounds</span>
         <ScrubberInput value={Math.round(tint * 100)} min={0} max={100} step={1} unit="%" onChange={(n) => setSurfaces({ tint: n / 100, depth })} />
       </div>
       <div className="flex items-center gap-2 py-0.5">
@@ -39,8 +39,8 @@ function SurfaceFeel({ theme }: { theme: ThemeConfig }) {
 // The roles that carry most of the admin's look. Everything else is in Advanced.
 const GROUPS: { title: string; hint?: string; vars: [string, string?][] }[] = [
   {
-    title: 'Surfaces',
-    hint: 'Page, panels and floating layers.',
+    title: 'Backgrounds',
+    hint: 'The page and every panel, menu and popup on it.',
     vars: [
       ['--color-bg', 'Page background'],
       ['--color-bg-secondary', 'Secondary surface'],
@@ -54,6 +54,7 @@ const GROUPS: { title: string; hint?: string; vars: [string, string?][] }[] = [
   },
   {
     title: 'Text & icons',
+    hint: 'Colors of text and icons everywhere.',
     vars: [
       ['--color-text', 'Text'],
       ['--color-text-secondary', 'Secondary text'],
@@ -65,7 +66,8 @@ const GROUPS: { title: string; hint?: string; vars: [string, string?][] }[] = [
     ],
   },
   {
-    title: 'Borders & focus',
+    title: 'Borders & focus ring',
+    hint: 'Dividers and outlines, and the ring shown when you tab through the page with a keyboard.',
     vars: [
       ['--color-border', 'Border'],
       ['--color-border-strong', 'Strong border'],
@@ -74,8 +76,8 @@ const GROUPS: { title: string; hint?: string; vars: [string, string?][] }[] = [
     ],
   },
   {
-    title: 'Brand & selection',
-    hint: 'Normally driven by the Brand seed — override here for exceptions.',
+    title: 'Brand color & selection',
+    hint: 'These follow your Brand color automatically — set them here only to make an exception.',
     vars: [
       ['--color-bg-brand', 'Primary button'],
       ['--color-bg-brand-hover', 'Primary button hover'],
@@ -85,7 +87,8 @@ const GROUPS: { title: string; hint?: string; vars: [string, string?][] }[] = [
     ],
   },
   {
-    title: 'Fields',
+    title: 'Form fields',
+    hint: 'Inputs, selects and date pickers.',
     vars: [
       ['--field-color-bg', 'Field background'],
       ['--field-color-border', 'Field border'],
@@ -114,7 +117,7 @@ export function SurfacesSection({ theme }: { theme: ThemeConfig }) {
         shared color variables — to color one element only (just the sidebar, just the table header) use Components.
       </SectionIntro>
       <SurfaceFeel theme={theme} />
-      <Group title="Contrast" hint="WCAG AA for body text. Translucent roles are blended over their background, as the browser does.">
+      <Group title="Readability check" hint="Is text readable on its background? AA is the accessibility standard (4.5:1). Fix a failing pair by changing the colors below.">
         <div className="grid grid-cols-[1fr_auto_auto] gap-x-3 gap-y-1 items-center text-[13px]">
           <span />
           <span className="text-xs uppercase tracking-wider text-[var(--pt-text-faint)]">Light</span>

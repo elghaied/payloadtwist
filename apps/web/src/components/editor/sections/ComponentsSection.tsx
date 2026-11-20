@@ -7,7 +7,7 @@ import { ScrubberInput } from '@/components/editor/ScrubberInput'
 import { COMPONENTS, isColorProp, PROPS, type ComponentDef, type PropKey } from '@/payload-theme/components'
 import type { Mode, ThemeConfig } from '@/payload-theme/theme'
 import { useEditorStore } from '@/store/editor-store'
-import { Group, SectionIntro, useResolved } from '../token-ui'
+import { Group, SectionIntro, useHighlight, useResolved } from '../token-ui'
 
 const SHADOWS = [
   { label: 'None', value: 'none' },
@@ -142,6 +142,36 @@ const FALLBACK_TOKEN: Partial<Record<PropKey, string>> = {
   accent: '--color-bg-brand',
 }
 
+/** One component: header with description; hovering anywhere outlines it in the preview. */
+function ComponentBlock({
+  def,
+  count,
+  isOpen,
+  onToggle,
+  children,
+}: {
+  def: ComponentDef
+  count: number
+  isOpen: boolean
+  onToggle: () => void
+  children: React.ReactNode
+}) {
+  const hover = useHighlight(def.selectors.filter((s) => !s.includes('::')))
+  return (
+    <div {...hover}>
+      <button onClick={onToggle} aria-expanded={isOpen} className="w-full flex items-start gap-1.5 py-2 text-left">
+        <ChevronRight size={14} className={`mt-0.5 shrink-0 transition-transform ${isOpen ? 'rotate-90' : ''}`} />
+        <span className="flex-1 min-w-0">
+          <span className="block text-[13px] font-medium text-[var(--pt-text)]">{def.label}</span>
+          {def.hint && <span className="block text-xs text-[var(--pt-text-muted)] leading-snug">{def.hint}</span>}
+        </span>
+        {count > 0 && <span className="text-xs font-mono bg-[var(--pt-accent-soft)] text-[var(--pt-accent)] px-1.5 rounded-full">{count}</span>}
+      </button>
+      {isOpen && <div className="pb-2 pl-5">{children}</div>}
+    </div>
+  )
+}
+
 export function ComponentsSection({ theme }: { theme: ThemeConfig }) {
   const resolved = useResolved(theme)
   const [open, setOpen] = useState<Record<string, boolean>>({ sidebar: true })
@@ -164,24 +194,11 @@ export function ComponentsSection({ theme }: { theme: ThemeConfig }) {
               const count = Object.keys(theme.components[def.id]?.light ?? {}).length + Object.keys(theme.components[def.id]?.dark ?? {}).length
               const isOpen = open[def.id]
               return (
-                <div key={def.id}>
-                  <button
-                    onClick={() => setOpen((o) => ({ ...o, [def.id]: !o[def.id] }))}
-                    aria-expanded={!!isOpen}
-                    className="w-full flex items-center gap-1.5 py-2 text-left text-[13px] font-medium text-[var(--pt-text)]"
-                  >
-                    <ChevronRight size={12} className={`transition-transform ${isOpen ? 'rotate-90' : ''}`} />
-                    {def.label}
-                    {count > 0 && <span className="ml-auto text-xs font-mono bg-[var(--pt-accent-soft)] text-[var(--pt-accent)] px-1.5 rounded-full">{count}</span>}
-                  </button>
-                  {isOpen && (
-                    <div className="pb-2 pl-4">
-                      {def.props.map((prop) => (
-                        <PropRow key={prop} def={def} prop={prop} theme={theme} fallback={fallback(prop)} />
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <ComponentBlock key={def.id} def={def} count={count} isOpen={!!isOpen} onToggle={() => setOpen((o) => ({ ...o, [def.id]: !o[def.id] }))}>
+                  {def.props.map((prop) => (
+                    <PropRow key={prop} def={def} prop={prop} theme={theme} fallback={fallback(prop)} />
+                  ))}
+                </ComponentBlock>
               )
             })}
           </div>

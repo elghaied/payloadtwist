@@ -20,6 +20,8 @@ export interface Token {
   contrast?: { both?: string; light?: string; dark?: string }
   /** Values inside `@media` queries, keyed by the query */
   responsive?: Record<string, string>
+  /** Payload component blocks (BEM roots, e.g. `btn`, `nav`) that use this token, directly or via other tokens */
+  usedBy?: string[]
 }
 
 export interface TokenSchema {
@@ -154,4 +156,76 @@ export function extractTokens(
     ramps,
     tokens,
   }
+}
+
+// ─── Usage map ──────────────────────────────────────────────────────────────
+
+/** BEM block of a selector's first class: `.btn--style-primary:hover` → `btn` */
+// State/utility classes that aren't components
+const NOT_BLOCKS = new Set(['active', 'open', 'selected', 'disabled', 'hidden', 'dark', 'light', 'is-active'])
+
+function blockOf(selector: string): string | null {
+  for (const m of selector.matchAll(/\.([a-z][a-z0-9]*(?:-[a-z0-9]+)*)(?:__|--|[^a-zA-Z0-9_-]|$)/g)) {
+    const block = m[1]
+    if (!NOT_BLOCKS.has(block)) return block
+  }
+  return null
+}
+
+const VAR_REF = /var\((--[\w-]+)/g
+
+/**
+ * Which Payload component blocks use each token — directly in component CSS, or through other
+ * tokens that reference it (a ramp step reaches every component its semantic roles reach).
+ */
+export function extractUsage(componentFiles: { css: string }[], tokens: Token[]): Record<string, string[]> {
+  const direct = new Map<string, Set<string>>()
+  for (const { css } of componentFiles) {
+    let root
+    try {
+      root = postcss.parse(css)
+    } catch {
+      continue
+    }
+    root.walkDecls((decl) => {
+      const refs = [...decl.value.matchAll(VAR_REF)].map((m) => m[1])
+      if (!refs.length) return
+      const rule = decl.parent as Rule | undefined
+      // nested rules (`&:hover`) inherit the block from their ancestors
+      let node: Rule | undefined = rule
+      let block: string | null = null
+      while (node && !block) {
+        block = node.selector ? blockOf(node.selector) : null
+        node = node.parent?.type === 'rule' ? (node.parent as Rule) : undefined
+      }
+      if (!block) return
+      for (const r of refs) {
+        if (!direct.has(r)) direct.set(r, new Set())
+        direct.get(r)!.add(block)
+      }
+    })
+  }
+
+  // token → tokens that reference it
+  const referencedBy = new Map<string, Set<string>>()
+  for (const t of tokens) {
+    const values = [t.light, t.dark, t.contrast?.both, t.contrast?.light, t.contrast?.dark].filter(Boolean).join(' ')
+    for (const m of values.matchAll(VAR_REF)) {
+      if (!referencedBy.has(m[1])) referencedBy.set(m[1], new Set())
+      referencedBy.get(m[1])!.add(t.var)
+    }
+  }
+
+  const memo = new Map<string, Set<string>>()
+  const usage = (v: string, seen = new Set<string>()): Set<string> => {
+    if (memo.has(v)) return memo.get(v)!
+    if (seen.has(v)) return new Set()
+    seen.add(v)
+    const out = new Set(direct.get(v) ?? [])
+    for (const parent of referencedBy.get(v) ?? []) for (const b of usage(parent, seen)) out.add(b)
+    memo.set(v, out)
+    return out
+  }
+
+  return Object.fromEntries(tokens.map((t) => [t.var, [...usage(t.var)].sort()]))
 }

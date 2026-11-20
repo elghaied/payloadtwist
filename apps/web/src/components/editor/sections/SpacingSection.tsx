@@ -1,6 +1,7 @@
 'use client'
 
 import { DENSITIES, type Density } from '@/payload-theme/controls'
+import { highlightSelectors } from '@/payload-theme/descriptions'
 import type { ThemeConfig } from '@/payload-theme/theme'
 import { useEditorStore } from '@/store/editor-store'
 import { PxTokenRow, Segmented } from '../control-rows'
@@ -22,7 +23,14 @@ export function SpacingSection({ theme }: { theme: ThemeConfig }) {
       </SectionIntro>
 
       <Group title="Control size" hint="Height of fields, buttons and small controls like search and pagination.">
-        <Segmented label="Control size" options={DENSITIES} value={theme.controls.density ?? 'compact'} info={DENSITY_INFO} onChange={setDensity} />
+        <Segmented
+          label="Control size"
+          options={DENSITIES}
+          value={theme.controls.density ?? 'compact'}
+          info={DENSITY_INFO}
+          onChange={setDensity}
+          highlight={[...new Set(['--button-height', '--field-min-height-large', '--control-height'].flatMap(highlightSelectors))]}
+        />
       </Group>
 
       <Group title="Layout widths" hint="Width of the main sidebar and of the sidebar inside documents.">

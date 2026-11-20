@@ -35,6 +35,8 @@ interface EditorState {
 
   previewTheme: PreviewTheme
   enhancedContrast: boolean
+  /** Component selectors outlined in the preview while hovering a control (not persisted) */
+  highlight: string[]
 
   setSeed(key: SeedKey, hex: string | null): void
   setRamp(varName: string, value: string | null): void
@@ -56,6 +58,7 @@ interface EditorState {
 
   setPreviewTheme(theme: PreviewTheme): void
   setEnhancedContrast(enabled: boolean): void
+  setHighlight(selectors: string[]): void
 }
 
 export const useEditorStore = create<EditorState>()(
@@ -82,6 +85,7 @@ export const useEditorStore = create<EditorState>()(
         lastEditAt: 0,
         previewTheme: 'light',
         enhancedContrast: false,
+        highlight: [],
 
         setSeed: (key, hex) => commit((t) => setSeed(t, key, hex)),
         setRamp: (v, value) => commit((t) => setRamp(t, v, value)),
@@ -111,6 +115,7 @@ export const useEditorStore = create<EditorState>()(
 
         setPreviewTheme: (previewTheme) => set({ previewTheme }),
         setEnhancedContrast: (enhancedContrast) => set({ enhancedContrast }),
+        setHighlight: (highlight) => set({ highlight }),
       }
     },
     {

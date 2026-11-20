@@ -2,7 +2,7 @@
 
 import { usePathname, useRootTheme, useRouter } from '@payloadcms/ui'
 import { useEffect, type ReactNode } from 'react'
-import { applyCss, isToPreview, type FromPreview } from '@/payload-theme/preview-protocol'
+import { applyCss, applyHighlight, isToPreview, type FromPreview } from '@/payload-theme/preview-protocol'
 
 /**
  * Admin provider for the embedded preview: receives theme CSS, color mode, contrast and
@@ -31,6 +31,7 @@ export function PreviewBridge({ children }: { children?: ReactNode }) {
       }
       else if (msg.type === 'theme') setTheme(msg.theme)
       else if (msg.type === 'contrast') setHighContrastMode(msg.enabled)
+      else if (msg.type === 'highlight') applyHighlight(document, msg.selectors)
       else if (msg.type === 'navigate' && msg.path.startsWith('/preview')) router.push(msg.path)
     }
 

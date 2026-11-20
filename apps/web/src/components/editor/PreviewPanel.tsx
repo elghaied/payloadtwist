@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Contrast, ExternalLink, Laptop, Moon, Smartphone, Sun, Tablet } from 'lucide-react'
 import { isFromPreview, type ToPreviewBody } from '@/payload-theme/preview-protocol'
+import { useEditorStore } from '@/store/editor-store'
 import { CustomPreviewSetup } from './CustomPreviewSetup'
 
 type Source = 'demo' | 'custom'
@@ -97,6 +98,10 @@ export function PreviewPanel({ css, theme, enhancedContrast, onThemeChange, onCo
   useEffect(() => {
     if (ready) send({ type: 'contrast', enabled: enhancedContrast })
   }, [enhancedContrast, ready, send])
+  const highlight = useEditorStore((s) => s.highlight)
+  useEffect(() => {
+    if (ready) send({ type: 'highlight', selectors: highlight })
+  }, [highlight, ready, send])
 
   const navigate = (to: string) => {
     if (ready) send({ type: 'navigate', path: to })

@@ -4,9 +4,18 @@ import { useMemo, type ReactNode } from 'react'
 import { RotateCcw } from 'lucide-react'
 import { ColorPopover } from '@/components/controls'
 import { contrastRatio, flatten } from '@/payload-theme/color'
+import { describeToken, highlightSelectors } from '@/payload-theme/descriptions'
 import { resolveAll, TOKENS } from '@/payload-theme/schema'
 import type { Mode, ThemeConfig } from '@/payload-theme/theme'
 import { useEditorStore } from '@/store/editor-store'
+
+/** Outlines the affected components in the preview while a control is hovered or focused. */
+export function useHighlight(selectors: string[]) {
+  const setHighlight = useEditorStore((s) => s.setHighlight)
+  const on = () => setHighlight(selectors)
+  const off = () => setHighlight([])
+  return { onMouseEnter: on, onMouseLeave: off, onFocusCapture: on, onBlurCapture: off }
+}
 
 /** Every token resolved for both modes, recomputed only when overrides change. */
 export function useResolved(theme: ThemeConfig) {
@@ -61,6 +70,7 @@ export function TokenColorRow({
   label?: string
 }) {
   const setToken = useEditorStore((s) => s.setToken)
+  const hover = useHighlight(highlightSelectors(varName))
   const token = TOKENS[varName]
   if (!token) return null
 
@@ -80,11 +90,12 @@ export function TokenColorRow({
   }
 
   return (
-    <div className="flex items-center gap-2 py-0.5 min-h-[28px]">
+    <div className="flex items-center gap-2 py-1 min-h-[28px] rounded hover:bg-[var(--pt-surface-hover)] -mx-1 px-1" {...hover}>
       <div className="flex-1 min-w-0">
-        <span className="text-[13px] text-[var(--pt-text-label)] block truncate" title={varName}>
+        <span className="text-[13px] text-[var(--pt-text)] block truncate" title={varName}>
           {label ?? tokenLabel(varName)}
         </span>
+        <span className="text-xs text-[var(--pt-text-muted)] block leading-snug">{describeToken(varName)}</span>
       </div>
       {cell('light')}
       {cell('dark')}

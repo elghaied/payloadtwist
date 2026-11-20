@@ -2,7 +2,9 @@
 
 import { RotateCcw } from 'lucide-react'
 import { ScrubberInput } from '@/components/editor/ScrubberInput'
+import { describeToken, highlightSelectors } from '@/payload-theme/descriptions'
 import { TOKENS } from '@/payload-theme/schema'
+import { useHighlight } from './token-ui'
 import type { ThemeConfig } from '@/payload-theme/theme'
 import { useEditorStore } from '@/store/editor-store'
 
@@ -14,9 +16,25 @@ export const SHADOW_INFO: Record<string, string> = {
   glow: 'Brand-colored',
 }
 
-export function Segmented<T extends string>({ label, options, value, info, onChange }: { label: string; options: readonly T[]; value: T; info?: Record<string, string>; onChange: (v: T) => void }) {
+export function Segmented<T extends string>({
+  label,
+  options,
+  value,
+  info,
+  onChange,
+  highlight = [],
+}: {
+  label: string
+  options: readonly T[]
+  value: T
+  info?: Record<string, string>
+  onChange: (v: T) => void
+  /** Component selectors to outline in the preview while hovering */
+  highlight?: string[]
+}) {
+  const hover = useHighlight(highlight)
   return (
-    <div className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }} role="radiogroup" aria-label={label}>
+    <div {...hover} className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }} role="radiogroup" aria-label={label}>
       {options.map((o) => (
         <button
           key={o}
@@ -39,11 +57,15 @@ export const pxOf = (v: string | undefined) => (v ? (v.endsWith('rem') ? parseFl
 
 export function PxTokenRow({ varName, label, min, max, theme }: { varName: string; label: string; min: number; max: number; theme: ThemeConfig }) {
   const setToken = useEditorStore((s) => s.setToken)
+  const hover = useHighlight(highlightSelectors(varName))
   const value = pxOf(theme.light[varName] ?? TOKENS[varName]?.light)
   const overridden = varName in theme.light
   return (
-    <div className="flex items-center gap-2 py-0.5">
-      <span className="flex-1 text-[13px] text-[var(--pt-text-label)]">{label}</span>
+    <div className="flex items-center gap-2 py-1 rounded hover:bg-[var(--pt-surface-hover)] -mx-1 px-1" {...hover}>
+      <span className="flex-1 min-w-0">
+        <span className="block text-[13px] text-[var(--pt-text)]">{label}</span>
+        <span className="block text-xs text-[var(--pt-text-muted)] leading-snug">{describeToken(varName)}</span>
+      </span>
       {overridden && (
         <button onClick={() => setToken(varName, null, 'light')} className="p-0.5 text-[var(--pt-text-faint)] hover:text-[var(--pt-text)]" aria-label={`Reset ${label}`}>
           <RotateCcw size={10} />

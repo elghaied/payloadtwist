@@ -1,5 +1,5 @@
 import { clamp, contrastRatio, hexToHsl, hslToHex, isHex, normalizeHex } from './color'
-import { DEFAULT_RAMPS, rampVar } from './schema'
+import { DEFAULT_RAMPS, rampVar, TOKENS } from './schema'
 
 // Seeds are the editor's primary lever: one color per role regenerates the Payload ramp
 // families that role drives. Generated ramps follow Payload's own lightness curve, so
@@ -21,30 +21,30 @@ interface SeedSpec {
 export const SEEDS: Record<SeedKey, SeedSpec> = {
   brand: {
     label: 'Brand',
-    description: 'Primary buttons, links, focus rings and selection',
+    description: 'Primary buttons, links, checkboxes, switches, focus rings and selected items',
     family: 'blue',
     anchor: '500',
     related: ['pale-blue'],
   },
   accent: {
     label: 'Accent',
-    description: 'Component highlights (Payload uses purple)',
+    description: 'Payload’s purple “component” colors — not used by the admin today',
     family: 'purple',
     anchor: '500',
     related: ['pale-purple'],
   },
   neutral: {
     label: 'Neutral',
-    description: 'Greys for surfaces, borders and secondary text',
+    description: 'All the greys: panels, borders, hover states and secondary text',
     family: 'grey',
     anchor: '500',
     related: [],
   },
-  success: { label: 'Success', description: 'Published states, confirmations', family: 'green', anchor: '500', related: ['pale-green'] },
-  warning: { label: 'Warning', description: 'Drafts, cautions', family: 'yellow', anchor: '500', related: ['pale-yellow'] },
+  success: { label: 'Success', description: 'Success messages, published states and confirmations', family: 'green', anchor: '500', related: ['pale-green'] },
+  warning: { label: 'Warning', description: 'Warnings, draft states and cautions', family: 'yellow', anchor: '500', related: ['pale-yellow'] },
   danger: {
     label: 'Danger',
-    description: 'Errors, destructive actions',
+    description: 'Errors, validation messages and delete buttons',
     family: 'red',
     anchor: '500',
     related: ['dark-red', 'pale-red'],
@@ -132,4 +132,11 @@ export function onColorTokens(key: SeedKey, seedHex: string): Record<string, str
   const hex = normalizeHex(seedHex)
   if (contrastRatio('#ffffff', hex) >= contrastRatio(DARK_LABEL, hex)) return {}
   return Object.fromEntries(vars.map((v) => [v, v.endsWith('-secondary') ? 'rgba(17, 17, 17, 0.7)' : DARK_LABEL]))
+}
+
+/** Payload component blocks that use any step of the scales a seed controls. */
+export function seedUsage(key: SeedKey): string[] {
+  const blocks = new Set<string>()
+  for (const v of seedRampVars(key)) for (const b of TOKENS[v]?.usedBy ?? []) blocks.add(b)
+  return [...blocks].sort()
 }

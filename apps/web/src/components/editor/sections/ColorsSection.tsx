@@ -2,11 +2,12 @@
 
 import { RotateCcw } from 'lucide-react'
 import { ColorPopover } from '@/components/controls'
-import { defaultSeed, SEED_KEYS, SEEDS, type SeedKey } from '@/payload-theme/ramps'
+import { blockName } from '@/payload-theme/descriptions'
+import { defaultSeed, SEED_KEYS, SEEDS, seedUsage, type SeedKey } from '@/payload-theme/ramps'
 import { DEFAULT_RAMPS, rampVar } from '@/payload-theme/schema'
 import type { ThemeConfig } from '@/payload-theme/theme'
 import { useEditorStore } from '@/store/editor-store'
-import { Group, SectionIntro } from '../token-ui'
+import { Group, SectionIntro, useHighlight } from '../token-ui'
 
 const steps = (family: string) => Object.keys(DEFAULT_RAMPS[family]).sort((a, b) => +a - +b)
 
@@ -39,13 +40,18 @@ function SeedRow({ seed, theme }: { seed: SeedKey; theme: ThemeConfig }) {
   const setSeed = useEditorStore((s) => s.setSeed)
   const spec = SEEDS[seed]
   const value = theme.seeds[seed]
+  const usage = seedUsage(seed)
+  const hover = useHighlight(usage.map((b) => `.${b}`))
   return (
-    <div className="space-y-1.5 py-1.5">
+    <div className="space-y-1.5 py-2" {...hover}>
       <div className="flex items-center gap-2">
         <ColorPopover value={value ?? defaultSeed(seed)} onChange={(hex) => setSeed(seed, hex)} hasOverride={!!value} label={spec.label} swatchSize="lg" />
         <div className="flex-1 min-w-0">
           <p className="text-xs font-medium text-[var(--pt-text)]">{spec.label}</p>
-          <p className="text-[13px] text-[var(--pt-text-faint)] truncate">{spec.description}</p>
+          <p className="text-xs text-[var(--pt-text-muted)] leading-snug">{spec.description}</p>
+          <p className="text-xs text-[var(--pt-text-faint)] leading-snug">
+            Reaches {usage.length} components, e.g. {usage.slice(0, 4).map(blockName).join(', ')} — hover to see them.
+          </p>
         </div>
         {value && (
           <button
@@ -74,7 +80,8 @@ export function ColorsSection({ theme }: { theme: ThemeConfig }) {
       </SectionIntro>
       <Group title="Palette colors" hint="Pick a color for each role. The strip under it is the generated scale — click any step to fine-tune it.">
         <div className="divide-y divide-[var(--pt-border)]">
-          {SEED_KEYS.map((k) => (
+          {/* Only seeds whose scales Payload actually uses (e.g. its purple "component" scale is unused) */}
+          {SEED_KEYS.filter((k) => seedUsage(k).length > 0).map((k) => (
             <SeedRow key={k} seed={k} theme={theme} />
           ))}
         </div>

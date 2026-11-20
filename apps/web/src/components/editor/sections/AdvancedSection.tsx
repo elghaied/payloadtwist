@@ -4,10 +4,11 @@ import { useMemo, useState } from 'react'
 import { ChevronRight, RotateCcw, Search } from 'lucide-react'
 import { ColorPopover } from '@/components/controls'
 import { parseColor } from '@/payload-theme/color'
+import { describeToken, highlightSelectors, usedByNames } from '@/payload-theme/descriptions'
 import { schema, TOKENS } from '@/payload-theme/schema'
 import { isSafeValue, type Mode, type ThemeConfig } from '@/payload-theme/theme'
 import { useEditorStore } from '@/store/editor-store'
-import { SectionIntro, useResolved } from '../token-ui'
+import { SectionIntro, useHighlight, useResolved } from '../token-ui'
 
 const FILE_LABELS: Record<string, string> = {
   colors: 'Color',
@@ -58,21 +59,36 @@ function ValueInput({ value, onCommit }: { value: string; onCommit: (v: string) 
 
 function TokenRow({ varName, mode, theme, resolved }: { varName: string; mode: Mode; theme: ThemeConfig; resolved: string }) {
   const setToken = useEditorStore((s) => s.setToken)
+  const hover = useHighlight(highlightSelectors(varName))
   const token = TOKENS[varName]
   const overridden = varName in theme[mode]
   const raw = theme[mode][varName] ?? (mode === 'dark' ? (token.dark ?? theme.light[varName] ?? token.light) : token.light)
+  const users = usedByNames(varName)
   return (
-    <div className="flex items-center gap-1.5 py-0.5 min-h-[26px]" title={raw}>
-      <code className="flex-1 min-w-0 truncate text-xs text-[var(--pt-text-label)]">{varName}</code>
-      {overridden && (
-        <button onClick={() => setToken(varName, null, mode)} className="p-0.5 text-[var(--pt-text-faint)] hover:text-[var(--pt-text)]" aria-label={`Reset ${varName}`}>
-          <RotateCcw size={10} />
-        </button>
-      )}
-      {token.type === 'color' && parseColor(resolved) ? (
-        <ColorPopover value={resolved} onChange={(hex) => setToken(varName, hex, mode)} hasOverride={overridden} label={varName} />
-      ) : null}
-      <ValueInput value={raw} onCommit={(v) => setToken(varName, v, mode)} />
+    <div className="py-2 border-b border-[var(--pt-border)] last:border-0 rounded hover:bg-[var(--pt-surface-hover)] -mx-1 px-1" {...hover}>
+      <div className="flex items-center gap-1.5">
+        <code className="flex-1 min-w-0 truncate text-xs font-semibold text-[var(--pt-text)]">{varName}</code>
+        {overridden && (
+          <button onClick={() => setToken(varName, null, mode)} className="p-0.5 text-[var(--pt-text-faint)] hover:text-[var(--pt-text)]" aria-label={`Reset ${varName}`}>
+            <RotateCcw size={11} />
+          </button>
+        )}
+        {token.type === 'color' && parseColor(resolved) ? (
+          <ColorPopover value={resolved} onChange={(hex) => setToken(varName, hex, mode)} hasOverride={overridden} label={varName} />
+        ) : null}
+        <ValueInput value={raw} onCommit={(v) => setToken(varName, v, mode)} />
+      </div>
+      <p className="mt-1 text-xs leading-snug text-[var(--pt-text-muted)]">{describeToken(varName)}</p>
+      <p className="mt-0.5 text-xs leading-snug text-[var(--pt-text-faint)]">
+        {users.length ? (
+          <>
+            Used by {users.slice(0, 6).join(', ')}
+            {users.length > 6 ? ` and ${users.length - 6} more` : ''} — hover to see them in the preview.
+          </>
+        ) : (
+          'Not used directly by Payload components (other variables may reference it).'
+        )}
+      </p>
     </div>
   )
 }
@@ -88,7 +104,7 @@ export function AdvancedSection({ theme }: { theme: ThemeConfig }) {
     const q = query.trim().toLowerCase()
     return GROUPS.map(([name, vars]) => [
       name,
-      vars.filter((v) => (!q || v.includes(q)) && (!onlyOverridden || v in theme[mode])),
+      vars.filter((v) => (!q || v.includes(q) || describeToken(v).toLowerCase().includes(q)) && (!onlyOverridden || v in theme[mode])),
     ] as const).filter(([, vars]) => vars.length)
   }, [query, onlyOverridden, theme, mode])
 
@@ -107,7 +123,7 @@ export function AdvancedSection({ theme }: { theme: ThemeConfig }) {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search tokens…"
+            placeholder="Search by name or what it does…"
             aria-label="Search tokens"
             className="w-full text-xs bg-[var(--pt-bg)] border border-[var(--pt-border)] rounded pl-7 pr-2 py-1.5 text-[var(--pt-text)] placeholder:text-[var(--pt-text-faint)] focus:outline-none focus:border-[var(--pt-accent)]"
           />

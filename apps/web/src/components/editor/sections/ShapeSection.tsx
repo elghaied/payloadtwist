@@ -2,7 +2,8 @@
 
 import { RotateCcw } from 'lucide-react'
 import { ScrubberInput } from '@/components/editor/ScrubberInput'
-import { BORDER_STYLES, DEFAULT_ROUNDNESS, SHADOW_STYLES } from '@/payload-theme/controls'
+import { BORDER_STYLES, DEFAULT_ROUNDNESS, SHADOW_STYLES, SHADOW_VARS } from '@/payload-theme/controls'
+import { highlightSelectors } from '@/payload-theme/descriptions'
 import type { ThemeConfig } from '@/payload-theme/theme'
 import { useEditorStore } from '@/store/editor-store'
 import { PxTokenRow, Segmented, SHADOW_INFO } from '../control-rows'
@@ -40,12 +41,19 @@ export function ShapeSection({ theme }: { theme: ThemeConfig }) {
       </Group>
 
       <Group title="Borders" hint="How visible the outlines of fields and controls are.">
-        <Segmented label="Border strength" options={BORDER_STYLES} value={theme.controls.borders ?? 'default'} onChange={setBorders} />
+        <Segmented label="Border strength" options={BORDER_STYLES} value={theme.controls.borders ?? 'default'} onChange={setBorders} highlight={highlightSelectors('--special-border-translucent')} />
         <PxTokenRow varName="--stroke-width-small" label="Border width" min={0} max={3} theme={theme} />
       </Group>
 
       <Group title="Shadows" hint="Depth under cards, tooltips, menus and dialogs.">
-        <Segmented label="Shadows" options={SHADOW_STYLES} value={theme.controls.shadows ?? 'default'} info={SHADOW_INFO} onChange={setShadows} />
+        <Segmented
+          label="Shadows"
+          options={SHADOW_STYLES}
+          value={theme.controls.shadows ?? 'default'}
+          info={SHADOW_INFO}
+          onChange={setShadows}
+          highlight={[...new Set(SHADOW_VARS.flatMap(highlightSelectors))]}
+        />
       </Group>
     </div>
   )

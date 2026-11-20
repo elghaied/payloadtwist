@@ -37,6 +37,16 @@ export function PayloadTwistBridge({ children }: { children?: ReactNode }) {
         setTheme(msg.theme)
       } else if (msg.type === 'contrast') {
         setHighContrastMode(msg.enabled === true)
+      } else if (msg.type === 'highlight' && Array.isArray(msg.selectors)) {
+        // outline the components a control affects (class selectors only)
+        const list = msg.selectors.filter((s: unknown): s is string => typeof s === 'string' && /^[.a-zA-Z0-9_ :()-]{1,120}$/.test(s)).slice(0, 80)
+        let hl = document.getElementById('payloadtwist-highlight')
+        if (!hl) {
+          hl = document.createElement('style')
+          hl.id = 'payloadtwist-highlight'
+          document.head.appendChild(hl)
+        }
+        hl.textContent = list.length ? list.join(',') + ' { outline: 2px solid #d946ef !important; outline-offset: 2px !important; }' : ''
       } else if (msg.type === 'navigate' && typeof msg.path === 'string' && msg.path.startsWith('/')) {
         router.push(msg.path)
       }
