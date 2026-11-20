@@ -7,7 +7,7 @@ import { FONT_VARS, type FontRole } from '@/payload-theme/controls'
 import { TOKENS } from '@/payload-theme/schema'
 import type { ThemeConfig } from '@/payload-theme/theme'
 import { useEditorStore } from '@/store/editor-store'
-import { Group } from '../token-ui'
+import { Group, SectionIntro } from '../token-ui'
 
 const ROLES: { role: FontRole; label: string; category: 'sans-serif' | 'monospace' | 'all' }[] = [
   { role: 'body', label: 'Body', category: 'sans-serif' },
@@ -21,7 +21,8 @@ export function TypeSection({ theme }: { theme: ThemeConfig }) {
 
   return (
     <div className="space-y-6">
-      <Group title="Fonts" hint="Google Fonts are imported by the exported CSS.">
+      <SectionIntro scope="global">Typefaces and text sizes for the whole admin.</SectionIntro>
+      <Group title="Typefaces" hint="Pick from Google Fonts or system fonts. Google Fonts are loaded by the exported CSS.">
         <div className="space-y-2">
           {ROLES.map(({ role, label, category }) => (
             <div key={role} className="flex items-end gap-1.5">

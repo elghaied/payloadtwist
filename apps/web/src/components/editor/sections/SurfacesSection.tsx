@@ -5,7 +5,7 @@ import { ScrubberInput } from '@/components/editor/ScrubberInput'
 import { flatten } from '@/payload-theme/color'
 import { surfaceSource, type ThemeConfig } from '@/payload-theme/theme'
 import { useEditorStore } from '@/store/editor-store'
-import { ContrastBadge, Group, ModeHeader, TokenColorRow, useResolved } from '../token-ui'
+import { ContrastBadge, Group, ModeHeader, SectionIntro, TokenColorRow, useResolved } from '../token-ui'
 
 function SurfaceFeel({ theme }: { theme: ThemeConfig }) {
   const setSurfaces = useEditorStore((s) => s.setSurfaces)
@@ -109,6 +109,10 @@ export function SurfacesSection({ theme }: { theme: ThemeConfig }) {
   const resolved = useResolved(theme)
   return (
     <div className="space-y-6">
+      <SectionIntro scope="global">
+        Background, text and border colors used everywhere in the admin, in light and dark mode. These are Payload&apos;s
+        shared color variables — to color one element only (just the sidebar, just the table header) use Components.
+      </SectionIntro>
       <SurfaceFeel theme={theme} />
       <Group title="Contrast" hint="WCAG AA for body text. Translucent roles are blended over their background, as the browser does.">
         <div className="grid grid-cols-[1fr_auto_auto] gap-x-3 gap-y-1 items-center text-[13px]">

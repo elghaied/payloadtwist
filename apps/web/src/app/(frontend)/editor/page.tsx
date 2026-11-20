@@ -3,14 +3,34 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { Download, GripVertical, Moon, Redo2, RotateCcw, Save, Sun, Undo2 } from 'lucide-react'
+import {
+  Boxes,
+  Braces,
+  Code,
+  Download,
+  GripVertical,
+  Layers,
+  Moon,
+  MoveHorizontal,
+  Palette,
+  Redo2,
+  RotateCcw,
+  Save,
+  Sparkles,
+  Square,
+  Sun,
+  Type as TypeIcon,
+  Undo2,
+} from 'lucide-react'
 import { EditorUserMenu } from '@/components/auth/UserMenu'
 import { ExportDialog } from '@/components/editor/ExportDialog'
 import { PreviewPanel } from '@/components/editor/PreviewPanel'
 import { AdvancedSection } from '@/components/editor/sections/AdvancedSection'
 import { ComponentsSection } from '@/components/editor/sections/ComponentsSection'
 import { CssSection } from '@/components/editor/sections/CssSection'
-import { PaletteSection } from '@/components/editor/sections/PaletteSection'
+import { ColorsSection } from '@/components/editor/sections/ColorsSection'
+import { PresetsSection } from '@/components/editor/sections/PresetsSection'
+import { SpacingSection } from '@/components/editor/sections/SpacingSection'
 import { ShapeSection } from '@/components/editor/sections/ShapeSection'
 import { SurfacesSection } from '@/components/editor/sections/SurfacesSection'
 import { TypeSection } from '@/components/editor/sections/TypeSection'
@@ -22,13 +42,15 @@ import { buildThemeCss } from '@/payload-theme/css'
 import { selectCanRedo, selectCanUndo, useEditorStore } from '@/store/editor-store'
 
 const TABS = [
-  { key: 'palette', label: 'Palette' },
-  { key: 'surfaces', label: 'Surfaces' },
-  { key: 'shape', label: 'Shape' },
-  { key: 'type', label: 'Type' },
-  { key: 'components', label: 'Components' },
-  { key: 'advanced', label: 'Advanced' },
-  { key: 'css', label: 'CSS' },
+  { key: 'presets', label: 'Presets', icon: Sparkles },
+  { key: 'colors', label: 'Colors', icon: Palette },
+  { key: 'backgrounds', label: 'Backgrounds & text', icon: Layers },
+  { key: 'shape', label: 'Shape', icon: Square },
+  { key: 'spacing', label: 'Spacing', icon: MoveHorizontal },
+  { key: 'fonts', label: 'Fonts', icon: TypeIcon },
+  { key: 'components', label: 'Components', icon: Boxes },
+  { key: 'variables', label: 'All variables', icon: Braces },
+  { key: 'css', label: 'Custom CSS', icon: Code },
 ] as const
 type Tab = (typeof TABS)[number]['key']
 
@@ -79,7 +101,7 @@ function Editor() {
   const canRedo = useEditorStore(selectCanRedo)
   const { undo, redo, resetTheme, loadTheme, setPreviewTheme, setEnhancedContrast } = useEditorStore.getState()
 
-  const [tab, setTab] = useState<Tab>('palette')
+  const [tab, setTab] = useState<Tab>('presets')
   const [editorDark, setEditorDark] = useEditorChromeDark()
   const [exportOpen, setExportOpen] = useState(false)
   const [saveOpen, setSaveOpen] = useState(false)
@@ -233,31 +255,37 @@ function Editor() {
           </div>
         </div>
 
-        <div className="flex gap-0.5 px-2 py-1.5 border-b border-[var(--pt-border)] overflow-x-auto" role="tablist" aria-label="Editor sections">
-          {TABS.map((t) => (
-            <button
-              key={t.key}
-              role="tab"
-              aria-selected={tab === t.key}
-              onClick={() => setTab(t.key)}
-              className={`text-[13px] px-2 py-1 rounded font-medium whitespace-nowrap transition-colors ${
-                tab === t.key
-                  ? 'bg-[var(--pt-accent)] text-white'
-                  : 'text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] hover:bg-[var(--pt-surface-hover)]'
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
+        <div className="grid grid-cols-3 gap-1 px-3 py-2 border-b border-[var(--pt-border)]" role="tablist" aria-label="Editor sections">
+          {TABS.map((t) => {
+            const Icon = t.icon
+            return (
+              <button
+                key={t.key}
+                role="tab"
+                aria-selected={tab === t.key}
+                onClick={() => setTab(t.key)}
+                className={`flex items-center gap-1.5 text-[13px] px-2 py-1.5 rounded-md font-medium text-left transition-colors ${
+                  tab === t.key
+                    ? 'bg-[var(--pt-accent)] text-white'
+                    : 'text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] hover:bg-[var(--pt-surface-hover)]'
+                }`}
+              >
+                <Icon size={14} className="shrink-0" />
+                <span className="leading-tight">{t.label}</span>
+              </button>
+            )
+          })}
         </div>
 
         <div className="flex-1 min-h-0 overflow-y-auto panel-scroll p-4" role="tabpanel">
-          {tab === 'palette' && <PaletteSection theme={theme} />}
-          {tab === 'surfaces' && <SurfacesSection theme={theme} />}
+          {tab === 'presets' && <PresetsSection />}
+          {tab === 'colors' && <ColorsSection theme={theme} />}
+          {tab === 'backgrounds' && <SurfacesSection theme={theme} />}
           {tab === 'shape' && <ShapeSection theme={theme} />}
-          {tab === 'type' && <TypeSection theme={theme} />}
+          {tab === 'spacing' && <SpacingSection theme={theme} />}
+          {tab === 'fonts' && <TypeSection theme={theme} />}
           {tab === 'components' && <ComponentsSection theme={theme} />}
-          {tab === 'advanced' && <AdvancedSection theme={theme} />}
+          {tab === 'variables' && <AdvancedSection theme={theme} />}
           {tab === 'css' && <CssSection theme={theme} css={css} />}
         </div>
       </aside>

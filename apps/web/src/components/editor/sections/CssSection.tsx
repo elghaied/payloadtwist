@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import type { ThemeConfig } from '@/payload-theme/theme'
 import { useEditorStore } from '@/store/editor-store'
-import { Group } from '../token-ui'
+import { Group, SectionIntro } from '../token-ui'
 
 export function CssSection({ theme, css }: { theme: ThemeConfig; css: string }) {
   const setCustomCss = useEditorStore((s) => s.setCustomCss)
@@ -17,6 +17,9 @@ export function CssSection({ theme, css }: { theme: ThemeConfig; css: string }) 
 
   return (
     <div className="space-y-6">
+      <SectionIntro scope="raw">
+        Your own CSS for anything the other tabs can&apos;t do. It&apos;s added after the generated theme.
+      </SectionIntro>
       <Group
         title="Custom CSS"
         hint="Appended after the generated tokens. Prefer tokens; target classes only for what tokens can't reach."

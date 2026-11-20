@@ -121,3 +121,23 @@ export function ContrastBadge({ fg, bg, page, large = false }: { fg: string; bg:
     </span>
   )
 }
+
+// ─── Section intro ──────────────────────────────────────────────────────────
+
+const SCOPES = {
+  whole: { label: 'Whole theme', cls: 'bg-[var(--pt-accent-soft)] text-[var(--pt-accent)]' },
+  global: { label: 'Global — whole admin', cls: 'bg-sky-500/10 text-sky-700 [[data-editor-theme=dark]_&]:text-sky-300' },
+  specific: { label: 'Specific elements', cls: 'bg-amber-500/10 text-amber-700 [[data-editor-theme=dark]_&]:text-amber-300' },
+  raw: { label: 'Raw variables', cls: 'bg-[var(--pt-surface-active)] text-[var(--pt-text-muted)]' },
+} as const
+
+/** Opens every editor tab: what scope the controls change, in one plain sentence. */
+export function SectionIntro({ scope, children }: { scope: keyof typeof SCOPES; children: ReactNode }) {
+  const s = SCOPES[scope]
+  return (
+    <div className="rounded-lg border border-[var(--pt-border)] bg-[var(--pt-surface-alt)] p-3 space-y-1.5">
+      <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full ${s.cls}`}>{s.label}</span>
+      <p className="text-[13px] leading-relaxed text-[var(--pt-text-muted)]">{children}</p>
+    </div>
+  )
+}

@@ -1,71 +1,11 @@
 'use client'
 
 import { useMemo } from 'react'
-import { RotateCcw } from 'lucide-react'
-import { ColorPopover } from '@/components/controls'
 import { PRESET_GROUPS, presetTheme, THEME_PRESETS } from '@/payload-theme/presets'
-import { defaultSeed, SEED_KEYS, SEEDS, type SeedKey } from '@/payload-theme/ramps'
-import { DEFAULT_RAMPS, rampVar, resolveAll } from '@/payload-theme/schema'
+import { resolveAll } from '@/payload-theme/schema'
 import type { ThemeConfig } from '@/payload-theme/theme'
 import { useEditorStore } from '@/store/editor-store'
-import { Group } from '../token-ui'
-
-const steps = (family: string) => Object.keys(DEFAULT_RAMPS[family]).sort((a, b) => +a - +b)
-
-function RampStrip({ family, theme }: { family: string; theme: ThemeConfig }) {
-  const setRamp = useEditorStore((s) => s.setRamp)
-  return (
-    <div className="flex items-center gap-2">
-      <code className="w-20 text-xs text-[var(--pt-text-faint)] truncate">{family}</code>
-      <div className="flex flex-1 gap-px rounded overflow-hidden">
-        {steps(family).map((step) => {
-          const v = rampVar(family, step)
-          const value = theme.ramps[v] ?? DEFAULT_RAMPS[family][step]
-          return (
-            <div key={step} className="flex-1">
-              <ColorPopover
-                value={value}
-                onChange={(hex) => setRamp(v, hex)}
-                label={v}
-                swatchClassName="w-full h-5 rounded-none border-0 shadow-none hover:scale-100 hover:brightness-110"
-              />
-            </div>
-          )
-        })}
-      </div>
-    </div>
-  )
-}
-
-function SeedRow({ seed, theme }: { seed: SeedKey; theme: ThemeConfig }) {
-  const setSeed = useEditorStore((s) => s.setSeed)
-  const spec = SEEDS[seed]
-  const value = theme.seeds[seed]
-  return (
-    <div className="space-y-1.5 py-1.5">
-      <div className="flex items-center gap-2">
-        <ColorPopover value={value ?? defaultSeed(seed)} onChange={(hex) => setSeed(seed, hex)} hasOverride={!!value} label={spec.label} swatchSize="lg" />
-        <div className="flex-1 min-w-0">
-          <p className="text-xs font-medium text-[var(--pt-text)]">{spec.label}</p>
-          <p className="text-[13px] text-[var(--pt-text-faint)] truncate">{spec.description}</p>
-        </div>
-        {value && (
-          <button
-            onClick={() => setSeed(seed, null)}
-            className="p-1 text-[var(--pt-text-faint)] hover:text-[var(--pt-text)]"
-            aria-label={`Reset ${spec.label}`}
-            title="Reset to Payload default"
-          >
-            <RotateCcw size={11} />
-          </button>
-        )}
-      </div>
-      {[spec.family, ...spec.related].map((f) => (
-        <RampStrip key={f} family={f} theme={theme} />
-      ))}
-    </div>
-  )
-}
+import { Group, SectionIntro } from '../token-ui'
 
 function MiniAdmin({ theme, mode }: { theme: ThemeConfig; mode: 'light' | 'dark' }) {
   const r = resolveAll(mode, theme)
@@ -135,18 +75,14 @@ function PresetGrid() {
   )
 }
 
-export function PaletteSection({ theme }: { theme: ThemeConfig }) {
+export function PresetsSection() {
   return (
     <div className="space-y-6">
-      <Group title="Start from a preset" hint="Replaces the current theme — undo brings it back.">
+      <SectionIntro scope="whole">
+        Complete themes to start from. Loading one replaces your current theme — undo brings it back.
+      </SectionIntro>
+      <Group title="Built-in themes">
         <PresetGrid />
-      </Group>
-      <Group title="Seed colors" hint="Each seed regenerates a Payload ramp family along Payload's own lightness curve. Click any ramp step to fine-tune it.">
-        <div className="divide-y divide-[var(--pt-border)]">
-          {SEED_KEYS.map((k) => (
-            <SeedRow key={k} seed={k} theme={theme} />
-          ))}
-        </div>
       </Group>
     </div>
   )

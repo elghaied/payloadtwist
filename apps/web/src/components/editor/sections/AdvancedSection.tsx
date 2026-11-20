@@ -7,7 +7,7 @@ import { parseColor } from '@/payload-theme/color'
 import { schema, TOKENS } from '@/payload-theme/schema'
 import { isSafeValue, type Mode, type ThemeConfig } from '@/payload-theme/theme'
 import { useEditorStore } from '@/store/editor-store'
-import { useResolved } from '../token-ui'
+import { SectionIntro, useResolved } from '../token-ui'
 
 const FILE_LABELS: Record<string, string> = {
   colors: 'Color',
@@ -97,9 +97,10 @@ export function AdvancedSection({ theme }: { theme: ThemeConfig }) {
 
   return (
     <div className="space-y-3">
-      <p className="text-[13px] text-[var(--pt-text-faint)]">
-        Every Payload v4 token. Values can reference others, e.g. <code>var(--ramp-blue-600)</code>.
-      </p>
+      <SectionIntro scope="raw">
+        Every CSS variable Payload v4 uses. The other tabs are shortcuts that set these for you — change one here only when no
+        shortcut covers it. Values can be colors, sizes, or references to other variables like <code>var(--ramp-blue-600)</code>.
+      </SectionIntro>
       <div className="flex items-center gap-1.5">
         <div className="relative flex-1">
           <Search size={12} className="absolute left-2 top-1/2 -translate-y-1/2 text-[var(--pt-text-faint)]" />

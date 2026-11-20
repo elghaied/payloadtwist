@@ -7,7 +7,7 @@ import { ScrubberInput } from '@/components/editor/ScrubberInput'
 import { COMPONENTS, isColorProp, PROPS, type ComponentDef, type PropKey } from '@/payload-theme/components'
 import type { Mode, ThemeConfig } from '@/payload-theme/theme'
 import { useEditorStore } from '@/store/editor-store'
-import { Group, useResolved } from '../token-ui'
+import { Group, SectionIntro, useResolved } from '../token-ui'
 
 const SHADOWS = [
   { label: 'None', value: 'none' },
@@ -152,10 +152,11 @@ export function ComponentsSection({ theme }: { theme: ThemeConfig }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-[13px] text-[var(--pt-text-faint)]">
-        Styles tokens can&apos;t express — a branded sidebar, card shadows, uppercase table headers — on Payload&apos;s stable
-        component classes. Colors have light and dark values; everything else applies to both modes.
-      </p>
+      <SectionIntro scope="specific">
+        Style one part of the admin without touching the rest — a dark sidebar, rounder buttons, uppercase table headers.
+        These target Payload&apos;s component classes and win over the global settings. Colors have a light and a dark value;
+        everything else applies to both modes.
+      </SectionIntro>
       {GROUPS.map((group) => (
         <Group key={group} title={group}>
           <div className="divide-y divide-[var(--pt-border)] border-y border-[var(--pt-border)]">
