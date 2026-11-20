@@ -61,7 +61,7 @@ export function PresetDetailClient({
 
       <h1
         className="text-2xl font-bold text-[var(--lp-text)] mb-2"
-        style={{ fontFamily: "'Instrument Serif', Georgia, serif", fontWeight: 400 }}
+        style={{ fontFamily: "'Bricolage Grotesque', system-ui, sans-serif", fontWeight: 700, letterSpacing: '-0.02em' }}
       >
         {preset.name}
       </h1>

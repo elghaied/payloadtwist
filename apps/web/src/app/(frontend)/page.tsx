@@ -138,17 +138,17 @@ export default function LandingPage() {
 
       {/* Nav */}
       <nav className="fixed top-0 inset-x-0 z-50 border-b border-[var(--lb-line)] bg-[var(--lb-paper)]/85 backdrop-blur-xl">
-        <div className="mx-auto max-w-7xl flex items-center justify-between gap-4 px-6 py-3.5">
+        <div className="mx-auto max-w-7xl flex items-center justify-between gap-3 px-4 sm:px-6 py-3.5">
           <Link href="/" className="flex items-center gap-2.5" aria-label="payloadtwist home">
             <LogoMark size={26} />
-            <Wordmark className="text-lg" />
+            <Wordmark className="text-base sm:text-lg" />
           </Link>
           <div className="hidden md:flex items-center gap-8 text-[15px] lb-muted">
             <a href="#lookbook" className="hover:text-[var(--lb-ink)]">Lookbook</a>
             <a href="#how" className="hover:text-[var(--lb-ink)]">How it works</a>
             <Link href="/presets" className="hover:text-[var(--lb-ink)]">Shared themes</Link>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <UserMenu />
             <ThemeToggle />
             <Link href="/editor" className="lb-button !py-2 !px-4 text-sm !hidden sm:!inline-flex">
@@ -161,7 +161,9 @@ export default function LandingPage() {
       {/* Hero: before and after */}
       <header className="mx-auto max-w-7xl px-6 pt-32 pb-24 lg:pt-40 lg:pb-32 grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
         <div className="lg:col-span-5">
-          <h1 className="lb-display text-[clamp(3.25rem,7vw,6.5rem)]">Your Payload admin, dressed properly.</h1>
+          <h1 className="lb-display text-[clamp(3rem,6vw,5.75rem)]">
+            Your Payload admin, <span className="text-gradient-shimmer">dressed properly.</span>
+          </h1>
           <p className="mt-8 max-w-md text-lg leading-relaxed lb-muted">
             payloadtwist is a visual theme editor for the Payload v4 admin. Start from a look, change anything on a
             live admin, and take home a custom.css.
@@ -355,7 +357,7 @@ export default function LandingPage() {
               download a theme package for payload-admin-ui-themes so your editors can switch themes themselves.
             </p>
           </div>
-          <div className="lg:col-span-7 rounded-[10px] border border-[var(--lb-line)] bg-[var(--lb-panel)] overflow-hidden">
+          <div className="lg:col-span-7 min-w-0 rounded-[10px] border border-[var(--lb-line)] bg-[var(--lb-panel)] overflow-hidden">
             <div className="px-5 py-3 border-b border-[var(--lb-line)] text-sm lb-muted">custom.css</div>
             <pre className="p-5 overflow-x-auto max-h-[440px]">
               <code className="text-[13px] font-mono leading-relaxed whitespace-pre">

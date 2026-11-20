@@ -1,7 +1,7 @@
 /* ── Landing page styles ── */
 
 .landing {
-  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
   --font-body: 'Geist', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
@@ -103,9 +103,8 @@
 
 .landing .font-display {
   font-family: var(--font-display);
-  /* Instrument Serif has a single weight: never fake-bold it */
-  font-weight: 400;
-  letter-spacing: -0.01em;
+  font-weight: 700;
+  letter-spacing: -0.03em;
 }
 
 .landing .font-mono {
@@ -127,6 +126,9 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: lp-shimmer 4s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing .text-gradient-shimmer { animation: none; }
 }
 
 /* ── Noise texture ── */

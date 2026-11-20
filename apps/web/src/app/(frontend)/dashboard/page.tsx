@@ -25,7 +25,7 @@ export default async function DashboardPage() {
           <div>
             <h1
               className="text-2xl font-bold text-[var(--lp-text)]"
-              style={{ fontFamily: "'Instrument Serif', Georgia, serif", fontWeight: 400 }}
+              style={{ fontFamily: "'Bricolage Grotesque', system-ui, sans-serif", fontWeight: 700, letterSpacing: '-0.02em' }}
             >
               Your Presets
             </h1>

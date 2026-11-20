@@ -23,7 +23,7 @@ export function Footer() {
           <LogoMark size={16} />
           <span>payloadtwist — open source</span>
         </div>
-        <div className="flex items-center gap-4 text-xs text-muted-foreground/70">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground/70">
           <Link href="/privacy" className="hover:text-foreground transition-colors">
             Privacy
           </Link>
