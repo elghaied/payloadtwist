@@ -502,6 +502,15 @@ export interface CallToAction {
  */
 export interface FieldShowcase {
   id: number;
+  /**
+   * Every Lexical feature, seeded with every node type.
+   */
+  body?: LexicalRichText<LexicalNodes_4617909B> | null;
+  /**
+   * Same content plus Lexical’s tree view, JSX output and test recorder.
+   */
+  debugBody?: LexicalRichText<LexicalNodes_4617909B> | null;
+  sections?: (Quote | Stats | Gallery)[] | null;
   title: string;
   slug: string;
   /**
@@ -571,15 +580,6 @@ export interface FieldShowcase {
     | null;
   cover?: (number | null) | Media;
   attachments?: (number | Media)[] | null;
-  /**
-   * Every Lexical feature, seeded with every node type.
-   */
-  body?: LexicalRichText<LexicalNodes_4617909B> | null;
-  /**
-   * Same content plus Lexical’s tree view, JSX output and test recorder.
-   */
-  debugBody?: LexicalRichText<LexicalNodes_4617909B> | null;
-  sections?: (Quote | Stats | Gallery)[] | null;
   structure?: {
     checklist?:
       | {
@@ -848,35 +848,6 @@ export interface PagesSelect<T extends boolean = true> {
  * via the `definition` "field-showcase_select".
  */
 export interface FieldShowcaseSelect<T extends boolean = true> {
-  title?: T;
-  slug?: T;
-  summary?: T;
-  contactEmail?: T;
-  priority?: T;
-  rating?: T;
-  keywords?: T;
-  scores?: T;
-  internalId?: T;
-  reviewNotes?: T;
-  status?: T;
-  channels?: T;
-  audience?: T;
-  tone?: T;
-  featured?: T;
-  allowComments?: T;
-  publishAt?: T;
-  deadline?: T;
-  reminderTime?: T;
-  campaignMonth?: T;
-  location?: T;
-  snippet?: T;
-  styles?: T;
-  metadata?: T;
-  owner?: T;
-  relatedPosts?: T;
-  linkedContent?: T;
-  cover?: T;
-  attachments?: T;
   body?: T;
   debugBody?: T;
   sections?:
@@ -912,6 +883,35 @@ export interface FieldShowcaseSelect<T extends boolean = true> {
               blockName?: T;
             };
       };
+  title?: T;
+  slug?: T;
+  summary?: T;
+  contactEmail?: T;
+  priority?: T;
+  rating?: T;
+  keywords?: T;
+  scores?: T;
+  internalId?: T;
+  reviewNotes?: T;
+  status?: T;
+  channels?: T;
+  audience?: T;
+  tone?: T;
+  featured?: T;
+  allowComments?: T;
+  publishAt?: T;
+  deadline?: T;
+  reminderTime?: T;
+  campaignMonth?: T;
+  location?: T;
+  snippet?: T;
+  styles?: T;
+  metadata?: T;
+  owner?: T;
+  relatedPosts?: T;
+  linkedContent?: T;
+  cover?: T;
+  attachments?: T;
   structure?:
     | T
     | {

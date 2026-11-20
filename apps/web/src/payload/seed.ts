@@ -222,25 +222,6 @@ export async function seed(payload: Payload): Promise<void> {
     })
   }
 
-  // Translations so the locale switcher (incl. RTL Arabic) shows real content
-  const firstPost = (await payload.find({ collection: 'posts', sort: 'createdAt', limit: 1, ...ctx })).docs[0]
-  if (firstPost) {
-    await payload.update({
-      collection: 'posts',
-      id: firstPost.id,
-      locale: 'fr',
-      data: { title: 'Concevoir un thème d’administration par jetons', excerpt: 'Les rôles sémantiques gardent les modes clair et sombre synchronisés.' },
-      ...ctx,
-    })
-    await payload.update({
-      collection: 'posts',
-      id: firstPost.id,
-      locale: 'ar',
-      data: { title: 'تصميم سمة إدارة قائمة على الرموز', excerpt: 'الأدوار الدلالية تبقي الوضعين الفاتح والداكن متزامنين.' },
-      ...ctx,
-    })
-  }
-
   for (const [i, title] of ['Home', 'Pricing', 'About us', 'Contact'].entries()) {
     await payload.create({
       collection: 'pages',
@@ -348,6 +329,40 @@ export async function seed(payload: Payload): Promise<void> {
     },
     ...ctx,
   })
+
+  // The editor's "Edit" preview opens post 1: give it every rich text node too, so the
+  // rich text editor is the first thing people see there
+  const editPost = (await payload.find({ collection: 'posts', sort: 'id', limit: 1, draft: true, ...ctx })).docs[0]
+  const otherPost = posts.docs.find((d) => d.id !== editPost.id) ?? editPost
+  await payload.update({
+    collection: 'posts',
+    id: editPost.id,
+    data: {
+      content: asRichText(
+        everythingDocument({ media: media.map((m) => m.id), post: otherPost.id, page: pages.docs[0].id, user: users[1].id }),
+      ) as Post['content'],
+    },
+    ...ctx,
+  })
+
+  // Translations so the locale switcher (incl. RTL Arabic) shows real content
+  const firstPost = (await payload.find({ collection: 'posts', sort: 'createdAt', limit: 1, ...ctx })).docs[0]
+  if (firstPost) {
+    await payload.update({
+      collection: 'posts',
+      id: firstPost.id,
+      locale: 'fr',
+      data: { title: 'Concevoir un thème d’administration par jetons', excerpt: 'Les rôles sémantiques gardent les modes clair et sombre synchronisés.' },
+      ...ctx,
+    })
+    await payload.update({
+      collection: 'posts',
+      id: firstPost.id,
+      locale: 'ar',
+      data: { title: 'تصميم سمة إدارة قائمة على الرموز', excerpt: 'الأدوار الدلالية تبقي الوضعين الفاتح والداكن متزامنين.' },
+      ...ctx,
+    })
+  }
 
   await payload.updateGlobal({
     slug: 'site-settings',

@@ -60,6 +60,20 @@ export const FieldShowcase: CollectionConfig = demo({
       type: 'tabs',
       tabs: [
         {
+          label: 'Content',
+          fields: [
+            { name: 'body', type: 'richText', localized: true, admin: { description: 'Every Lexical feature, seeded with every node type.' } },
+            {
+              name: 'debugBody',
+              label: 'Rich text with developer panels',
+              type: 'richText',
+              editor: debugEditor,
+              admin: { description: 'Same content plus Lexical’s tree view, JSX output and test recorder.' },
+            },
+            { name: 'sections', type: 'blocks', blocks: [quoteBlock, statsBlock, galleryBlock] },
+          ],
+        },
+        {
           label: 'Basics',
           description: 'Text-like inputs and their states.',
           fields: [
@@ -173,20 +187,6 @@ export const FieldShowcase: CollectionConfig = demo({
             },
             { name: 'cover', type: 'upload', relationTo: 'media' },
             { name: 'attachments', type: 'upload', relationTo: 'media', hasMany: true },
-          ],
-        },
-        {
-          label: 'Content',
-          fields: [
-            { name: 'body', type: 'richText', localized: true, admin: { description: 'Every Lexical feature, seeded with every node type.' } },
-            {
-              name: 'debugBody',
-              label: 'Rich text with developer panels',
-              type: 'richText',
-              editor: debugEditor,
-              admin: { description: 'Same content plus Lexical’s tree view, JSX output and test recorder.' },
-            },
-            { name: 'sections', type: 'blocks', blocks: [quoteBlock, statsBlock, galleryBlock] },
           ],
         },
         {
