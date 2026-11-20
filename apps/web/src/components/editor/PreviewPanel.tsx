@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { Contrast, ExternalLink, Laptop, Moon, Smartphone, Sun, Tablet } from 'lucide-react'
 import { isFromPreview, type ToPreviewBody } from '@/payload-theme/preview-protocol'
 import { useEditorStore } from '@/store/editor-store'
@@ -26,6 +26,39 @@ const VIEWPORTS: Record<Viewport, { width: string; icon: typeof Laptop }> = {
 }
 
 const CUSTOM_URL_KEY = 'payloadtwist-custom-preview-url'
+
+// Demo admin language: Payload reads the interface language (and RTL for Arabic) from this
+// cookie; the content locale travels as ?locale= so both switch together.
+const LANGUAGES = [
+  { code: 'en', label: 'EN', name: 'English' },
+  { code: 'fr', label: 'FR', name: 'French' },
+  { code: 'ar', label: 'عربي', name: 'Arabic (right-to-left)' },
+] as const
+type Lang = (typeof LANGUAGES)[number]['code']
+const LANG_COOKIE = 'payload-lng'
+const langListeners = new Set<() => void>()
+const langStore = {
+  subscribe(listener: () => void) {
+    langListeners.add(listener)
+    return () => langListeners.delete(listener)
+  },
+  get(): Lang {
+    const v = document.cookie.match(new RegExp(`(?:^|; )${LANG_COOKIE}=([^;]+)`))?.[1]
+    return LANGUAGES.some((l) => l.code === v) ? (v as Lang) : 'en'
+  },
+  set(lang: Lang) {
+    document.cookie = `${LANG_COOKIE}=${lang}; path=/; max-age=31536000; samesite=lax`
+    langListeners.forEach((l) => l())
+  },
+}
+
+/** Adds the content locale to a demo admin path (English is Payload's default). */
+function withLocale(path: string, lang: Lang): string {
+  const url = new URL(path, 'http://x')
+  if (lang === 'en') url.searchParams.delete('locale')
+  else url.searchParams.set('locale', lang)
+  return url.pathname + url.search
+}
 
 function originOf(url: string): string | null {
   try {
@@ -103,9 +136,21 @@ export function PreviewPanel({ css, theme, enhancedContrast, onThemeChange, onCo
     if (ready) send({ type: 'highlight', selectors: highlight })
   }, [highlight, ready, send])
 
+  const lang = useSyncExternalStore(langStore.subscribe, langStore.get, () => 'en' as Lang)
+  const [reloadKey, setReloadKey] = useState(0)
+
   const navigate = (to: string) => {
-    if (ready) send({ type: 'navigate', path: to })
-    else setDemoSrc(to)
+    const target = withLocale(to, lang)
+    if (ready) send({ type: 'navigate', path: target })
+    else setDemoSrc(target)
+  }
+
+  const switchLanguage = (next: Lang) => {
+    langStore.set(next)
+    // the interface language is rendered on the server: reload the admin on the same page
+    setReady(false)
+    setDemoSrc(withLocale(path, next))
+    setReloadKey((k) => k + 1)
   }
 
   const switchSource = (next: Source) => {
@@ -197,6 +242,25 @@ export function PreviewPanel({ css, theme, enhancedContrast, onThemeChange, onCo
               </button>
             )
           })}
+          {source === 'demo' && (
+            <>
+              <div className="w-px h-4 bg-[var(--pt-border)] mx-1" />
+              <div className="flex items-center gap-0.5" role="radiogroup" aria-label="Admin language">
+                {LANGUAGES.map((l) => (
+                  <button
+                    key={l.code}
+                    role="radio"
+                    aria-checked={lang === l.code}
+                    onClick={() => switchLanguage(l.code)}
+                    className={`px-1.5 py-1 rounded text-xs font-medium ${lang === l.code ? 'bg-[var(--pt-surface-active)] text-[var(--pt-text)]' : 'text-[var(--pt-text-muted)] hover:text-[var(--pt-text)] hover:bg-[var(--pt-surface-hover)]'}`}
+                    title={`Admin in ${l.name}`}
+                  >
+                    {l.label}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
           <div className="w-px h-4 bg-[var(--pt-border)] mx-1" />
           <button className={iconBtn(theme === 'light')} onClick={() => onThemeChange('light')} aria-label="Preview light mode" aria-pressed={theme === 'light'}>
             <Sun size={14} />
@@ -225,7 +289,7 @@ export function PreviewPanel({ css, theme, enhancedContrast, onThemeChange, onCo
         {iframeSrc ? (
           <div className="h-full transition-[width] duration-200" style={{ width: VIEWPORTS[viewport].width, maxWidth: '100%' }}>
             <iframe
-              key={`${source}:${iframeSrc}`}
+              key={`${source}:${iframeSrc}:${reloadKey}`}
               id="payload-preview"
               ref={iframeRef}
               src={iframeSrc}

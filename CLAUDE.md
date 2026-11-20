@@ -102,6 +102,8 @@ typed properties per component, emitted after the token blocks on Payload's BEM 
   `pnpm payload migrate:create` (prodMigrations), `pnpm generate:importmap`, `payload generate:types`.
 - Uploads go to `MEDIA_DIR` (os.tmpdir), wiped on seed. `next.config.mjs` force-traces `strtok3`.
 - `/preview/gallery` is a custom admin view with every component family and token.
+- `i18n.supportedLanguages` (en/fr/ar) is the admin UI language (cookie `payload-lng`, Arabic = RTL); `localization` is content. The
+  preview toolbar switches both.
 - `field-showcase` has every field type; `lexical.ts` enables every Lexical feature (seed builders in
   `seed-richtext.ts` cover every node type). The JSX debug panel only has default converters, so its
   field gets a "portable" copy without custom blocks/internal links.

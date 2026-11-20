@@ -49,6 +49,14 @@ test.describe('Embedded Payload v4 admin', () => {
     await page.evaluate(() => localStorage.removeItem('payload-admin-ui-theme:1'))
   })
 
+  test('Arabic admin language renders right-to-left', async ({ page, context, baseURL }) => {
+    await context.addCookies([{ name: 'payload-lng', value: 'ar', url: baseURL! }])
+    await page.goto('/preview?locale=ar')
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ar')
+    await context.clearCookies({ name: 'payload-lng' })
+  })
+
   test('rejects writes', async ({ request }) => {
     const res = await request.patch('/preview-api/posts/1', { data: { title: 'hacked' } })
     expect(res.status()).toBe(403)

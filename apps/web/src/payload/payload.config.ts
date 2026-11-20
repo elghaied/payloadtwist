@@ -1,6 +1,9 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
+import { ar } from '@payloadcms/translations/languages/ar'
+import { en } from '@payloadcms/translations/languages/en'
+import { fr } from '@payloadcms/translations/languages/fr'
 import { APIError, buildConfig, createFolderField } from 'payload'
 import type { Field, GlobalConfig } from 'payload'
 import { payloadAdminUIThemes } from 'payload-admin-ui-themes'
@@ -254,6 +257,9 @@ export default buildConfig({
   collections: [Posts, Pages, FieldShowcase, Media, Categories, Folders, Users],
   globals: [SiteSettings],
   editor: fullEditor,
+  // Admin interface languages (the user menu's language switch). Arabic turns the whole admin
+  // right-to-left, which is how themes get checked in RTL; content locales are configured below.
+  i18n: { supportedLanguages: { en, fr, ar }, fallbackLanguage: 'en' },
   localization: {
     locales: [
       { label: 'English', code: 'en' },
